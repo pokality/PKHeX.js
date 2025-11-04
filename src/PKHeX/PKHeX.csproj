@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    
+    <!-- WASM Configuration -->
+    <WasmEnableExceptionHandling>true</WasmEnableExceptionHandling>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    
+    <!-- JSExport Configuration -->
+    <WasmEnableSIMD>false</WasmEnableSIMD>
+    <WasmEnableThreads>false</WasmEnableThreads>
+    
+    <!-- Disable Blazor Features -->
+    <IsTrimmable>true</IsTrimmable>
+    <TrimMode>link</TrimMode>
+    <EnableDefaultItems>true</EnableDefaultItems>
+    
+    <!-- Output Configuration -->
+    <BaseOutputPath>../../dist/</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)bin/$(Configuration)/</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    
+    <!-- IL Trimming for Size Optimization -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimmerDefaultAction>link</TrimmerDefaultAction>
+    <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+    <EventSourceSupport>false</EventSourceSupport>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    
+    <!-- Trimming Warnings -->
+    <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    
+    <!-- Suppress platform warnings for JSExport (we know we're browser-only) -->
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\PKHeX\PKHeX.Core\PKHeX.Core.csproj" />
+    <PackageReference Include="System.Text.Json" Version="9.0.*" />
+  </ItemGroup>
+
+  <!-- Preserve JSExport methods and PKHeX.Core from trimming -->
+  <ItemGroup>
+    <TrimmerRootAssembly Include="PKHeX" />
+    <TrimmerRootAssembly Include="PKHeX.Core" />
+  </ItemGroup>
+  
+  <!-- Preserve specific PKHeX.Core types from trimming -->
+  <ItemGroup>
+    <TrimmerRootDescriptor Include="TrimmerRoots.xml" Condition="Exists('TrimmerRoots.xml')" />
+  </ItemGroup>
+
+</Project>

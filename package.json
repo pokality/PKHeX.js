@@ -1,0 +1,58 @@
+{
+  "name": "pkhex",
+  "version": "1.0.0",
+  "description": "WebAssembly library wrapping PKHeX.Core for Pokemon save file editing in JavaScript/TypeScript",
+  "main": "dist/dotnet.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/dotnet.js",
+    "dist/dotnet.js.map",
+    "dist/dotnet.native.wasm",
+    "dist/dotnet.native.js",
+    "dist/dotnet.native.js.symbols",
+    "dist/dotnet.runtime.js",
+    "dist/dotnet.runtime.js.map",
+    "dist/PKHeX.dll",
+    "dist/PKHeX.Core.dll",
+    "dist/System.Text.Json.dll",
+    "dist/index.d.ts",
+    "dist/README.md"
+  ],
+  "scripts": {
+    "build": "dotnet publish src/PKHeX/PKHeX.csproj -c Release && ./scripts/generate-boot-json.sh",
+    "build:debug": "dotnet build src/PKHeX/PKHeX.csproj",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:csharp": "dotnet test tests/PKHeX.Tests/PKHeX.Tests.csproj",
+    "test:all": "npm run test:csharp && npm run test",
+    "docs": "typedoc src/index.d.ts --out docs --name 'PKHeX WASM API'",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "pokemon",
+    "pkhex",
+    "save-editor",
+    "webassembly",
+    "wasm",
+    "save-file",
+    "game-editor"
+  ],
+  "author": "PKHeX WASM Contributors",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/pkhex-wasm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/pkhex-wasm/issues"
+  },
+  "homepage": "https://github.com/yourusername/pkhex-wasm#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.24",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.1"
+  }
+}

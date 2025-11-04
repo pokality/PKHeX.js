@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <!-- Preserve all public types in PKHeX for JSExport -->
+  <assembly fullname="PKHeX">
+    <type fullname="PKHeX.Api.PKHeXApi" preserve="all" />
+  </assembly>
+  
+  <!-- Preserve SaveFile types -->
+  <assembly fullname="PKHeX.Core">
+    <type fullname="PKHeX.Core.SaveUtil" preserve="all" />
+    <type fullname="PKHeX.Core.SaveFile" preserve="all" />
+    <type fullname="PKHeX.Core.SAV*" preserve="all" />
+    
+    <!-- Preserve PKM types -->
+    <type fullname="PKHeX.Core.PKM" preserve="all" />
+    <type fullname="PKHeX.Core.PK*" preserve="all" />
+    <type fullname="PKHeX.Core.PA*" preserve="all" />
+    <type fullname="PKHeX.Core.PB*" preserve="all" />
+    
+    <!-- Preserve Showdown parsing -->
+    <type fullname="PKHeX.Core.ShowdownParsing" preserve="all" />
+    <type fullname="PKHeX.Core.ShowdownSet" preserve="all" />
+    
+    <!-- Preserve Legality checking -->
+    <type fullname="PKHeX.Core.LegalityAnalysis" preserve="all" />
+    <type fullname="PKHeX.Core.LegalityCheckResult" preserve="all" />
+    
+    <!-- Preserve Game data -->
+    <type fullname="PKHeX.Core.GameInfo" preserve="all" />
+    <type fullname="PKHeX.Core.GameStrings" preserve="all" />
+    <type fullname="PKHeX.Core.Legal" preserve="all" />
+    
+    <!-- Preserve Common edits -->
+    <type fullname="PKHeX.Core.CommonEdits" preserve="all" />
+    
+    <!-- Preserve Ribbon info -->
+    <type fullname="PKHeX.Core.RibbonInfo" preserve="all" />
+  </assembly>
+</linker>
