@@ -1,0 +1,41 @@
+# Build artifacts
+bin/
+obj/
+out/
+dist/
+docs/
+
+# .NET User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Dependencies
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+node_modules/
+
+
+# Non-git hidden files
+.*
+!.git*
+
+test-*

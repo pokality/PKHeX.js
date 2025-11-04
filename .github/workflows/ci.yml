@@ -1,0 +1,147 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    environment: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Install WASM workload
+      run: dotnet workload install wasm-tools
+    
+    - name: Restore dependencies
+      run: dotnet restore src/PKHeX/PKHeX.csproj
+    
+    - name: Format check
+      run: dotnet format src/PKHeX/PKHeX.csproj --verify-no-changes --verbosity diagnostic
+    
+    - name: Analyze code
+      run: dotnet build src/PKHeX/PKHeX.csproj -c Release /p:TreatWarningsAsErrors=true
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: build
+    needs: lint
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Install WASM workload
+      run: dotnet workload install wasm-tools
+    
+    - name: Restore dependencies
+      run: dotnet restore src/PKHeX/PKHeX.csproj
+    
+    - name: Build
+      run: dotnet build src/PKHeX/PKHeX.csproj -c Release --no-restore
+    
+    - name: Publish WASM
+      run: |
+        rm -rf dist
+        mkdir -p dist
+        dotnet publish src/PKHeX/PKHeX.csproj -c Release
+        cp -r src/PKHeX/bin/Release/browser-wasm/publish/* dist/
+        chmod +x scripts/generate-boot-json.sh
+        ./scripts/generate-boot-json.sh
+    
+    - name: Calculate bundle size
+      run: |
+        echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+        if [ -f dist/dotnet.native.wasm ]; then
+          du -h dist/dotnet.native.wasm | awk '{print "| dotnet.native.wasm | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+        fi
+        if [ -f dist/PKHeX.Core.dll ]; then
+          du -h dist/PKHeX.Core.dll | awk '{print "| PKHeX.Core.dll | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+        fi
+        if [ -f dist/PKHeX.dll ]; then
+          du -h dist/PKHeX.dll | awk '{print "| PKHeX.dll | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+        TOTAL=$(du -sh dist | awk '{print $1}')
+        echo "**Total Bundle Size: $TOTAL**" >> $GITHUB_STEP_SUMMARY
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: pkhex-wasm-build
+        path: dist/
+        retention-days: 7
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    environment: build
+    needs: lint
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Install WASM workload
+      run: dotnet workload install wasm-tools
+    
+    - name: Restore dependencies
+      run: dotnet restore tests/PKHeX.Tests/PKHeX.Tests.csproj
+    
+    - name: Run tests
+      run: dotnet test tests/PKHeX.Tests/PKHeX.Tests.csproj -c Release --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./coverage
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage/**/coverage.cobertura.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Test Results
+        path: './coverage/**/test-results.trx'
+        reporter: dotnet-trx
+        fail-on-error: false

@@ -1,0 +1,402 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="5d13880d-3d54-4f50-bf81-488cb1de3965" name="@bootes 2025-11-04 21:41:24" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-11-04T21:41:24.0944960-08:00" queuing="2025-11-04T21:41:24.0944960-08:00" start="2025-11-04T21:41:19.4107720-08:00" finish="2025-11-04T21:41:29.0796980-08:00" />
+  <TestSettings name="default" id="e3c3b2d4-6ac4-42af-a0dc-cb958a5b7832">
+    <Deployment runDeploymentRoot="_bootes_2025-11-04_21_41_24" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="25eda4ed-b8d9-46d4-94ff-0dccf7e2442f" testId="4512d97a-671b-b70a-9b8b-429757c08a99" testName="PKHeXWasm.Tests.TrainerTests.SetTrainerInfo_WithInvalidJson_ReturnsError" computerName="bootes" duration="00:00:00.0405871" startTime="2025-11-04T21:41:24.0761800-08:00" endTime="2025-11-04T21:41:24.0761800-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25eda4ed-b8d9-46d4-94ff-0dccf7e2442f" />
+    <UnitTestResult executionId="388c32ff-3692-4042-a360-a2e22c9d7d86" testId="cb27f820-2f9c-e710-3057-b71a57a5ba53" testName="PKHeXWasm.Tests.ErrorHandlingTests.NegativeHandle_AllMethods_ReturnError" computerName="bootes" duration="00:00:00.0000391" startTime="2025-11-04T21:41:24.1049430-08:00" endTime="2025-11-04T21:41:24.1049430-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="388c32ff-3692-4042-a360-a2e22c9d7d86" />
+    <UnitTestResult executionId="66aa21ce-69b8-4f20-bba1-a0d47e903905" testId="c7a5e9d6-5ca5-7fb6-69ce-bebdeaba9c4a" testName="PKHeXWasm.Tests.ItemTests.AddItemToPouch_WithValidItem_AddsItem" computerName="bootes" duration="00:00:00.0405444" startTime="2025-11-04T21:41:24.0836360-08:00" endTime="2025-11-04T21:41:24.0836360-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="66aa21ce-69b8-4f20-bba1-a0d47e903905">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.</Message>
+          <StackTrace>   at System.Text.Json.JsonElement.GetProperty(String propertyName)
+   at PKHeXWasm.Tests.ItemTests.LoadTestSave() in /Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/ItemTests.cs:line 17
+   at PKHeXWasm.Tests.ItemTests.AddItemToPouch_WithValidItem_AddsItem() in /Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/ItemTests.cs:line 46
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5d40247c-f30d-4e41-aa7c-b494c34da3af" testId="21550661-e385-a017-bcc6-31850ad455eb" testName="PKHeXWasm.Tests.ErrorHandlingTests.DoubleDispose_DisposeSave_HandlesGracefully" computerName="bootes" duration="00:00:00.0004033" startTime="2025-11-04T21:41:24.1042820-08:00" endTime="2025-11-04T21:41:24.1042820-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5d40247c-f30d-4e41-aa7c-b494c34da3af" />
+    <UnitTestResult executionId="dfadde47-8a5f-4f66-9f3a-c59cfa46869f" testId="60cd7489-fa87-4222-2fb2-2eb83c0b8e26" testName="PKHeXWasm.Tests.ErrorHandlingTests.InvalidBase64Data_LoadSave_ReturnsError" computerName="bootes" duration="00:00:00.0002390" startTime="2025-11-04T21:41:24.1032940-08:00" endTime="2025-11-04T21:41:24.1032940-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dfadde47-8a5f-4f66-9f3a-c59cfa46869f" />
+    <UnitTestResult executionId="0be4fc8c-aea5-48d0-a269-4b435724f094" testId="5ea345b8-d04a-fb86-886f-0ea845e426b9" testName="PKHeXWasm.Tests.PokemonTests.GetPokemon_WithValidCoordinates_ReturnsPokemonDetail" computerName="bootes" duration="00:00:00.0407302" startTime="2025-11-04T21:41:24.0763040-08:00" endTime="2025-11-04T21:41:24.0763040-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0be4fc8c-aea5-48d0-a269-4b435724f094" />
+    <UnitTestResult executionId="f48efa60-f2e7-4f7b-ba19-83bb9ad9abde" testId="e8d18423-feb1-bfb9-576d-18ad6ef57dad" testName="PKHeXWasm.Tests.PokedexTests.GetPokedex_WithValidSession_ReturnsPokedexData" computerName="bootes" duration="00:00:00.0408909" startTime="2025-11-04T21:41:24.0845200-08:00" endTime="2025-11-04T21:41:24.0845200-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f48efa60-f2e7-4f7b-ba19-83bb9ad9abde">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure
+Expected: True
+Actual:   False</Message>
+          <StackTrace>   at PKHeXWasm.Tests.PokedexTests.GetPokedex_WithValidSession_ReturnsPokedexData() in /Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/PokedexTests.cs:line 28
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8c48d7b8-ea60-40f3-9d51-d6f10af7ad4d" testId="35719d9e-a471-1c36-228c-c9cc3f065eb5" testName="PKHeXWasm.Tests.SaveFileTests.SaveFileHandleLifecycle_MultipleOperations_WorksCorrectly" computerName="bootes" duration="00:00:00.0017520" startTime="2025-11-04T21:41:24.0974380-08:00" endTime="2025-11-04T21:41:24.0974380-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c48d7b8-ea60-40f3-9d51-d6f10af7ad4d" />
+    <UnitTestResult executionId="cc27c318-d6d9-4b64-8683-4c2726929d57" testId="7d22e893-0759-ea3d-77cc-bd0d04947224" testName="PKHeXWasm.Tests.PokedexTests.GetPokedex_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0000553" startTime="2025-11-04T21:41:24.0856480-08:00" endTime="2025-11-04T21:41:24.0856480-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc27c318-d6d9-4b64-8683-4c2726929d57" />
+    <UnitTestResult executionId="c23b1d23-8890-46fd-b73c-6ea2bb4e78ff" testId="764c6b0e-ca0b-90e1-4bea-2d710f277749" testName="PKHeXWasm.Tests.PokemonTests.GetAllPokemon_WithValidSession_ReturnsPokemonList" computerName="bootes" duration="00:00:00.0022638" startTime="2025-11-04T21:41:24.0880930-08:00" endTime="2025-11-04T21:41:24.0880930-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c23b1d23-8890-46fd-b73c-6ea2bb4e78ff" />
+    <UnitTestResult executionId="a18ce75c-8d37-468c-8028-184e6be61939" testId="ba6eaa28-569f-c9dc-930d-8e8fc5418460" testName="PKHeXWasm.Tests.ErrorHandlingTests.InvalidSessionId_AllMethods_ReturnError" computerName="bootes" duration="00:00:00.0004396" startTime="2025-11-04T21:41:24.1046640-08:00" endTime="2025-11-04T21:41:24.1046640-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a18ce75c-8d37-468c-8028-184e6be61939" />
+    <UnitTestResult executionId="a53d04dd-44b2-42d4-9b84-f06ca8866dd8" testId="edc61f03-095c-caf8-d663-6ab1552f58fe" testName="PKHeXWasm.Tests.PokemonTests.DeletePokemon_WithValidCoordinates_RemovesPokemon" computerName="bootes" duration="00:00:00.0012292" startTime="2025-11-04T21:41:24.1202500-08:00" endTime="2025-11-04T21:41:24.1202500-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a53d04dd-44b2-42d4-9b84-f06ca8866dd8" />
+    <UnitTestResult executionId="093d792c-b99a-4539-ade8-507c466a2633" testId="979cbe81-fd4a-c1a7-b6ae-4c4801149965" testName="PKHeXWasm.Tests.TrainerTests.SetTrainerInfo_WithValidData_UpdatesTrainer" computerName="bootes" duration="00:00:00.0197932" startTime="2025-11-04T21:41:24.1055380-08:00" endTime="2025-11-04T21:41:24.1055380-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="093d792c-b99a-4539-ade8-507c466a2633" />
+    <UnitTestResult executionId="a45109f7-5947-4376-9019-2fcd9e4e1cd1" testId="67abc286-57e8-85d3-9b10-dae2ba37b8af" testName="PKHeXWasm.Tests.PartyTests.GetParty_WithValidSave_ReturnsPartyList" computerName="bootes" duration="00:00:00.0376091" startTime="2025-11-04T21:41:24.1185410-08:00" endTime="2025-11-04T21:41:24.1185410-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a45109f7-5947-4376-9019-2fcd9e4e1cd1" />
+    <UnitTestResult executionId="94325cd6-fa5c-43c9-b978-1d6977150d49" testId="42db3a2f-be82-d17f-7521-31afae9e4ff4" testName="PKHeXWasm.Tests.ItemTests.GetPouchItems_WithValidSession_ReturnsItemList" computerName="bootes" duration="00:00:00.0302044" startTime="2025-11-04T21:41:24.1161200-08:00" endTime="2025-11-04T21:41:24.1161200-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94325cd6-fa5c-43c9-b978-1d6977150d49" />
+    <UnitTestResult executionId="7d53002e-a14a-4957-9428-2b689dd38d80" testId="90f61a7c-aceb-2484-643e-84296cf1e9e5" testName="PKHeXWasm.Tests.PokemonTests.GetPokemon_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0000449" startTime="2025-11-04T21:41:24.0872050-08:00" endTime="2025-11-04T21:41:24.0872050-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d53002e-a14a-4957-9428-2b689dd38d80" />
+    <UnitTestResult executionId="47c9c107-1e6f-4923-9f54-0b468df4f44b" testId="e4f44e6e-4683-cd3e-36d8-8d8330b07b49" testName="PKHeXWasm.Tests.TrainerTests.GetTrainerInfo_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0000485" startTime="2025-11-04T21:41:24.1056640-08:00" endTime="2025-11-04T21:41:24.1056640-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47c9c107-1e6f-4923-9f54-0b468df4f44b" />
+    <UnitTestResult executionId="9edafa12-4b9c-4fbf-9a38-384c6d717a61" testId="6df09ac8-a5c4-e0b6-569b-3341aa333ccc" testName="PKHeXWasm.Tests.ErrorHandlingTests.ConcurrentOperations_MultipleSessions_WorkIndependently" computerName="bootes" duration="00:00:00.0490960" startTime="2025-11-04T21:41:24.0847710-08:00" endTime="2025-11-04T21:41:24.0847710-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9edafa12-4b9c-4fbf-9a38-384c6d717a61" />
+    <UnitTestResult executionId="48014ed0-cf21-4388-9e0f-1deb9dea0fa6" testId="106d2fd9-8e2f-47a0-d369-626623c31dde" testName="PKHeXWasm.Tests.JsonSerializationTests.SerializeSuccess_WithListOfPokemonSummary_ReturnsValidJson" computerName="bootes" duration="00:00:00.0032502" startTime="2025-11-04T21:41:24.0755060-08:00" endTime="2025-11-04T21:41:24.0755060-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48014ed0-cf21-4388-9e0f-1deb9dea0fa6" />
+    <UnitTestResult executionId="65cf1f39-7bc5-4137-9805-32e477e940e0" testId="b90da05a-47ed-1569-06fa-8f4ce0dd00be" testName="PKHeXWasm.Tests.JsonSerializationTests.SerializeError_ReturnsValidErrorJson" computerName="bootes" duration="00:00:00.0000491" startTime="2025-11-04T21:41:24.0759530-08:00" endTime="2025-11-04T21:41:24.0759540-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="65cf1f39-7bc5-4137-9805-32e477e940e0" />
+    <UnitTestResult executionId="3fbb4725-a3c6-4916-b035-d7aa1212d79f" testId="d3fca007-00d9-a76a-371b-57d9fbe18cd1" testName="PKHeXWasm.Tests.PokemonTests.GetParty_WithValidSession_ReturnsPartyPokemon" computerName="bootes" duration="00:00:00.0302076" startTime="2025-11-04T21:41:24.1182490-08:00" endTime="2025-11-04T21:41:24.1182490-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3fbb4725-a3c6-4916-b035-d7aa1212d79f" />
+    <UnitTestResult executionId="d4f7f45a-bea1-4c92-a461-112f7832610e" testId="3ccae077-c48a-898b-ce04-5e571c39e1ef" testName="PKHeXWasm.Tests.PokedexTests.PokedexOperations_MultipleUpdates_WorkCorrectly" computerName="bootes" duration="00:00:00.0311770" startTime="2025-11-04T21:41:24.1163280-08:00" endTime="2025-11-04T21:41:24.1163280-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4f7f45a-bea1-4c92-a461-112f7832610e" />
+    <UnitTestResult executionId="28ca9b16-e994-42aa-851a-8b95c542f1d5" testId="df538cd2-62f6-ff1f-628a-144ea616020e" testName="PKHeXWasm.Tests.ItemTests.GetPouchItems_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0005389" startTime="2025-11-04T21:41:24.0873220-08:00" endTime="2025-11-04T21:41:24.0873220-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="28ca9b16-e994-42aa-851a-8b95c542f1d5" />
+    <UnitTestResult executionId="40ba766f-6135-43ae-bf90-457d846f468c" testId="6f16bf8b-e0d0-283f-9e8a-d1280cc20c82" testName="PKHeXWasm.Tests.PokedexTests.SetPokedexCaught_WithValidSpecies_UpdatesPokedex" computerName="bootes" duration="00:00:00.0006826" startTime="2025-11-04T21:41:24.0855330-08:00" endTime="2025-11-04T21:41:24.0855330-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40ba766f-6135-43ae-bf90-457d846f468c" />
+    <UnitTestResult executionId="faad05d3-d75a-48e1-8563-5be686ec297c" testId="3daf2edb-1431-2b44-653b-597f09f48e3c" testName="PKHeXWasm.Tests.ItemTests.RemoveItemFromPouch_WithValidItem_RemovesItem" computerName="bootes" duration="00:00:00.0003428" startTime="2025-11-04T21:41:24.0858740-08:00" endTime="2025-11-04T21:41:24.0858740-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="faad05d3-d75a-48e1-8563-5be686ec297c" />
+    <UnitTestResult executionId="0c98ba1a-444c-459d-ab76-4b7d76d2639e" testId="f5ad4bd4-4d2c-a7f1-e0fd-09c1571455a8" testName="PKHeXWasm.Tests.JsonSerializationTests.SerializeSuccess_WithSaveFileHandle_ReturnsValidJson" computerName="bootes" duration="00:00:00.0000374" startTime="2025-11-04T21:41:24.0661250-08:00" endTime="2025-11-04T21:41:24.0661250-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c98ba1a-444c-459d-ab76-4b7d76d2639e" />
+    <UnitTestResult executionId="38d7ea7f-c38f-4953-969d-fc35c60caca6" testId="50c75685-d44a-8336-d1bb-b2bf98f287f7" testName="PKHeXWasm.Tests.SaveFileTests.LoadSave_WithValidData_ReturnsSessionId" computerName="bootes" duration="00:00:00.0403856" startTime="2025-11-04T21:41:24.0760520-08:00" endTime="2025-11-04T21:41:24.0760520-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="38d7ea7f-c38f-4953-969d-fc35c60caca6" />
+    <UnitTestResult executionId="505873ff-62a7-4c1d-843d-c45bf2d25bdb" testId="fe091e18-6dc2-c157-3a1d-38daa793b8bd" testName="PKHeXWasm.Tests.SaveFileTests.LoadSave_WithEmptyData_ReturnsError" computerName="bootes" duration="00:00:00.0001845" startTime="2025-11-04T21:41:24.0880060-08:00" endTime="2025-11-04T21:41:24.0880060-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="505873ff-62a7-4c1d-843d-c45bf2d25bdb" />
+    <UnitTestResult executionId="4497d269-90f8-4168-807c-9d95d5952272" testId="f9a919db-6898-9f71-eee3-eb09d208b4ee" testName="PKHeXWasm.Tests.PartyTests.GetParty_WithEmptyParty_ReturnsEmptyArray" computerName="bootes" duration="00:00:00.0003200" startTime="2025-11-04T21:41:24.1186600-08:00" endTime="2025-11-04T21:41:24.1186600-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4497d269-90f8-4168-807c-9d95d5952272" />
+    <UnitTestResult executionId="355e61a5-da1a-40e2-80e3-e7282e2524f8" testId="10608695-005f-4015-8dec-a9ca4248c655" testName="PKHeXWasm.Tests.ItemTests.AddItemToPouch_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0000415" startTime="2025-11-04T21:41:24.0867380-08:00" endTime="2025-11-04T21:41:24.0867380-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="355e61a5-da1a-40e2-80e3-e7282e2524f8" />
+    <UnitTestResult executionId="af1a487a-171e-49cf-a647-6a6cf6ee9e9a" testId="e8c69f26-e1cb-7566-395f-eefcd2d5b978" testName="PKHeXWasm.Tests.PokemonTests.MovePokemon_WithValidCoordinates_MovesPokemon" computerName="bootes" duration="00:00:00.0007320" startTime="2025-11-04T21:41:24.1190010-08:00" endTime="2025-11-04T21:41:24.1190010-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af1a487a-171e-49cf-a647-6a6cf6ee9e9a" />
+    <UnitTestResult executionId="496cea23-9557-40c9-b8bd-ffb710bdc062" testId="152913d5-d2ae-bffd-9927-8765c9371121" testName="PKHeXWasm.Tests.PokemonTests.ModifyPokemon_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0012502" startTime="2025-11-04T21:41:24.0868700-08:00" endTime="2025-11-04T21:41:24.0868700-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="496cea23-9557-40c9-b8bd-ffb710bdc062" />
+    <UnitTestResult executionId="72b6ac30-875f-429d-b1e6-534fb83ee38c" testId="9c99abc5-4d87-05aa-a6e1-67ebe6893312" testName="PKHeXWasm.Tests.ErrorHandlingTests.OutOfBoundsCoordinates_GetPokemon_ReturnsError" computerName="bootes" duration="00:00:00.0002364" startTime="2025-11-04T21:41:24.1024060-08:00" endTime="2025-11-04T21:41:24.1024060-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72b6ac30-875f-429d-b1e6-534fb83ee38c" />
+    <UnitTestResult executionId="142a9d35-1dd1-49a6-a459-0f374aad10ce" testId="e75d0ef6-a79a-eaef-38ef-3d57e7dc3aaa" testName="PKHeXWasm.Tests.ErrorHandlingTests.ZeroHandle_AllMethods_ReturnError" computerName="bootes" duration="00:00:00.0000499" startTime="2025-11-04T21:41:24.1012370-08:00" endTime="2025-11-04T21:41:24.1012370-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="142a9d35-1dd1-49a6-a459-0f374aad10ce" />
+    <UnitTestResult executionId="6656397d-ac68-414a-9523-2c6f029f6c81" testId="3c63ceb4-8489-868f-626b-9fe04bdb9d7a" testName="PKHeXWasm.Tests.TrainerTests.GetTrainerInfo_WithValidSession_ReturnsTrainerData" computerName="bootes" duration="00:00:00.0082688" startTime="2025-11-04T21:41:24.0846530-08:00" endTime="2025-11-04T21:41:24.0846530-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6656397d-ac68-414a-9523-2c6f029f6c81" />
+    <UnitTestResult executionId="8aa03a38-ee8d-43cd-ae49-23169d2b0a85" testId="8a15d4a6-e2e8-e100-1ebb-80795e7c7808" testName="PKHeXWasm.Tests.ErrorHandlingTests.InvalidJsonInput_ModifyPokemon_ReturnsError" computerName="bootes" duration="00:00:00.0003797" startTime="2025-11-04T21:41:24.1020980-08:00" endTime="2025-11-04T21:41:24.1020980-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8aa03a38-ee8d-43cd-ae49-23169d2b0a85" />
+    <UnitTestResult executionId="e6f80f5f-01ca-4555-b0a7-980e2deb5358" testId="af8cba19-3496-3349-b854-5bc817c5d7ba" testName="PKHeXWasm.Tests.SaveFileTests.DisposeSave_WithValidSession_RemovesSession" computerName="bootes" duration="00:00:00.0031991" startTime="2025-11-04T21:41:24.0980410-08:00" endTime="2025-11-04T21:41:24.0980410-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6f80f5f-01ca-4555-b0a7-980e2deb5358" />
+    <UnitTestResult executionId="06273798-1e8d-47a6-8da0-05715970cf3d" testId="d7cfd2a4-b7d8-3077-2b71-e61adbef33ca" testName="PKHeXWasm.Tests.JsonSerializationTests.SerializeSuccess_WithSaveFileInfo_ReturnsValidJson" computerName="bootes" duration="00:00:00.0268396" startTime="2025-11-04T21:41:24.0629530-08:00" endTime="2025-11-04T21:41:24.0629630-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06273798-1e8d-47a6-8da0-05715970cf3d" />
+    <UnitTestResult executionId="9fbe9f25-e6b4-4a7f-8a62-9adb2312fa9a" testId="84848d98-fe66-7f4a-109e-17e2409cf167" testName="PKHeXWasm.Tests.ErrorHandlingTests.InvalidJsonInput_SetTrainerInfo_ReturnsError" computerName="bootes" duration="00:00:00.0166741" startTime="2025-11-04T21:41:24.1007320-08:00" endTime="2025-11-04T21:41:24.1007320-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9fbe9f25-e6b4-4a7f-8a62-9adb2312fa9a" />
+    <UnitTestResult executionId="94eab857-9701-471b-ac7c-5aab712e410c" testId="bc769d53-d829-5ae1-5c9c-b89e3345362d" testName="PKHeXWasm.Tests.PokemonTests.ModifyPokemon_WithValidModifications_UpdatesPokemon" computerName="bootes" duration="00:00:00.0086631" startTime="2025-11-04T21:41:24.0850120-08:00" endTime="2025-11-04T21:41:24.0850120-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94eab857-9701-471b-ac7c-5aab712e410c" />
+    <UnitTestResult executionId="76aa88e7-afbd-4800-adda-f23c5d66f1bc" testId="635d5a98-c4d4-4832-e81c-620217d43aca" testName="PKHeXWasm.Tests.SaveFileTests.GetSaveInfo_WithValidSession_ReturnsMetadata" computerName="bootes" duration="00:00:00.0035949" startTime="2025-11-04T21:41:24.0918530-08:00" endTime="2025-11-04T21:41:24.0918530-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76aa88e7-afbd-4800-adda-f23c5d66f1bc" />
+    <UnitTestResult executionId="09ddab70-e32a-4b13-b55a-6d840a66e60c" testId="f76d01bc-d3f4-b0f4-96e1-4d195d128023" testName="PKHeXWasm.Tests.TrainerTests.SetTrainerInfo_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0016766" startTime="2025-11-04T21:41:24.0869330-08:00" endTime="2025-11-04T21:41:24.0869330-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="09ddab70-e32a-4b13-b55a-6d840a66e60c" />
+    <UnitTestResult executionId="670bb59c-3eaf-48e8-9449-592de9178384" testId="d3a7d61d-c1e8-aa8e-7a76-5b0507fe789b" testName="PKHeXWasm.Tests.ItemTests.ItemModifications_AddAndRemove_WorksCorrectly" computerName="bootes" duration="00:00:00.0047599" startTime="2025-11-04T21:41:24.0854120-08:00" endTime="2025-11-04T21:41:24.0854120-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="670bb59c-3eaf-48e8-9449-592de9178384" />
+    <UnitTestResult executionId="60535268-d067-47eb-9af0-279ef759a25f" testId="c1c7e22e-b7ab-325b-68a8-c358edf8a195" testName="PKHeXWasm.Tests.SaveFileTests.LoadSave_WithInvalidData_ReturnsError" computerName="bootes" duration="00:00:00.0002725" startTime="2025-11-04T21:41:24.0981640-08:00" endTime="2025-11-04T21:41:24.0981640-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60535268-d067-47eb-9af0-279ef759a25f" />
+    <UnitTestResult executionId="71ffb0ca-8d83-412d-aa3f-2440466cec31" testId="c54fcc40-bd84-ab48-eaea-57205448c185" testName="PKHeXWasm.Tests.PokedexTests.SetPokedexSeen_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0000432" startTime="2025-11-04T21:41:24.0857610-08:00" endTime="2025-11-04T21:41:24.0857610-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71ffb0ca-8d83-412d-aa3f-2440466cec31" />
+    <UnitTestResult executionId="dd2f055d-5e4b-43a7-84d2-6dcc72451c64" testId="e5aa7e40-4280-2456-fa62-97060eb41c0a" testName="PKHeXWasm.Tests.ErrorHandlingTests.NegativeCoordinates_GetPokemon_ReturnsError" computerName="bootes" duration="00:00:00.0013024" startTime="2025-11-04T21:41:24.1027290-08:00" endTime="2025-11-04T21:41:24.1027290-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd2f055d-5e4b-43a7-84d2-6dcc72451c64" />
+    <UnitTestResult executionId="136df75e-8d26-47d9-bfdd-a43e09556b12" testId="4de59e4f-c041-8134-8818-f0f5369526f3" testName="PKHeXWasm.Tests.SaveFileTests.GetSaveInfo_WithInvalidSession_ReturnsError" computerName="bootes" duration="00:00:00.0007079" startTime="2025-11-04T21:41:24.0925340-08:00" endTime="2025-11-04T21:41:24.0925350-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="136df75e-8d26-47d9-bfdd-a43e09556b12" />
+    <UnitTestResult executionId="21385bd5-e090-4197-9c00-ffd4b2f174c8" testId="879258c1-9592-99b4-e00e-2acfd4fb5caa" testName="PKHeXWasm.Tests.SaveFileTests.ExportSave_WithValidSession_ReturnsBase64Data" computerName="bootes" duration="00:00:00.0123832" startTime="2025-11-04T21:41:24.0877980-08:00" endTime="2025-11-04T21:41:24.0877980-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="21385bd5-e090-4197-9c00-ffd4b2f174c8" />
+    <UnitTestResult executionId="d71d8e6e-0fa9-4044-8349-7ddf5e55ec6f" testId="3e0acff6-f6d6-2094-9109-21f45bf9380d" testName="PKHeXWasm.Tests.PartyTests.GetParty_WithSinglePokemon_ReturnsSingleItem" computerName="bootes" duration="00:00:00.0453891" startTime="2025-11-04T21:41:24.0842970-08:00" endTime="2025-11-04T21:41:24.0842970-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d71d8e6e-0fa9-4044-8349-7ddf5e55ec6f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ
+Expected: Array
+Actual:   Object</Message>
+          <StackTrace>   at PKHeXWasm.Tests.PartyTests.GetParty_WithSinglePokemon_ReturnsSingleItem() in /Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/PartyTests.cs:line 55
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fc4e04cf-262b-48ac-80aa-bef1bc9d900c" testId="67e5438f-f4c8-fd50-edd7-a959e5c752d8" testName="PKHeXWasm.Tests.PokedexTests.SetPokedexSeen_WithValidSpecies_UpdatesPokedex" computerName="bootes" duration="00:00:00.0034520" startTime="2025-11-04T21:41:24.0848930-08:00" endTime="2025-11-04T21:41:24.0848930-08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc4e04cf-262b-48ac-80aa-bef1bc9d900c" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="PKHeXWasm.Tests.PokedexTests.SetPokedexSeen_WithValidSpecies_UpdatesPokedex" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="67e5438f-f4c8-fd50-edd7-a959e5c752d8">
+      <Execution id="fc4e04cf-262b-48ac-80aa-bef1bc9d900c" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokedexTests" name="SetPokedexSeen_WithValidSpecies_UpdatesPokedex" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ItemTests.ItemModifications_AddAndRemove_WorksCorrectly" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="d3a7d61d-c1e8-aa8e-7a76-5b0507fe789b">
+      <Execution id="670bb59c-3eaf-48e8-9449-592de9178384" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ItemTests" name="ItemModifications_AddAndRemove_WorksCorrectly" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.TrainerTests.GetTrainerInfo_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="e4f44e6e-4683-cd3e-36d8-8d8330b07b49">
+      <Execution id="47c9c107-1e6f-4923-9f54-0b468df4f44b" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.TrainerTests" name="GetTrainerInfo_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokedexTests.SetPokedexSeen_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="c54fcc40-bd84-ab48-eaea-57205448c185">
+      <Execution id="71ffb0ca-8d83-412d-aa3f-2440466cec31" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokedexTests" name="SetPokedexSeen_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.SaveFileTests.DisposeSave_WithValidSession_RemovesSession" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="af8cba19-3496-3349-b854-5bc817c5d7ba">
+      <Execution id="e6f80f5f-01ca-4555-b0a7-980e2deb5358" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.SaveFileTests" name="DisposeSave_WithValidSession_RemovesSession" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.ZeroHandle_AllMethods_ReturnError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="e75d0ef6-a79a-eaef-38ef-3d57e7dc3aaa">
+      <Execution id="142a9d35-1dd1-49a6-a459-0f374aad10ce" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="ZeroHandle_AllMethods_ReturnError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.TrainerTests.SetTrainerInfo_WithValidData_UpdatesTrainer" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="979cbe81-fd4a-c1a7-b6ae-4c4801149965">
+      <Execution id="093d792c-b99a-4539-ade8-507c466a2633" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.TrainerTests" name="SetTrainerInfo_WithValidData_UpdatesTrainer" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.JsonSerializationTests.SerializeSuccess_WithSaveFileInfo_ReturnsValidJson" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="d7cfd2a4-b7d8-3077-2b71-e61adbef33ca">
+      <Execution id="06273798-1e8d-47a6-8da0-05715970cf3d" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.JsonSerializationTests" name="SerializeSuccess_WithSaveFileInfo_ReturnsValidJson" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.DoubleDispose_DisposeSave_HandlesGracefully" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="21550661-e385-a017-bcc6-31850ad455eb">
+      <Execution id="5d40247c-f30d-4e41-aa7c-b494c34da3af" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="DoubleDispose_DisposeSave_HandlesGracefully" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.InvalidSessionId_AllMethods_ReturnError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="ba6eaa28-569f-c9dc-930d-8e8fc5418460">
+      <Execution id="a18ce75c-8d37-468c-8028-184e6be61939" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="InvalidSessionId_AllMethods_ReturnError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.NegativeCoordinates_GetPokemon_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="e5aa7e40-4280-2456-fa62-97060eb41c0a">
+      <Execution id="dd2f055d-5e4b-43a7-84d2-6dcc72451c64" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="NegativeCoordinates_GetPokemon_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.ConcurrentOperations_MultipleSessions_WorkIndependently" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="6df09ac8-a5c4-e0b6-569b-3341aa333ccc">
+      <Execution id="9edafa12-4b9c-4fbf-9a38-384c6d717a61" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="ConcurrentOperations_MultipleSessions_WorkIndependently" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokedexTests.GetPokedex_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="7d22e893-0759-ea3d-77cc-bd0d04947224">
+      <Execution id="cc27c318-d6d9-4b64-8683-4c2726929d57" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokedexTests" name="GetPokedex_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PartyTests.GetParty_WithValidSave_ReturnsPartyList" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="67abc286-57e8-85d3-9b10-dae2ba37b8af">
+      <Execution id="a45109f7-5947-4376-9019-2fcd9e4e1cd1" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PartyTests" name="GetParty_WithValidSave_ReturnsPartyList" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.SaveFileTests.LoadSave_WithValidData_ReturnsSessionId" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="50c75685-d44a-8336-d1bb-b2bf98f287f7">
+      <Execution id="38d7ea7f-c38f-4953-969d-fc35c60caca6" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.SaveFileTests" name="LoadSave_WithValidData_ReturnsSessionId" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.JsonSerializationTests.SerializeSuccess_WithSaveFileHandle_ReturnsValidJson" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="f5ad4bd4-4d2c-a7f1-e0fd-09c1571455a8">
+      <Execution id="0c98ba1a-444c-459d-ab76-4b7d76d2639e" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.JsonSerializationTests" name="SerializeSuccess_WithSaveFileHandle_ReturnsValidJson" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.SaveFileTests.GetSaveInfo_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="4de59e4f-c041-8134-8818-f0f5369526f3">
+      <Execution id="136df75e-8d26-47d9-bfdd-a43e09556b12" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.SaveFileTests" name="GetSaveInfo_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.SaveFileTests.ExportSave_WithValidSession_ReturnsBase64Data" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="879258c1-9592-99b4-e00e-2acfd4fb5caa">
+      <Execution id="21385bd5-e090-4197-9c00-ffd4b2f174c8" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.SaveFileTests" name="ExportSave_WithValidSession_ReturnsBase64Data" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.TrainerTests.SetTrainerInfo_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="f76d01bc-d3f4-b0f4-96e1-4d195d128023">
+      <Execution id="09ddab70-e32a-4b13-b55a-6d840a66e60c" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.TrainerTests" name="SetTrainerInfo_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.JsonSerializationTests.SerializeError_ReturnsValidErrorJson" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="b90da05a-47ed-1569-06fa-8f4ce0dd00be">
+      <Execution id="65cf1f39-7bc5-4137-9805-32e477e940e0" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.JsonSerializationTests" name="SerializeError_ReturnsValidErrorJson" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.TrainerTests.GetTrainerInfo_WithValidSession_ReturnsTrainerData" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="3c63ceb4-8489-868f-626b-9fe04bdb9d7a">
+      <Execution id="6656397d-ac68-414a-9523-2c6f029f6c81" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.TrainerTests" name="GetTrainerInfo_WithValidSession_ReturnsTrainerData" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokemonTests.GetAllPokemon_WithValidSession_ReturnsPokemonList" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="764c6b0e-ca0b-90e1-4bea-2d710f277749">
+      <Execution id="c23b1d23-8890-46fd-b73c-6ea2bb4e78ff" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokemonTests" name="GetAllPokemon_WithValidSession_ReturnsPokemonList" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.SaveFileTests.GetSaveInfo_WithValidSession_ReturnsMetadata" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="635d5a98-c4d4-4832-e81c-620217d43aca">
+      <Execution id="76aa88e7-afbd-4800-adda-f23c5d66f1bc" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.SaveFileTests" name="GetSaveInfo_WithValidSession_ReturnsMetadata" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokemonTests.DeletePokemon_WithValidCoordinates_RemovesPokemon" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="edc61f03-095c-caf8-d663-6ab1552f58fe">
+      <Execution id="a53d04dd-44b2-42d4-9b84-f06ca8866dd8" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokemonTests" name="DeletePokemon_WithValidCoordinates_RemovesPokemon" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ItemTests.RemoveItemFromPouch_WithValidItem_RemovesItem" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="3daf2edb-1431-2b44-653b-597f09f48e3c">
+      <Execution id="faad05d3-d75a-48e1-8563-5be686ec297c" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ItemTests" name="RemoveItemFromPouch_WithValidItem_RemovesItem" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokedexTests.GetPokedex_WithValidSession_ReturnsPokedexData" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="e8d18423-feb1-bfb9-576d-18ad6ef57dad">
+      <Execution id="f48efa60-f2e7-4f7b-ba19-83bb9ad9abde" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokedexTests" name="GetPokedex_WithValidSession_ReturnsPokedexData" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.InvalidJsonInput_SetTrainerInfo_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="84848d98-fe66-7f4a-109e-17e2409cf167">
+      <Execution id="9fbe9f25-e6b4-4a7f-8a62-9adb2312fa9a" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="InvalidJsonInput_SetTrainerInfo_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.OutOfBoundsCoordinates_GetPokemon_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="9c99abc5-4d87-05aa-a6e1-67ebe6893312">
+      <Execution id="72b6ac30-875f-429d-b1e6-534fb83ee38c" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="OutOfBoundsCoordinates_GetPokemon_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokedexTests.SetPokedexCaught_WithValidSpecies_UpdatesPokedex" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="6f16bf8b-e0d0-283f-9e8a-d1280cc20c82">
+      <Execution id="40ba766f-6135-43ae-bf90-457d846f468c" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokedexTests" name="SetPokedexCaught_WithValidSpecies_UpdatesPokedex" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokemonTests.GetParty_WithValidSession_ReturnsPartyPokemon" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="d3fca007-00d9-a76a-371b-57d9fbe18cd1">
+      <Execution id="3fbb4725-a3c6-4916-b035-d7aa1212d79f" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokemonTests" name="GetParty_WithValidSession_ReturnsPartyPokemon" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.SaveFileTests.LoadSave_WithInvalidData_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="c1c7e22e-b7ab-325b-68a8-c358edf8a195">
+      <Execution id="60535268-d067-47eb-9af0-279ef759a25f" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.SaveFileTests" name="LoadSave_WithInvalidData_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ItemTests.GetPouchItems_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="df538cd2-62f6-ff1f-628a-144ea616020e">
+      <Execution id="28ca9b16-e994-42aa-851a-8b95c542f1d5" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ItemTests" name="GetPouchItems_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.InvalidBase64Data_LoadSave_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="60cd7489-fa87-4222-2fb2-2eb83c0b8e26">
+      <Execution id="dfadde47-8a5f-4f66-9f3a-c59cfa46869f" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="InvalidBase64Data_LoadSave_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokemonTests.GetPokemon_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="90f61a7c-aceb-2484-643e-84296cf1e9e5">
+      <Execution id="7d53002e-a14a-4957-9428-2b689dd38d80" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokemonTests" name="GetPokemon_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.SaveFileTests.LoadSave_WithEmptyData_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="fe091e18-6dc2-c157-3a1d-38daa793b8bd">
+      <Execution id="505873ff-62a7-4c1d-843d-c45bf2d25bdb" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.SaveFileTests" name="LoadSave_WithEmptyData_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokedexTests.PokedexOperations_MultipleUpdates_WorkCorrectly" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="3ccae077-c48a-898b-ce04-5e571c39e1ef">
+      <Execution id="d4f7f45a-bea1-4c92-a461-112f7832610e" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokedexTests" name="PokedexOperations_MultipleUpdates_WorkCorrectly" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.SaveFileTests.SaveFileHandleLifecycle_MultipleOperations_WorksCorrectly" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="35719d9e-a471-1c36-228c-c9cc3f065eb5">
+      <Execution id="8c48d7b8-ea60-40f3-9d51-d6f10af7ad4d" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.SaveFileTests" name="SaveFileHandleLifecycle_MultipleOperations_WorksCorrectly" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokemonTests.ModifyPokemon_WithValidModifications_UpdatesPokemon" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="bc769d53-d829-5ae1-5c9c-b89e3345362d">
+      <Execution id="94eab857-9701-471b-ac7c-5aab712e410c" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokemonTests" name="ModifyPokemon_WithValidModifications_UpdatesPokemon" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.NegativeHandle_AllMethods_ReturnError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="cb27f820-2f9c-e710-3057-b71a57a5ba53">
+      <Execution id="388c32ff-3692-4042-a360-a2e22c9d7d86" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="NegativeHandle_AllMethods_ReturnError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokemonTests.ModifyPokemon_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="152913d5-d2ae-bffd-9927-8765c9371121">
+      <Execution id="496cea23-9557-40c9-b8bd-ffb710bdc062" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokemonTests" name="ModifyPokemon_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ErrorHandlingTests.InvalidJsonInput_ModifyPokemon_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="8a15d4a6-e2e8-e100-1ebb-80795e7c7808">
+      <Execution id="8aa03a38-ee8d-43cd-ae49-23169d2b0a85" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ErrorHandlingTests" name="InvalidJsonInput_ModifyPokemon_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokemonTests.MovePokemon_WithValidCoordinates_MovesPokemon" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="e8c69f26-e1cb-7566-395f-eefcd2d5b978">
+      <Execution id="af1a487a-171e-49cf-a647-6a6cf6ee9e9a" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokemonTests" name="MovePokemon_WithValidCoordinates_MovesPokemon" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ItemTests.GetPouchItems_WithValidSession_ReturnsItemList" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="42db3a2f-be82-d17f-7521-31afae9e4ff4">
+      <Execution id="94325cd6-fa5c-43c9-b978-1d6977150d49" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ItemTests" name="GetPouchItems_WithValidSession_ReturnsItemList" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.TrainerTests.SetTrainerInfo_WithInvalidJson_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="4512d97a-671b-b70a-9b8b-429757c08a99">
+      <Execution id="25eda4ed-b8d9-46d4-94ff-0dccf7e2442f" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.TrainerTests" name="SetTrainerInfo_WithInvalidJson_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PokemonTests.GetPokemon_WithValidCoordinates_ReturnsPokemonDetail" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="5ea345b8-d04a-fb86-886f-0ea845e426b9">
+      <Execution id="0be4fc8c-aea5-48d0-a269-4b435724f094" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PokemonTests" name="GetPokemon_WithValidCoordinates_ReturnsPokemonDetail" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ItemTests.AddItemToPouch_WithInvalidSession_ReturnsError" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="10608695-005f-4015-8dec-a9ca4248c655">
+      <Execution id="355e61a5-da1a-40e2-80e3-e7282e2524f8" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ItemTests" name="AddItemToPouch_WithInvalidSession_ReturnsError" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.ItemTests.AddItemToPouch_WithValidItem_AddsItem" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="c7a5e9d6-5ca5-7fb6-69ce-bebdeaba9c4a">
+      <Execution id="66aa21ce-69b8-4f20-bba1-a0d47e903905" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.ItemTests" name="AddItemToPouch_WithValidItem_AddsItem" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PartyTests.GetParty_WithSinglePokemon_ReturnsSingleItem" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="3e0acff6-f6d6-2094-9109-21f45bf9380d">
+      <Execution id="d71d8e6e-0fa9-4044-8349-7ddf5e55ec6f" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PartyTests" name="GetParty_WithSinglePokemon_ReturnsSingleItem" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.PartyTests.GetParty_WithEmptyParty_ReturnsEmptyArray" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="f9a919db-6898-9f71-eee3-eb09d208b4ee">
+      <Execution id="4497d269-90f8-4168-807c-9d95d5952272" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.PartyTests" name="GetParty_WithEmptyParty_ReturnsEmptyArray" />
+    </UnitTest>
+    <UnitTest name="PKHeXWasm.Tests.JsonSerializationTests.SerializeSuccess_WithListOfPokemonSummary_ReturnsValidJson" storage="/users/polar/documents/projects/github.com/monokrome/pkhex.js/tests/pkhexwasm.tests/bin/release/net9.0/pkhexwasm.tests.dll" id="106d2fd9-8e2f-47a0-d369-626623c31dde">
+      <Execution id="48014ed0-cf21-4388-9e0f-1deb9dea0fa6" />
+      <TestMethod codeBase="/Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/bin/Release/net9.0/PKHeXWasm.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="PKHeXWasm.Tests.JsonSerializationTests" name="SerializeSuccess_WithListOfPokemonSummary_ReturnsValidJson" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="4512d97a-671b-b70a-9b8b-429757c08a99" executionId="25eda4ed-b8d9-46d4-94ff-0dccf7e2442f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb27f820-2f9c-e710-3057-b71a57a5ba53" executionId="388c32ff-3692-4042-a360-a2e22c9d7d86" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7a5e9d6-5ca5-7fb6-69ce-bebdeaba9c4a" executionId="66aa21ce-69b8-4f20-bba1-a0d47e903905" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21550661-e385-a017-bcc6-31850ad455eb" executionId="5d40247c-f30d-4e41-aa7c-b494c34da3af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="60cd7489-fa87-4222-2fb2-2eb83c0b8e26" executionId="dfadde47-8a5f-4f66-9f3a-c59cfa46869f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ea345b8-d04a-fb86-886f-0ea845e426b9" executionId="0be4fc8c-aea5-48d0-a269-4b435724f094" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8d18423-feb1-bfb9-576d-18ad6ef57dad" executionId="f48efa60-f2e7-4f7b-ba19-83bb9ad9abde" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35719d9e-a471-1c36-228c-c9cc3f065eb5" executionId="8c48d7b8-ea60-40f3-9d51-d6f10af7ad4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7d22e893-0759-ea3d-77cc-bd0d04947224" executionId="cc27c318-d6d9-4b64-8683-4c2726929d57" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="764c6b0e-ca0b-90e1-4bea-2d710f277749" executionId="c23b1d23-8890-46fd-b73c-6ea2bb4e78ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba6eaa28-569f-c9dc-930d-8e8fc5418460" executionId="a18ce75c-8d37-468c-8028-184e6be61939" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="edc61f03-095c-caf8-d663-6ab1552f58fe" executionId="a53d04dd-44b2-42d4-9b84-f06ca8866dd8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="979cbe81-fd4a-c1a7-b6ae-4c4801149965" executionId="093d792c-b99a-4539-ade8-507c466a2633" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="67abc286-57e8-85d3-9b10-dae2ba37b8af" executionId="a45109f7-5947-4376-9019-2fcd9e4e1cd1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42db3a2f-be82-d17f-7521-31afae9e4ff4" executionId="94325cd6-fa5c-43c9-b978-1d6977150d49" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90f61a7c-aceb-2484-643e-84296cf1e9e5" executionId="7d53002e-a14a-4957-9428-2b689dd38d80" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e4f44e6e-4683-cd3e-36d8-8d8330b07b49" executionId="47c9c107-1e6f-4923-9f54-0b468df4f44b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6df09ac8-a5c4-e0b6-569b-3341aa333ccc" executionId="9edafa12-4b9c-4fbf-9a38-384c6d717a61" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="106d2fd9-8e2f-47a0-d369-626623c31dde" executionId="48014ed0-cf21-4388-9e0f-1deb9dea0fa6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b90da05a-47ed-1569-06fa-8f4ce0dd00be" executionId="65cf1f39-7bc5-4137-9805-32e477e940e0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3fca007-00d9-a76a-371b-57d9fbe18cd1" executionId="3fbb4725-a3c6-4916-b035-d7aa1212d79f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3ccae077-c48a-898b-ce04-5e571c39e1ef" executionId="d4f7f45a-bea1-4c92-a461-112f7832610e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df538cd2-62f6-ff1f-628a-144ea616020e" executionId="28ca9b16-e994-42aa-851a-8b95c542f1d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f16bf8b-e0d0-283f-9e8a-d1280cc20c82" executionId="40ba766f-6135-43ae-bf90-457d846f468c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3daf2edb-1431-2b44-653b-597f09f48e3c" executionId="faad05d3-d75a-48e1-8563-5be686ec297c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f5ad4bd4-4d2c-a7f1-e0fd-09c1571455a8" executionId="0c98ba1a-444c-459d-ab76-4b7d76d2639e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50c75685-d44a-8336-d1bb-b2bf98f287f7" executionId="38d7ea7f-c38f-4953-969d-fc35c60caca6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe091e18-6dc2-c157-3a1d-38daa793b8bd" executionId="505873ff-62a7-4c1d-843d-c45bf2d25bdb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9a919db-6898-9f71-eee3-eb09d208b4ee" executionId="4497d269-90f8-4168-807c-9d95d5952272" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10608695-005f-4015-8dec-a9ca4248c655" executionId="355e61a5-da1a-40e2-80e3-e7282e2524f8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8c69f26-e1cb-7566-395f-eefcd2d5b978" executionId="af1a487a-171e-49cf-a647-6a6cf6ee9e9a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="152913d5-d2ae-bffd-9927-8765c9371121" executionId="496cea23-9557-40c9-b8bd-ffb710bdc062" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c99abc5-4d87-05aa-a6e1-67ebe6893312" executionId="72b6ac30-875f-429d-b1e6-534fb83ee38c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e75d0ef6-a79a-eaef-38ef-3d57e7dc3aaa" executionId="142a9d35-1dd1-49a6-a459-0f374aad10ce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c63ceb4-8489-868f-626b-9fe04bdb9d7a" executionId="6656397d-ac68-414a-9523-2c6f029f6c81" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8a15d4a6-e2e8-e100-1ebb-80795e7c7808" executionId="8aa03a38-ee8d-43cd-ae49-23169d2b0a85" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af8cba19-3496-3349-b854-5bc817c5d7ba" executionId="e6f80f5f-01ca-4555-b0a7-980e2deb5358" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7cfd2a4-b7d8-3077-2b71-e61adbef33ca" executionId="06273798-1e8d-47a6-8da0-05715970cf3d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84848d98-fe66-7f4a-109e-17e2409cf167" executionId="9fbe9f25-e6b4-4a7f-8a62-9adb2312fa9a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc769d53-d829-5ae1-5c9c-b89e3345362d" executionId="94eab857-9701-471b-ac7c-5aab712e410c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="635d5a98-c4d4-4832-e81c-620217d43aca" executionId="76aa88e7-afbd-4800-adda-f23c5d66f1bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f76d01bc-d3f4-b0f4-96e1-4d195d128023" executionId="09ddab70-e32a-4b13-b55a-6d840a66e60c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3a7d61d-c1e8-aa8e-7a76-5b0507fe789b" executionId="670bb59c-3eaf-48e8-9449-592de9178384" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c1c7e22e-b7ab-325b-68a8-c358edf8a195" executionId="60535268-d067-47eb-9af0-279ef759a25f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c54fcc40-bd84-ab48-eaea-57205448c185" executionId="71ffb0ca-8d83-412d-aa3f-2440466cec31" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5aa7e40-4280-2456-fa62-97060eb41c0a" executionId="dd2f055d-5e4b-43a7-84d2-6dcc72451c64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4de59e4f-c041-8134-8818-f0f5369526f3" executionId="136df75e-8d26-47d9-bfdd-a43e09556b12" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="879258c1-9592-99b4-e00e-2acfd4fb5caa" executionId="21385bd5-e090-4197-9c00-ffd4b2f174c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3e0acff6-f6d6-2094-9109-21f45bf9380d" executionId="d71d8e6e-0fa9-4044-8349-7ddf5e55ec6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="67e5438f-f4c8-fd50-edd7-a959e5c752d8" executionId="fc4e04cf-262b-48ac-80aa-bef1bc9d900c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="50" executed="50" passed="47" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.8)
+[xUnit.net 00:00:00.02]   Discovering: PKHeXWasm.Tests
+[xUnit.net 00:00:00.04]   Discovered:  PKHeXWasm.Tests
+[xUnit.net 00:00:00.04]   Starting:    PKHeXWasm.Tests
+[xUnit.net 00:00:00.10]       System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.
+[xUnit.net 00:00:00.10]       Stack Trace:
+[xUnit.net 00:00:00.10]            at System.Text.Json.JsonElement.GetProperty(String propertyName)
+[xUnit.net 00:00:00.10]         /Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/ItemTests.cs(17,0): at PKHeXWasm.Tests.ItemTests.LoadTestSave()
+[xUnit.net 00:00:00.10]         /Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/ItemTests.cs(46,0): at PKHeXWasm.Tests.ItemTests.AddItemToPouch_WithValidItem_AddsItem()
+[xUnit.net 00:00:00.10]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.10]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.10]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.10]       Expected: Array
+[xUnit.net 00:00:00.10]       Actual:   Object
+[xUnit.net 00:00:00.10]       Stack Trace:
+[xUnit.net 00:00:00.10]         /Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/PartyTests.cs(55,0): at PKHeXWasm.Tests.PartyTests.GetParty_WithSinglePokemon_ReturnsSingleItem()
+[xUnit.net 00:00:00.10]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.10]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.10]       Assert.True() Failure
+[xUnit.net 00:00:00.10]       Expected: True
+[xUnit.net 00:00:00.10]       Actual:   False
+[xUnit.net 00:00:00.10]       Stack Trace:
+[xUnit.net 00:00:00.10]         /Users/polar/Documents/Projects/github.com/monokrome/PkHex.js/tests/PKHeXWasm.Tests/PokedexTests.cs(28,0): at PKHeXWasm.Tests.PokedexTests.GetPokedex_WithValidSession_ReturnsPokedexData()
+[xUnit.net 00:00:00.10]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.10]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.14]   Finished:    PKHeXWasm.Tests
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="bootes" outcome="Error" timestamp="2025-11-04T21:41:24.0972090-08:00">
+        <Text>[xUnit.net 00:00:00.10]     PKHeXWasm.Tests.ItemTests.AddItemToPouch_WithValidItem_AddsItem [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="bootes" outcome="Error" timestamp="2025-11-04T21:41:24.0984580-08:00">
+        <Text>[xUnit.net 00:00:00.10]     PKHeXWasm.Tests.PartyTests.GetParty_WithSinglePokemon_ReturnsSingleItem [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="bootes" outcome="Error" timestamp="2025-11-04T21:41:24.0984750-08:00">
+        <Text>[xUnit.net 00:00:00.10]     PKHeXWasm.Tests.PokedexTests.GetPokedex_WithValidSession_ReturnsPokedexData [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+    <CollectorDataEntries>
+      <Collector agentName="bootes" uri="datacollector://microsoft/CoverletCodeCoverage/1.0" collectorDisplayName="XPlat code coverage">
+        <UriAttachments>
+          <UriAttachment>
+            <A href="bootes/coverage.cobertura.xml"></A>
+          </UriAttachment>
+        </UriAttachments>
+      </Collector>
+    </CollectorDataEntries>
+  </ResultSummary>
+</TestRun>
