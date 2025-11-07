@@ -4,6 +4,7 @@ using System.Text.Json;
 using PKHeX.Core;
 using PKHeX.Helpers;
 using PKHeX.Models;
+using static PKHeX.Models.ErrorCodes;
 
 namespace PKHeX.Api;
 
@@ -23,7 +24,7 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             if (string.IsNullOrWhiteSpace(base64Data))
-                throw new ValidationException("Save data cannot be empty", "EMPTY_DATA");
+                throw new ValidationException("Save data cannot be empty", EMPTY_DATA);
 
             byte[] data;
             try
@@ -32,12 +33,12 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             var save = SaveUtil.GetSaveFile(data);
             if (save == null)
-                throw new ValidationException("Unable to load save file. Format not recognized or data is corrupted.", "INVALID_SAVE_FORMAT");
+                throw new ValidationException("Unable to load save file. Format not recognized or data is corrupted.", INVALID_SAVE_FORMAT);
 
             var handle = SaveFileManager.CreateHandle(save);
             return new SaveFileHandle(true, handle);
@@ -86,9 +87,20 @@ public partial class PKHeXApi
             ApiHelpers.ValidateHandle(handle);
             var removed = SaveFileManager.RemoveHandle(handle);
             if (!removed)
-                throw new ValidationException("Invalid save file handle", "INVALID_HANDLE");
+                throw new ValidationException("Invalid save file handle", INVALID_HANDLE);
 
             return new SuccessMessage(true, "Save disposed successfully");
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string GetActiveHandleCount()
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var count = SaveFileManager.GetActiveHandleCount();
+            return new { success = true, count };
         });
     }
 
@@ -176,14 +188,14 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
 
             if (slot < 0 || slot >= 6)
-                throw new ValidationException($"Party slot {slot} is out of range (0-5)", "INVALID_SLOT");
+                throw new ValidationException($"Party slot {slot} is out of range (0-5)", INVALID_SLOT);
 
             if (slot >= save.PartyCount)
-                throw new ValidationException($"Party slot {slot} is empty", "EMPTY_SLOT");
+                throw new ValidationException($"Party slot {slot} is empty", EMPTY_SLOT);
 
             var pk = save.GetPartySlotAtIndex(slot);
             if (pk.Species == 0)
-                throw new ValidationException($"No Pokemon in party slot {slot}", "EMPTY_SLOT");
+                throw new ValidationException($"No Pokemon in party slot {slot}", EMPTY_SLOT);
 
             return CreatePokemonDetailObject(pk);
         });
@@ -200,7 +212,7 @@ public partial class PKHeXApi
 
             var mods = JsonSerializer.Deserialize<PokemonModifications>(modificationsJson, JsonOptions);
             if (mods == null)
-                throw new ValidationException("Invalid modifications JSON", "INVALID_JSON");
+                throw new ValidationException("Invalid modifications JSON", INVALID_JSON);
 
             ApplyModifications(pk, mods, save);
             save.SetBoxSlotAtIndex(pk, box, slot);
@@ -226,12 +238,12 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             var pk = save.GetDecryptedPKM(data);
             if (pk.Species == 0)
-                throw new ValidationException("Invalid Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Invalid Pokemon data", INVALID_PKM_DATA);
 
             save.SetBoxSlotAtIndex(pk, box, slot);
 
@@ -270,7 +282,7 @@ public partial class PKHeXApi
 
             var sourcePk = save.GetBoxSlotAtIndex(fromBox, fromSlot);
             if (sourcePk.Species == 0)
-                throw new ValidationException($"No Pokemon in source box {fromBox} slot {fromSlot}", "EMPTY_SLOT");
+                throw new ValidationException($"No Pokemon in source box {fromBox} slot {fromSlot}", EMPTY_SLOT);
 
             var destPk = save.GetBoxSlotAtIndex(toBox, toSlot);
 
@@ -291,7 +303,7 @@ public partial class PKHeXApi
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
             if (nature < 0 || nature > 24)
-                throw new ValidationException($"Nature {nature} is out of range (0-24)", "INVALID_NATURE");
+                throw new ValidationException($"Nature {nature} is out of range (0-24)", INVALID_NATURE);
 
             var rnd = new Random();
             var targetNature = (Nature)nature;
@@ -321,7 +333,7 @@ public partial class PKHeXApi
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
             if (pid < 0)
-                throw new ValidationException("PID must be non-negative", "INVALID_PID");
+                throw new ValidationException("PID must be non-negative", INVALID_PID);
 
             pk.PID = (uint)pid;
             pk.RefreshAbility(pk.AbilityNumber >> 1);
@@ -341,7 +353,7 @@ public partial class PKHeXApi
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
             if (shinyType < 0 || shinyType > 5)
-                throw new ValidationException($"Shiny type {shinyType} is out of range (0-5)", "INVALID_SHINY_TYPE");
+                throw new ValidationException($"Shiny type {shinyType} is out of range (0-5)", INVALID_SHINY_TYPE);
 
             var type = (Shiny)shinyType;
 
@@ -449,7 +461,7 @@ public partial class PKHeXApi
         if (mods.Species.HasValue)
         {
             if (mods.Species.Value < 0 || mods.Species.Value > save.MaxSpeciesID)
-                throw new ValidationException($"Species {mods.Species.Value} is out of range", "INVALID_SPECIES");
+                throw new ValidationException($"Species {mods.Species.Value} is out of range", INVALID_SPECIES);
             pk.Species = (ushort)mods.Species.Value;
         }
 
@@ -459,28 +471,28 @@ public partial class PKHeXApi
         if (mods.Level.HasValue)
         {
             if (mods.Level.Value < 1 || mods.Level.Value > 100)
-                throw new ValidationException($"Level {mods.Level.Value} is out of range (1-100)", "INVALID_LEVEL");
+                throw new ValidationException($"Level {mods.Level.Value} is out of range (1-100)", INVALID_LEVEL);
             pk.CurrentLevel = (byte)mods.Level.Value;
         }
 
         if (mods.Nature.HasValue)
         {
             if (mods.Nature.Value < 0 || mods.Nature.Value >= GameInfo.Strings.Natures.Count)
-                throw new ValidationException($"Nature {mods.Nature.Value} is out of range", "INVALID_NATURE");
+                throw new ValidationException($"Nature {mods.Nature.Value} is out of range", INVALID_NATURE);
             pk.Nature = (Nature)mods.Nature.Value;
         }
 
         if (mods.Ability.HasValue)
         {
             if (mods.Ability.Value < 0 || mods.Ability.Value > save.MaxAbilityID)
-                throw new ValidationException($"Ability {mods.Ability.Value} is out of range", "INVALID_ABILITY");
+                throw new ValidationException($"Ability {mods.Ability.Value} is out of range", INVALID_ABILITY);
             pk.Ability = mods.Ability.Value;
         }
 
         if (mods.HeldItem.HasValue)
         {
             if (mods.HeldItem.Value < 0 || mods.HeldItem.Value > save.MaxItemID)
-                throw new ValidationException($"Item {mods.HeldItem.Value} is out of range", "INVALID_ITEM");
+                throw new ValidationException($"Item {mods.HeldItem.Value} is out of range", INVALID_ITEM);
             pk.HeldItem = mods.HeldItem.Value;
         }
 
@@ -492,25 +504,25 @@ public partial class PKHeXApi
             if (mods.Moves.Length > 0)
             {
                 if (mods.Moves[0] < 0 || mods.Moves[0] > save.MaxMoveID)
-                    throw new ValidationException($"Move {mods.Moves[0]} is out of range", "INVALID_MOVE");
+                    throw new ValidationException($"Move {mods.Moves[0]} is out of range", INVALID_MOVE);
                 pk.Move1 = (ushort)mods.Moves[0];
             }
             if (mods.Moves.Length > 1)
             {
                 if (mods.Moves[1] < 0 || mods.Moves[1] > save.MaxMoveID)
-                    throw new ValidationException($"Move {mods.Moves[1]} is out of range", "INVALID_MOVE");
+                    throw new ValidationException($"Move {mods.Moves[1]} is out of range", INVALID_MOVE);
                 pk.Move2 = (ushort)mods.Moves[1];
             }
             if (mods.Moves.Length > 2)
             {
                 if (mods.Moves[2] < 0 || mods.Moves[2] > save.MaxMoveID)
-                    throw new ValidationException($"Move {mods.Moves[2]} is out of range", "INVALID_MOVE");
+                    throw new ValidationException($"Move {mods.Moves[2]} is out of range", INVALID_MOVE);
                 pk.Move3 = (ushort)mods.Moves[2];
             }
             if (mods.Moves.Length > 3)
             {
                 if (mods.Moves[3] < 0 || mods.Moves[3] > save.MaxMoveID)
-                    throw new ValidationException($"Move {mods.Moves[3]} is out of range", "INVALID_MOVE");
+                    throw new ValidationException($"Move {mods.Moves[3]} is out of range", INVALID_MOVE);
                 pk.Move4 = (ushort)mods.Moves[3];
             }
         }
@@ -518,60 +530,60 @@ public partial class PKHeXApi
         if (mods.IVs != null)
         {
             if (mods.IVs.Length != 6)
-                throw new ValidationException("IVs must have exactly 6 values", "INVALID_IVS");
+                throw new ValidationException("IVs must have exactly 6 values", INVALID_IVS);
 
             if (mods.IVs[0] < 0 || mods.IVs[0] > save.MaxIV)
-                throw new ValidationException($"IV {mods.IVs[0]} is out of range (0-{save.MaxIV})", "INVALID_IV");
+                throw new ValidationException($"IV {mods.IVs[0]} is out of range (0-{save.MaxIV})", INVALID_IV);
             pk.IV_HP = mods.IVs[0];
 
             if (mods.IVs[1] < 0 || mods.IVs[1] > save.MaxIV)
-                throw new ValidationException($"IV {mods.IVs[1]} is out of range (0-{save.MaxIV})", "INVALID_IV");
+                throw new ValidationException($"IV {mods.IVs[1]} is out of range (0-{save.MaxIV})", INVALID_IV);
             pk.IV_ATK = mods.IVs[1];
 
             if (mods.IVs[2] < 0 || mods.IVs[2] > save.MaxIV)
-                throw new ValidationException($"IV {mods.IVs[2]} is out of range (0-{save.MaxIV})", "INVALID_IV");
+                throw new ValidationException($"IV {mods.IVs[2]} is out of range (0-{save.MaxIV})", INVALID_IV);
             pk.IV_DEF = mods.IVs[2];
 
             if (mods.IVs[3] < 0 || mods.IVs[3] > save.MaxIV)
-                throw new ValidationException($"IV {mods.IVs[3]} is out of range (0-{save.MaxIV})", "INVALID_IV");
+                throw new ValidationException($"IV {mods.IVs[3]} is out of range (0-{save.MaxIV})", INVALID_IV);
             pk.IV_SPE = mods.IVs[3];
 
             if (mods.IVs[4] < 0 || mods.IVs[4] > save.MaxIV)
-                throw new ValidationException($"IV {mods.IVs[4]} is out of range (0-{save.MaxIV})", "INVALID_IV");
+                throw new ValidationException($"IV {mods.IVs[4]} is out of range (0-{save.MaxIV})", INVALID_IV);
             pk.IV_SPA = mods.IVs[4];
 
             if (mods.IVs[5] < 0 || mods.IVs[5] > save.MaxIV)
-                throw new ValidationException($"IV {mods.IVs[5]} is out of range (0-{save.MaxIV})", "INVALID_IV");
+                throw new ValidationException($"IV {mods.IVs[5]} is out of range (0-{save.MaxIV})", INVALID_IV);
             pk.IV_SPD = mods.IVs[5];
         }
 
         if (mods.EVs != null)
         {
             if (mods.EVs.Length != 6)
-                throw new ValidationException("EVs must have exactly 6 values", "INVALID_EVS");
+                throw new ValidationException("EVs must have exactly 6 values", INVALID_EVS);
 
             if (mods.EVs[0] < 0 || mods.EVs[0] > save.MaxEV)
-                throw new ValidationException($"EV {mods.EVs[0]} is out of range (0-{save.MaxEV})", "INVALID_EV");
+                throw new ValidationException($"EV {mods.EVs[0]} is out of range (0-{save.MaxEV})", INVALID_EV);
             pk.EV_HP = mods.EVs[0];
 
             if (mods.EVs[1] < 0 || mods.EVs[1] > save.MaxEV)
-                throw new ValidationException($"EV {mods.EVs[1]} is out of range (0-{save.MaxEV})", "INVALID_EV");
+                throw new ValidationException($"EV {mods.EVs[1]} is out of range (0-{save.MaxEV})", INVALID_EV);
             pk.EV_ATK = mods.EVs[1];
 
             if (mods.EVs[2] < 0 || mods.EVs[2] > save.MaxEV)
-                throw new ValidationException($"EV {mods.EVs[2]} is out of range (0-{save.MaxEV})", "INVALID_EV");
+                throw new ValidationException($"EV {mods.EVs[2]} is out of range (0-{save.MaxEV})", INVALID_EV);
             pk.EV_DEF = mods.EVs[2];
 
             if (mods.EVs[3] < 0 || mods.EVs[3] > save.MaxEV)
-                throw new ValidationException($"EV {mods.EVs[3]} is out of range (0-{save.MaxEV})", "INVALID_EV");
+                throw new ValidationException($"EV {mods.EVs[3]} is out of range (0-{save.MaxEV})", INVALID_EV);
             pk.EV_SPE = mods.EVs[3];
 
             if (mods.EVs[4] < 0 || mods.EVs[4] > save.MaxEV)
-                throw new ValidationException($"EV {mods.EVs[4]} is out of range (0-{save.MaxEV})", "INVALID_EV");
+                throw new ValidationException($"EV {mods.EVs[4]} is out of range (0-{save.MaxEV})", INVALID_EV);
             pk.EV_SPA = mods.EVs[4];
 
             if (mods.EVs[5] < 0 || mods.EVs[5] > save.MaxEV)
-                throw new ValidationException($"EV {mods.EVs[5]} is out of range (0-{save.MaxEV})", "INVALID_EV");
+                throw new ValidationException($"EV {mods.EVs[5]} is out of range (0-{save.MaxEV})", INVALID_EV);
             pk.EV_SPD = mods.EVs[5];
         }
 
@@ -675,7 +687,7 @@ public partial class PKHeXApi
                 throw new ValidationException("Failed to parse Showdown text", "INVALID_SHOWDOWN_FORMAT");
 
             if (set.Species == 0)
-                throw new ValidationException("Invalid species in Showdown text", "INVALID_SPECIES");
+                throw new ValidationException("Invalid species in Showdown text", INVALID_SPECIES);
 
             var pk = save.BlankPKM;
             ApplyShowdownSet(pk, set, save);
@@ -930,7 +942,7 @@ public partial class PKHeXApi
 
             var trainerData = JsonSerializer.Deserialize<TrainerInfo>(trainerDataJson, JsonOptions);
             if (trainerData == null)
-                throw new ValidationException("Invalid trainer data JSON", "INVALID_JSON");
+                throw new ValidationException("Invalid trainer data JSON", INVALID_JSON);
 
             save.OT = trainerData.OT;
             save.Gender = (byte)trainerData.Gender;
@@ -1002,7 +1014,7 @@ public partial class PKHeXApi
 
             var appearance = JsonSerializer.Deserialize<TrainerAppearance>(appearanceJson, JsonOptions);
             if (appearance == null)
-                throw new ValidationException("Invalid appearance data JSON", "INVALID_JSON");
+                throw new ValidationException("Invalid appearance data JSON", INVALID_JSON);
 
             return new SuccessMessage(true, "Trainer appearance updated successfully");
         });
@@ -1237,7 +1249,7 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
 
             if (slot < 0 || slot >= 6)
-                throw new ValidationException($"Battle Box slot {slot} is out of range (0-5)", "INVALID_SLOT");
+                throw new ValidationException($"Battle Box slot {slot} is out of range (0-5)", INVALID_SLOT);
 
             byte[] data;
             try
@@ -1246,12 +1258,12 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             var pk = save.GetDecryptedPKM(data);
             if (pk.Species == 0)
-                throw new ValidationException("Invalid Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Invalid Pokemon data", INVALID_PKM_DATA);
 
             if (save is SAV5 sav5)
             {
@@ -1495,7 +1507,7 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
 
             if (species < 0 || species > save.MaxSpeciesID)
-                throw new ValidationException($"Species {species} is out of range (0-{save.MaxSpeciesID})", "INVALID_SPECIES");
+                throw new ValidationException($"Species {species} is out of range (0-{save.MaxSpeciesID})", INVALID_SPECIES);
 
             save.SetSeen((ushort)species, true);
 
@@ -1512,7 +1524,7 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
 
             if (species < 0 || species > save.MaxSpeciesID)
-                throw new ValidationException($"Species {species} is out of range (0-{save.MaxSpeciesID})", "INVALID_SPECIES");
+                throw new ValidationException($"Species {species} is out of range (0-{save.MaxSpeciesID})", INVALID_SPECIES);
 
             save.SetCaught((ushort)species, true);
 
@@ -2242,7 +2254,7 @@ public partial class PKHeXApi
 
             var team = JsonSerializer.Deserialize<PokemonSummary[]>(teamJson, JsonOptions);
             if (team == null || team.Length == 0)
-                throw new ValidationException("Invalid team data JSON", "INVALID_JSON");
+                throw new ValidationException("Invalid team data JSON", INVALID_JSON);
 
             if (save is SAV3 sav3)
             {
@@ -2587,7 +2599,7 @@ public partial class PKHeXApi
 
             var cardData = JsonSerializer.Deserialize<MysteryGiftCard>(cardJson, JsonOptions);
             if (cardData == null)
-                throw new ValidationException("Invalid card data JSON", "INVALID_JSON");
+                throw new ValidationException("Invalid card data JSON", INVALID_JSON);
 
             if (save is not IMysteryGiftStorage giftStorage)
                 throw new ValidationException("Mystery Gifts not supported for this save file generation", "UNSUPPORTED_GENERATION");
@@ -3097,18 +3109,18 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
                 throw new ValidationException($"Generation {generation} is out of range (1-9)", "INVALID_GENERATION");
 
             if (shinyType < 0 || shinyType > 5)
-                throw new ValidationException($"Shiny type {shinyType} is out of range (0-5)", "INVALID_SHINY_TYPE");
+                throw new ValidationException($"Shiny type {shinyType} is out of range (0-5)", INVALID_SHINY_TYPE);
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var type = (Shiny)shinyType;
 
@@ -3141,7 +3153,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3149,7 +3161,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var isShiny = pk.IsShiny;
             var shinyType = pk.ShinyXor == 0 ? "Square" : pk.IsShiny ? "Star" : "None";
@@ -3183,18 +3195,18 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
                 throw new ValidationException($"Generation {generation} is out of range (1-9)", "INVALID_GENERATION");
 
             if (pid < 0)
-                throw new ValidationException("PID must be non-negative", "INVALID_PID");
+                throw new ValidationException("PID must be non-negative", INVALID_PID);
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             pk.PID = (uint)pid;
             pk.RefreshAbility(pk.AbilityNumber >> 1);
@@ -3219,7 +3231,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3227,7 +3239,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             return CreatePokemonDetailObject(pk);
         });
@@ -3246,7 +3258,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3254,11 +3266,11 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var mods = JsonSerializer.Deserialize<PokemonModifications>(modificationsJson, JsonOptions);
             if (mods == null)
-                throw new ValidationException("Invalid modifications JSON", "INVALID_JSON");
+                throw new ValidationException("Invalid modifications JSON", INVALID_JSON);
 
 
             if (mods.Species.HasValue)
@@ -3332,7 +3344,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3340,7 +3352,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var analysis = new LegalityAnalysis(pk);
             var errorList = new List<string>();
@@ -3373,7 +3385,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3381,7 +3393,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             pk.SetMoveset();
             pk.Heal();
@@ -3407,7 +3419,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3415,7 +3427,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var showdownText = ShowdownParsing.GetShowdownText(pk);
             return new ShowdownResponse(true, showdownText);
@@ -3441,7 +3453,7 @@ public partial class PKHeXApi
                 throw new ValidationException("Failed to parse Showdown text", "INVALID_SHOWDOWN_FORMAT");
 
             if (set.Species == 0)
-                throw new ValidationException("Invalid species in Showdown text", "INVALID_SPECIES");
+                throw new ValidationException("Invalid species in Showdown text", INVALID_SPECIES);
 
             // Create a blank Pokemon using EntityBlank
             var context = (EntityContext)generation;
@@ -3526,10 +3538,10 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             if (species < 1 || species > 1025)
-                throw new ValidationException($"Species {species} is out of range (1-1025)", "INVALID_SPECIES");
+                throw new ValidationException($"Species {species} is out of range (1-1025)", INVALID_SPECIES);
 
             if (level < 1 || level > 100)
-                throw new ValidationException($"Level {level} is out of range (1-100)", "INVALID_LEVEL");
+                throw new ValidationException($"Level {level} is out of range (1-100)", INVALID_LEVEL);
 
             if (generation < 1 || generation > 9)
                 throw new ValidationException($"Generation {generation} is out of range (1-9)", "INVALID_GENERATION");
@@ -3565,7 +3577,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3573,7 +3585,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
 
             return new PokemonStats(
@@ -3600,7 +3612,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3608,7 +3620,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var ribbonInfo = RibbonInfo.GetRibbonInfo(pk);
             var ribbonList = ribbonInfo.Select(r => new
@@ -3636,7 +3648,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3644,7 +3656,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             if (string.IsNullOrWhiteSpace(ribbonName))
                 throw new ValidationException("Ribbon name cannot be empty", "EMPTY_RIBBON_NAME");
@@ -3688,7 +3700,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3696,7 +3708,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var rnd = new Random();
             pk.EncryptionConstant = (uint)rnd.Next();
@@ -3722,7 +3734,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3730,7 +3742,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var hpType = pk.HPType;
             var hpPower = pk.HPPower;
@@ -3756,7 +3768,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             if (generation < 1 || generation > 9)
@@ -3764,7 +3776,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)generation);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var characteristic = pk.Characteristic;
             var characteristics = GameInfo.Strings.characteristics;
@@ -3794,11 +3806,11 @@ public partial class PKHeXApi
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
-            ApiHelpers.ValidateNonNegative(species, nameof(species), "INVALID_SPECIES");
+            ApiHelpers.ValidateNonNegative(species, nameof(species), INVALID_SPECIES);
             ApiHelpers.ValidateNonNegative(generation, nameof(generation), "INVALID_GENERATION");
 
             if (species < 1 || species > 1025)
-                throw new ValidationException($"Species {species} is out of range (1-1025)", "INVALID_SPECIES");
+                throw new ValidationException($"Species {species} is out of range (1-1025)", INVALID_SPECIES);
 
             if (generation < 1 || generation > 9)
                 throw new ValidationException($"Generation {generation} is out of range (1-9)", "INVALID_GENERATION");
@@ -3867,11 +3879,11 @@ public partial class PKHeXApi
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
-            ApiHelpers.ValidateNonNegative(species, nameof(species), "INVALID_SPECIES");
+            ApiHelpers.ValidateNonNegative(species, nameof(species), INVALID_SPECIES);
             ApiHelpers.ValidateNonNegative(generation, nameof(generation), "INVALID_GENERATION");
 
             if (species < 1 || species > 1025)
-                throw new ValidationException($"Species {species} is out of range (1-1025)", "INVALID_SPECIES");
+                throw new ValidationException($"Species {species} is out of range (1-1025)", INVALID_SPECIES);
 
             if (generation < 1 || generation > 9)
                 throw new ValidationException($"Generation {generation} is out of range (1-9)", "INVALID_GENERATION");
@@ -3945,7 +3957,7 @@ public partial class PKHeXApi
             }
             catch (FormatException)
             {
-                throw new ValidationException("Invalid base64 encoding", "INVALID_BASE64");
+                throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
             ApiHelpers.ValidateNonNegative(fromGeneration, nameof(fromGeneration), "INVALID_GENERATION");
@@ -3960,7 +3972,7 @@ public partial class PKHeXApi
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)fromGeneration);
             if (pk == null)
-                throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
+                throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
 
             Type? targetType = toGeneration switch
