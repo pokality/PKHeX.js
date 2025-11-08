@@ -67,21 +67,29 @@ jobs:
         
         ERRORS=0
         
-        if [ "$TAG_VERSION" != "$PKHEX_VERSION" ]; then
-          echo "❌ Tag version ($TAG_VERSION) does not match PKHeX submodule version ($PKHEX_VERSION)"
+        # Allow tag to be either exact match or hotfix (PKHEX_VERSION-<suffix> with at least 1 char)
+        if [ "$TAG_VERSION" = "$PKHEX_VERSION" ]; then
+          echo "Tag version matches PKHeX version exactly"
+        elif [[ "$TAG_VERSION" =~ ^${PKHEX_VERSION}-.+$ ]]; then
+          echo "Tag version ($TAG_VERSION) is a hotfix of PKHeX version ($PKHEX_VERSION)"
+        else
+          echo "Tag version ($TAG_VERSION) does not match or start with PKHeX version ($PKHEX_VERSION)"
           ERRORS=$((ERRORS + 1))
         fi
         
-        if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
-          echo "❌ Tag version ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)"
+        # Package.json must match tag exactly
+        if [ "$TAG_VERSION" = "$PACKAGE_VERSION" ]; then
+          echo "Package.json version matches tag exactly"
+        else
+          echo "Package.json version ($PACKAGE_VERSION) does not match tag version ($TAG_VERSION)"
           ERRORS=$((ERRORS + 1))
         fi
         
         if [ $ERRORS -eq 0 ]; then
-          echo "✅ All versions match! Deployment will proceed."
+          echo "All versions match. Deployment will proceed."
           echo "should_deploy=true" >> $GITHUB_OUTPUT
         else
-          echo "❌ Version mismatch detected! Deployment will be skipped."
+          echo "Version mismatch detected. Deployment will be skipped."
           echo "should_deploy=false" >> $GITHUB_OUTPUT
           exit 1
         fi
