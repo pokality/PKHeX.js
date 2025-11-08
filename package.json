@@ -41,12 +41,12 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/monokrome/pkhex.git"
+    "url": "git+https://github.com/pokality/pkhex.git"
   },
   "bugs": {
-    "url": "https://github.com/monokrome/pkhex/issues"
+    "url": "https://github.com/pokality/pkhex/issues"
   },
-  "homepage": "https://github.com/monokrome/pkhex#readme",
+  "homepage": "https://github.com/pokality/pkhex#readme",
   "engines": {
     "node": ">=18.0.0"
   },
