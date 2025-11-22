@@ -1,0 +1,58 @@
+{
+  "name": "pkhex",
+  "version": "25.10.26",
+  "description": "WebAssembly library wrapping PKHeX.Core for Pokemon save file editing in JavaScript/TypeScript",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "src/index.d.ts",
+    "src/helpers.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "scripts/build.sh",
+    "build:debug": "dotnet build src/PKHeX/PKHeX.csproj",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:csharp": "dotnet test tests/PKHeX.Tests/PKHeX.Tests.csproj",
+    "test:all": "npm run test:csharp && npm run test",
+    "docs": "typedoc src/index.d.ts --out docs --name 'PKHeX WASM API'",
+    "prepublishOnly": "./scripts/build.sh"
+  },
+  "keywords": [
+    "pokemon",
+    "pkhex",
+    "save-editor",
+    "webassembly",
+    "wasm",
+    "save-file",
+    "game-editor"
+  ],
+  "author": "PKHeX WASM Contributors",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monokrome/pkhex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/monokrome/pkhex/issues"
+  },
+  "homepage": "https://github.com/monokrome/pkhex#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.24",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.1"
+  }
+}

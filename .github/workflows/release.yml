@@ -1,0 +1,345 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g., 25.10.26)'
+        required: true
+        type: string
+
+jobs:
+  validate-version:
+    name: Validate Version Match
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract.outputs.version }}
+      pkhex_version: ${{ steps.pkhex.outputs.version }}
+      should_deploy: ${{ steps.compare.outputs.should_deploy }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0
+    
+    - name: Extract tag version
+      id: extract
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.tag }}"
+        else
+          VERSION="${GITHUB_REF#refs/tags/}"
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Tag version: $VERSION"
+    
+    - name: Get PKHeX submodule version
+      id: pkhex
+      run: |
+        PKHEX_TAG=$(git -C lib/PKHeX describe --tags --abbrev=0 2>/dev/null || echo "unknown")
+        # PKHeX tags don't have 'v' prefix (e.g., "25.10.26")
+        echo "version=$PKHEX_TAG" >> $GITHUB_OUTPUT
+        echo "PKHeX version: $PKHEX_TAG"
+    
+    - name: Get package.json version
+      id: package
+      run: |
+        PACKAGE_VERSION=$(jq -r '.version' package.json)
+        echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+        echo "Package.json version: $PACKAGE_VERSION"
+    
+    - name: Compare versions
+      id: compare
+      run: |
+        TAG_VERSION="${{ steps.extract.outputs.version }}"
+        PKHEX_VERSION="${{ steps.pkhex.outputs.version }}"
+        PACKAGE_VERSION="${{ steps.package.outputs.version }}"
+        
+        echo "Comparing versions:"
+        echo "  Tag version: $TAG_VERSION"
+        echo "  PKHeX version: $PKHEX_VERSION"
+        echo "  Package.json version: $PACKAGE_VERSION"
+        
+        ERRORS=0
+        
+        if [ "$TAG_VERSION" != "$PKHEX_VERSION" ]; then
+          echo "❌ Tag version ($TAG_VERSION) does not match PKHeX submodule version ($PKHEX_VERSION)"
+          ERRORS=$((ERRORS + 1))
+        fi
+        
+        if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+          echo "❌ Tag version ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)"
+          ERRORS=$((ERRORS + 1))
+        fi
+        
+        if [ $ERRORS -eq 0 ]; then
+          echo "✅ All versions match! Deployment will proceed."
+          echo "should_deploy=true" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Version mismatch detected! Deployment will be skipped."
+          echo "should_deploy=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+
+  build:
+    name: Build Release
+    runs-on: ubuntu-latest
+    environment: build
+    needs: validate-version
+    if: needs.validate-version.outputs.should_deploy == 'true'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Install WASM workload
+      run: dotnet workload install wasm-tools
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Restore .NET dependencies
+      run: |
+        dotnet restore src/PKHeX/PKHeX.csproj
+        dotnet restore tests/PKHeX.Tests/PKHeX.Tests.csproj
+    
+    - name: Build and test
+      run: |
+        chmod +x scripts/build.sh scripts/generate-boot-json.sh
+        ./scripts/build.sh
+        echo "Build complete. Checking dist directory:"
+        ls -la dist/ | head -20
+    
+    - name: Copy additional files for NPM
+      run: |
+        echo "Copying README.md to dist/"
+        cp README.md dist/
+        echo "Contents of dist/ after copy:"
+        ls -la dist/ | head -20
+    
+    - name: Create package.json for publishing
+      run: |
+        VERSION="${{ needs.validate-version.outputs.version }}"
+        # Create a clean package.json without build scripts for publishing
+        jq --arg version "$VERSION" '
+          .version = $version |
+          del(.scripts.prepublishOnly) |
+          del(.scripts.build) |
+          del(.scripts["build:debug"]) |
+          del(.devDependencies)
+        ' package.json > dist/package.json
+    
+    - name: Create tarball for GitHub Release
+      run: |
+        tar -czf pkhex-wasm-${{ needs.validate-version.outputs.version }}.tar.gz -C dist .
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: pkhex-wasm-release
+        path: dist/
+        retention-days: 90
+    
+    - name: Upload tarball artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: pkhex-wasm-tarball
+        path: pkhex-wasm-${{ needs.validate-version.outputs.version }}.tar.gz
+        retention-days: 90
+
+  github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate-version, build, generate-docs]
+    if: needs.validate-version.outputs.should_deploy == 'true'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Download tarball
+      uses: actions/download-artifact@v4
+      with:
+        name: pkhex-wasm-tarball
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: pkhex-wasm-release
+        path: dist/
+    
+    - name: Download documentation
+      uses: actions/download-artifact@v4
+      with:
+        name: pkhex-wasm-docs
+        path: docs/
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          pkhex-wasm-${{ needs.validate-version.outputs.version }}.tar.gz
+          dist/dotnet.js
+          dist/dotnet.native.wasm
+          dist/PKHeX.dll
+          dist/PKHeX.Core.dll
+          dist/index.d.ts
+          docs/PKHeX-API-Documentation.pdf
+          docs/PKHeX-API-Documentation.epub
+          docs/PKHeX-API-Documentation.mobi
+        generate_release_notes: true
+        body: |
+          ## PKHeX WASM ${{ needs.validate-version.outputs.version }}
+          
+          Built against PKHeX.Core ${{ needs.validate-version.outputs.pkhex_version }}
+          
+          ### Installation
+          
+          ```bash
+          npm install pkhex-wasm@${{ needs.validate-version.outputs.version }}
+          ```
+          
+          ### Documentation
+          
+          - [Online Documentation](https://monokrome.github.io/PKHeX.js/)
+          - [PDF Documentation](./PKHeX-API-Documentation.pdf)
+          - [EPUB Documentation](./PKHeX-API-Documentation.epub)
+          - [MOBI Documentation](./PKHeX-API-Documentation.mobi)
+          
+          ### What's Changed
+          See the full changelog below.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  npm-publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    environment: build
+    needs: [validate-version, build]
+    if: needs.validate-version.outputs.should_deploy == 'true'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Install WASM workload
+      run: dotnet workload install wasm-tools
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        registry-url: 'https://registry.npmjs.org'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Restore .NET dependencies
+      run: |
+        dotnet restore src/PKHeX/PKHeX.csproj
+        dotnet restore tests/PKHeX.Tests/PKHeX.Tests.csproj
+    
+    - name: Build
+      run: |
+        chmod +x scripts/build.sh scripts/generate-boot-json.sh
+        npm run build
+    
+    - name: Publish to NPM
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  generate-docs:
+    name: Generate TSDoc Documentation
+    runs-on: ubuntu-latest
+    environment: build
+    needs: [validate-version, build]
+    if: needs.validate-version.outputs.should_deploy == 'true'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Install documentation tools
+      run: |
+        npm install -g typedoc
+        sudo apt-get update
+        sudo apt-get install -y pandoc calibre python3-pip
+        pip3 install weasyprint
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: pkhex-wasm-release
+        path: dist/
+    
+    - name: Generate documentation (HTML, PDF, EPUB, MOBI)
+      run: ./scripts/generate-docs.sh
+    
+    - name: Upload docs artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: pkhex-wasm-docs
+        path: docs/
+        retention-days: 90
+
+  github-pages:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: [validate-version, generate-docs]
+    if: needs.validate-version.outputs.should_deploy == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
+    steps:
+    - name: Download documentation
+      uses: actions/download-artifact@v4
+      with:
+        name: pkhex-wasm-docs
+        path: docs/
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/
+    
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
