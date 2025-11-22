@@ -98,6 +98,15 @@ describe('API Wrapper', () => {
       GetAllNatures: vi.fn(),
       GetTypeName: vi.fn(),
       GetAllTypes: vi.fn(),
+      CollectColorfulScrews: vi.fn(),
+      GetColorfulScrewLocations: vi.fn(),
+      GetInfiniteRoyalePoints: vi.fn(),
+      SetInfiniteRoyalePoints: vi.fn(),
+      SetTextSpeed: vi.fn(),
+      GetTextSpeed: vi.fn(),
+      UnlockFashionCategory: vi.fn(),
+      UnlockAllFashion: vi.fn(),
+      UnlockAllHairMakeup: vi.fn(),
       GetPKMData: vi.fn(),
       ModifyPKMData: vi.fn(),
       CheckPKMLegality: vi.fn(),
@@ -858,6 +867,103 @@ describe('API Wrapper', () => {
 
       expect(mockRawApi.SetPKMRibbon).toHaveBeenCalledWith('base64data', 3, 'Champion', true);
       expect(result).toHaveProperty('base64Data');
+    });
+  });
+
+  describe('Save Progress Methods', () => {
+    it('save.progress.collectColorfulScrews should call CollectColorfulScrews', () => {
+      const mockResponse = JSON.stringify({ screwsCollected: 100 });
+      mockRawApi.CollectColorfulScrews.mockReturnValue(mockResponse);
+
+      const result = api.save.progress.collectColorfulScrews(1);
+
+      expect(mockRawApi.CollectColorfulScrews).toHaveBeenCalledWith(1);
+      expect(result).toHaveProperty('screwsCollected', 100);
+    });
+
+    it('save.progress.getColorfulScrewLocations should handle boolean parameter', () => {
+      const mockResponse = JSON.stringify({ locations: [] });
+      mockRawApi.GetColorfulScrewLocations.mockReturnValue(mockResponse);
+
+      const result = api.save.progress.getColorfulScrewLocations(1, true);
+
+      expect(mockRawApi.GetColorfulScrewLocations).toHaveBeenCalledWith(1, true);
+      expect(result).toHaveProperty('locations');
+    });
+
+    it('save.progress.getInfiniteRoyalePoints should call GetInfiniteRoyalePoints', () => {
+      const mockResponse = JSON.stringify({ royalePoints: 1000, infinitePoints: 500 });
+      mockRawApi.GetInfiniteRoyalePoints.mockReturnValue(mockResponse);
+
+      const result = api.save.progress.getInfiniteRoyalePoints(1);
+
+      expect(mockRawApi.GetInfiniteRoyalePoints).toHaveBeenCalledWith(1);
+      expect(result).toHaveProperty('royalePoints', 1000);
+      expect(result).toHaveProperty('infinitePoints', 500);
+    });
+
+    it('save.progress.setInfiniteRoyalePoints should handle multiple numeric parameters', () => {
+      const mockResponse = JSON.stringify({ success: true });
+      mockRawApi.SetInfiniteRoyalePoints.mockReturnValue(mockResponse);
+
+      const result = api.save.progress.setInfiniteRoyalePoints(1, 999999, 888888);
+
+      expect(mockRawApi.SetInfiniteRoyalePoints).toHaveBeenCalledWith(1, 999999, 888888);
+      expect(result).toHaveProperty('success', true);
+    });
+  });
+
+  describe('Save Configuration Methods', () => {
+    it('save.setTextSpeed should call SetTextSpeed', () => {
+      const mockResponse = JSON.stringify({ success: true });
+      mockRawApi.SetTextSpeed.mockReturnValue(mockResponse);
+
+      const result = api.save.setTextSpeed(1, 3);
+
+      expect(mockRawApi.SetTextSpeed).toHaveBeenCalledWith(1, 3);
+      expect(result).toHaveProperty('success', true);
+    });
+
+    it('save.getTextSpeed should call GetTextSpeed', () => {
+      const mockResponse = JSON.stringify({ speed: 2 });
+      mockRawApi.GetTextSpeed.mockReturnValue(mockResponse);
+
+      const result = api.save.getTextSpeed(1);
+
+      expect(mockRawApi.GetTextSpeed).toHaveBeenCalledWith(1);
+      expect(result).toHaveProperty('speed', 2);
+    });
+  });
+
+  describe('Save Features Methods', () => {
+    it('save.features.unlockFashionCategory should handle string parameter', () => {
+      const mockResponse = JSON.stringify({ itemsUnlocked: 15 });
+      mockRawApi.UnlockFashionCategory.mockReturnValue(mockResponse);
+
+      const result = api.save.features.unlockFashionCategory(1, 'tops');
+
+      expect(mockRawApi.UnlockFashionCategory).toHaveBeenCalledWith(1, 'tops');
+      expect(result).toHaveProperty('itemsUnlocked', 15);
+    });
+
+    it('save.features.unlockAllFashion should call UnlockAllFashion', () => {
+      const mockResponse = JSON.stringify({ itemsUnlocked: 150 });
+      mockRawApi.UnlockAllFashion.mockReturnValue(mockResponse);
+
+      const result = api.save.features.unlockAllFashion(1);
+
+      expect(mockRawApi.UnlockAllFashion).toHaveBeenCalledWith(1);
+      expect(result).toHaveProperty('itemsUnlocked', 150);
+    });
+
+    it('save.features.unlockAllHairMakeup should call UnlockAllHairMakeup', () => {
+      const mockResponse = JSON.stringify({ itemsUnlocked: 50 });
+      mockRawApi.UnlockAllHairMakeup.mockReturnValue(mockResponse);
+
+      const result = api.save.features.unlockAllHairMakeup(1);
+
+      expect(mockRawApi.UnlockAllHairMakeup).toHaveBeenCalledWith(1);
+      expect(result).toHaveProperty('itemsUnlocked', 50);
     });
   });
 

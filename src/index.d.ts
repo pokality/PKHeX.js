@@ -445,6 +445,16 @@ export interface PokeJobsData {
   completedJobsCount: number;
 }
 
+/**
+ * Colorful Screw location (Gen 9a - Legends Z-A)
+ */
+export interface ColorfulScrewLocation {
+  fieldItem: string;
+  x: number;
+  y: number;
+  z: number;
+}
+
 // ============================================================================
 // Game Data Models
 // ============================================================================
@@ -652,6 +662,8 @@ export interface PKHeXApi {
     getInfo(handle: SaveHandle): ApiResult<SaveFileInfo>;
     export(handle: SaveHandle): ApiResult<{ base64Data: string }>;
     dispose(handle: SaveHandle): ApiResult<MessageResponse>;
+    setTextSpeed(handle: SaveHandle, speed: number): ApiResult<MessageResponse>;
+    getTextSpeed(handle: SaveHandle): ApiResult<{ textSpeed: number; speedName: string }>;
 
     // Pokemon operations within save
     pokemon: {
@@ -730,6 +742,10 @@ export interface PKHeXApi {
       getBattleFacilityStats(handle: SaveHandle): ApiResult<BattleFacilityStats>;
       getHallOfFame(handle: SaveHandle): ApiResult<{ entries: HallOfFameEntry[] }>;
       setHallOfFameEntry(handle: SaveHandle, index: number, team: PokemonSummary[]): ApiResult<MessageResponse>;
+      collectColorfulScrews(handle: SaveHandle): ApiResult<{ screwsCollected: number; message: string }>;
+      getColorfulScrewLocations(handle: SaveHandle, collected: boolean): ApiResult<{ collected: boolean; count: number; locations: ColorfulScrewLocation[] }>;
+      getInfiniteRoyalePoints(handle: SaveHandle): ApiResult<{ royalePoints: number; infiniteRoyalePoints: number }>;
+      setInfiniteRoyalePoints(handle: SaveHandle, royalePoints: number, infinitePoints: number): ApiResult<MessageResponse>;
     };
 
     // Time operations
@@ -766,6 +782,9 @@ export interface PKHeXApi {
       getPokePelago(handle: SaveHandle): ApiResult<{ pokePelagoData: PokePelagoData }>;
       getFestivalPlaza(handle: SaveHandle): ApiResult<{ festivalPlazaData: FestivalPlazaData }>;
       getPokeJobs(handle: SaveHandle): ApiResult<{ pokeJobsData: PokeJobsData }>;
+      unlockFashionCategory(handle: SaveHandle, category: string): ApiResult<MessageResponse>;
+      unlockAllFashion(handle: SaveHandle): ApiResult<{ itemsUnlocked: number; message: string }>;
+      unlockAllHairMakeup(handle: SaveHandle): ApiResult<{ itemsUnlocked: number; message: string }>;
     };
   };
 
@@ -915,5 +934,100 @@ export interface PKHeXApi {
      * @param generation - Pokemon generation (1-9)
      */
     getSpeciesEvolutions(species: SpeciesID, generation: Generation): ApiResult<SpeciesEvolutionData>;
+  };
+
+  /**
+   * @deprecated Gen9a namespace is deprecated. Use the following instead:
+   * - collectColorfulScrews -> save.progress.collectColorfulScrews
+   * - getColorfulScrewLocations -> save.progress.getColorfulScrewLocations
+   * - setTextSpeed -> save.setTextSpeed
+   * - getTextSpeed -> save.getTextSpeed
+   * - unlockFashionCategory -> save.features.unlockFashionCategory
+   * - unlockAllFashion -> save.features.unlockAllFashion
+   * - unlockAllHairMakeup -> save.features.unlockAllHairMakeup
+   * - getInfiniteRoyalePoints -> save.progress.getInfiniteRoyalePoints
+   * - setInfiniteRoyalePoints -> save.progress.setInfiniteRoyalePoints
+   */
+  gen9a: {
+    /**
+     * @deprecated Use save.progress.collectColorfulScrews instead
+     * Collect all Colorful Screws in Legends Z-A and update inventory
+     * @param handle - Save file handle
+     * @returns Number of screws collected
+     */
+    collectColorfulScrews(handle: SaveHandle): ApiResult<{ screwsCollected: number; message: string }>;
+
+    /**
+     * @deprecated Use save.progress.getColorfulScrewLocations instead
+     * Get locations of Colorful Screws by collection state
+     * @param handle - Save file handle
+     * @param collected - True for collected screws, false for uncollected
+     * @returns Array of screw locations with coordinates
+     */
+    getColorfulScrewLocations(
+      handle: SaveHandle,
+      collected: boolean
+    ): ApiResult<{ collected: boolean; count: number; locations: ColorfulScrewLocation[] }>;
+
+    /**
+     * @deprecated Use save.setTextSpeed instead
+     * Set text speed in ConfigSave
+     * @param handle - Save file handle
+     * @param speed - Text speed (0=Slow, 1=Normal, 2=Fast, 3=Instant)
+     */
+    setTextSpeed(handle: SaveHandle, speed: number): ApiResult<MessageResponse>;
+
+    /**
+     * @deprecated Use save.getTextSpeed instead
+     * Get current text speed setting
+     * @param handle - Save file handle
+     * @returns Current text speed value and name
+     */
+    getTextSpeed(handle: SaveHandle): ApiResult<{ textSpeed: number; speedName: string }>;
+
+    /**
+     * @deprecated Use save.features.unlockFashionCategory instead
+     * Unlock all fashion items in a specific category
+     * @param handle - Save file handle
+     * @param category - Fashion category (tops, bottoms, allinone, headwear, eyewear, gloves, legwear, footwear, satchels, earrings)
+     */
+    unlockFashionCategory(handle: SaveHandle, category: string): ApiResult<MessageResponse>;
+
+    /**
+     * @deprecated Use save.features.unlockAllFashion instead
+     * Unlock all fashion items in all categories
+     * @param handle - Save file handle
+     * @returns Number of items unlocked
+     */
+    unlockAllFashion(handle: SaveHandle): ApiResult<{ itemsUnlocked: number; message: string }>;
+
+    /**
+     * @deprecated Use save.features.unlockAllHairMakeup instead
+     * Unlock all hair and makeup options
+     * @param handle - Save file handle
+     * @returns Number of items unlocked
+     */
+    unlockAllHairMakeup(handle: SaveHandle): ApiResult<{ itemsUnlocked: number; message: string }>;
+
+    /**
+     * @deprecated Use save.progress.getInfiniteRoyalePoints instead
+     * Get Infinite Royale ticket points
+     * @param handle - Save file handle
+     * @returns Regular and Infinite Royale points
+     */
+    getInfiniteRoyalePoints(handle: SaveHandle): ApiResult<{ royalePoints: number; infiniteRoyalePoints: number }>;
+
+    /**
+     * @deprecated Use save.progress.setInfiniteRoyalePoints instead
+     * Set Infinite Royale ticket points
+     * @param handle - Save file handle
+     * @param royalePoints - Regular Royale ticket points (max: 2147483647)
+     * @param infinitePoints - Infinite Royale ticket points (max: 2147483647)
+     */
+    setInfiniteRoyalePoints(
+      handle: SaveHandle,
+      royalePoints: number,
+      infinitePoints: number
+    ): ApiResult<MessageResponse>;
   };
 }

@@ -144,4 +144,100 @@ describe('Integration Tests', () => {
       }
     });
   });
+
+  describe('Save Progress Methods', () => {
+    it('should serialize CollectColorfulScrews error response', () => {
+      const jsonResponse = rawApi.CollectColorfulScrews(-1);
+      const parsed = JSON.parse(jsonResponse);
+      
+      expect(parsed).toHaveProperty('error');
+      expect(typeof parsed.error).toBe('string');
+    });
+
+    it('should serialize GetColorfulScrewLocations with boolean parameter', () => {
+      const jsonResponseFalse = rawApi.GetColorfulScrewLocations(-1, false);
+      const jsonResponseTrue = rawApi.GetColorfulScrewLocations(-1, true);
+      
+      expect(() => JSON.parse(jsonResponseFalse)).not.toThrow();
+      expect(() => JSON.parse(jsonResponseTrue)).not.toThrow();
+    });
+
+    it('should serialize GetInfiniteRoyalePoints error response', () => {
+      const jsonResponse = rawApi.GetInfiniteRoyalePoints(-1);
+      const parsed = JSON.parse(jsonResponse);
+      
+      expect(parsed).toHaveProperty('error');
+      expect(typeof parsed.error).toBe('string');
+    });
+
+    it('should serialize SetInfiniteRoyalePoints with large values', () => {
+      const maxInt32 = 2147483647;
+      const jsonResponse = rawApi.SetInfiniteRoyalePoints(-1, maxInt32, maxInt32);
+      
+      expect(() => JSON.parse(jsonResponse)).not.toThrow();
+    });
+  });
+
+  describe('Save Configuration Methods', () => {
+    it('should serialize SetTextSpeed error response', () => {
+      const jsonResponse = rawApi.SetTextSpeed(-1, 3);
+      const parsed = JSON.parse(jsonResponse);
+      
+      expect(parsed).toHaveProperty('error');
+      expect(typeof parsed.error).toBe('string');
+    });
+
+    it('should serialize GetTextSpeed error response', () => {
+      const jsonResponse = rawApi.GetTextSpeed(-1);
+      const parsed = JSON.parse(jsonResponse);
+      
+      expect(parsed).toHaveProperty('error');
+      expect(typeof parsed.error).toBe('string');
+    });
+
+    it('should handle all text speed values', () => {
+      for (let speed = 0; speed <= 3; speed++) {
+        const jsonResponse = rawApi.SetTextSpeed(-1, speed);
+        expect(() => JSON.parse(jsonResponse)).not.toThrow();
+      }
+    });
+  });
+
+  describe('Save Features Methods', () => {
+    it('should serialize UnlockFashionCategory error response', () => {
+      const jsonResponse = rawApi.UnlockFashionCategory(-1, 'tops');
+      const parsed = JSON.parse(jsonResponse);
+      
+      expect(parsed).toHaveProperty('error');
+      expect(typeof parsed.error).toBe('string');
+    });
+
+    it('should handle all fashion categories', () => {
+      const categories = [
+        'tops', 'bottoms', 'allinone', 'headwear', 'eyewear',
+        'gloves', 'legwear', 'footwear', 'satchels', 'earrings'
+      ];
+
+      for (const category of categories) {
+        const jsonResponse = rawApi.UnlockFashionCategory(-1, category);
+        expect(() => JSON.parse(jsonResponse)).not.toThrow();
+      }
+    });
+
+    it('should serialize UnlockAllFashion error response', () => {
+      const jsonResponse = rawApi.UnlockAllFashion(-1);
+      const parsed = JSON.parse(jsonResponse);
+      
+      expect(parsed).toHaveProperty('error');
+      expect(typeof parsed.error).toBe('string');
+    });
+
+    it('should serialize UnlockAllHairMakeup error response', () => {
+      const jsonResponse = rawApi.UnlockAllHairMakeup(-1);
+      const parsed = JSON.parse(jsonResponse);
+      
+      expect(parsed).toHaveProperty('error');
+      expect(typeof parsed.error).toBe('string');
+    });
+  });
 });

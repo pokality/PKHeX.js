@@ -68,6 +68,8 @@ locally with scripts/build.sh, and create a PR.
 
 This project uses PKHeX.Core which is licensed under GPLv3.
 
-## Credits
+## Acknowledgments
 
-Built on top of [PKHeX](https://github.com/kwsch/PKHeX) by Kurt.
+This project would not be possible without [PKHeX](https://github.com/kwsch/PKHeX) by [kwsch](https://github.com/kwsch). PKHeX is the gold standard for Pokémon save file editing, and we're grateful to be able to bring its powerful functionality to JavaScript/TypeScript environments through WebAssembly.
+
+Special thanks to kwsch for maintaining PKHeX and making it available under an open source license.

@@ -1,6 +1,6 @@
 {
   "name": "pkhex",
-  "version": "25.10.26-a",
+  "version": "25.11.06",
   "description": "WebAssembly library wrapping PKHeX.Core for Pokemon save file editing in JavaScript/TypeScript",
   "type": "module",
   "main": "dist/index.js",

@@ -112,9 +112,6 @@ jobs:
       with:
         dotnet-version: '9.0.x'
     
-    - name: Install WASM workload
-      run: dotnet workload install wasm-tools
-    
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -123,8 +120,9 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
-    - name: Restore .NET dependencies
+    - name: Restore workloads and dependencies
       run: |
+        dotnet workload restore src/PKHeX/PKHeX.csproj
         dotnet restore src/PKHeX/PKHeX.csproj
         dotnet restore tests/PKHeX.Tests/PKHeX.Tests.csproj
     
@@ -254,9 +252,6 @@ jobs:
       with:
         dotnet-version: '9.0.x'
     
-    - name: Install WASM workload
-      run: dotnet workload install wasm-tools
-    
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -266,8 +261,9 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
-    - name: Restore .NET dependencies
+    - name: Restore workloads and dependencies
       run: |
+        dotnet workload restore src/PKHeX/PKHeX.csproj
         dotnet restore src/PKHeX/PKHeX.csproj
         dotnet restore tests/PKHeX.Tests/PKHeX.Tests.csproj
     

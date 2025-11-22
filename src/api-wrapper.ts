@@ -147,6 +147,17 @@ interface RawPKHeXApi {
   GetSpeciesForms(species: number, generation: number): string;
   GetSpeciesEvolutions(species: number, generation: number): string;
   ConvertPKMFormat(base64PkmData: string, fromGeneration: number, toGeneration: number): string;
+  
+  // Gen9a (Legends Z-A) methods
+  CollectColorfulScrews(handle: number): string;
+  GetColorfulScrewLocations(handle: number, collected: boolean): string;
+  SetTextSpeed(handle: number, speed: number): string;
+  GetTextSpeed(handle: number): string;
+  UnlockFashionCategory(handle: number, category: string): string;
+  UnlockAllFashion(handle: number): string;
+  UnlockAllHairMakeup(handle: number): string;
+  GetInfiniteRoyalePoints(handle: number): string;
+  SetInfiniteRoyalePoints(handle: number, royalePoints: number, infinitePoints: number): string;
 }
 
 function parseJson<T>(jsonString: string): ApiResult<T> {
@@ -187,6 +198,8 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
       getInfo: (handle: SaveHandle) => parseJson<SaveFileInfo>(rawApi.GetSaveInfo(handle)),
       export: (handle: SaveHandle) => parseJson<{ base64Data: string }>(rawApi.ExportSave(handle)),
       dispose: (handle: SaveHandle) => parseJson<MessageResponse>(rawApi.DisposeSave(handle)),
+      setTextSpeed: (handle: SaveHandle, speed: number) => parseJson<MessageResponse>(rawApi.SetTextSpeed(handle, speed)),
+      getTextSpeed: (handle: SaveHandle) => parseJson<{ textSpeed: number; speedName: string }>(rawApi.GetTextSpeed(handle)),
 
       pokemon: {
         get: (handle: SaveHandle, box: number, slot: number) => parseJson<PokemonDetail>(rawApi.GetPokemon(handle, box, slot)),
@@ -259,6 +272,10 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         getBattleFacilityStats: (handle: SaveHandle) => parseJson<BattleFacilityStats>(rawApi.GetBattleFacilityStats(handle)),
         getHallOfFame: (handle: SaveHandle) => parseJson<{ entries: HallOfFameEntry[] }>(rawApi.GetHallOfFame(handle)),
         setHallOfFameEntry: (handle: SaveHandle, index: number, team: PokemonSummary[]) => parseJson<MessageResponse>(rawApi.SetHallOfFameEntry(handle, index, JSON.stringify(team))),
+        collectColorfulScrews: (handle: SaveHandle) => parseJson<{ screwsCollected: number; message: string }>(rawApi.CollectColorfulScrews(handle)),
+        getColorfulScrewLocations: (handle: SaveHandle, collected: boolean) => parseJson<{ collected: boolean; count: number; locations: Array<{ fieldItem: string; x: number; y: number; z: number }> }>(rawApi.GetColorfulScrewLocations(handle, collected)),
+        getInfiniteRoyalePoints: (handle: SaveHandle) => parseJson<{ royalePoints: number; infiniteRoyalePoints: number }>(rawApi.GetInfiniteRoyalePoints(handle)),
+        setInfiniteRoyalePoints: (handle: SaveHandle, royalePoints: number, infinitePoints: number) => parseJson<MessageResponse>(rawApi.SetInfiniteRoyalePoints(handle, royalePoints, infinitePoints)),
       },
 
       time: {
@@ -291,6 +308,9 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         getPokePelago: (handle: SaveHandle) => parseJson<{ pokePelagoData: PokePelagoData }>(rawApi.GetPokePelago(handle)),
         getFestivalPlaza: (handle: SaveHandle) => parseJson<{ festivalPlazaData: FestivalPlazaData }>(rawApi.GetFestivalPlaza(handle)),
         getPokeJobs: (handle: SaveHandle) => parseJson<{ pokeJobsData: PokeJobsData }>(rawApi.GetPokeJobs(handle)),
+        unlockFashionCategory: (handle: SaveHandle, category: string) => parseJson<MessageResponse>(rawApi.UnlockFashionCategory(handle, category)),
+        unlockAllFashion: (handle: SaveHandle) => parseJson<{ itemsUnlocked: number; message: string }>(rawApi.UnlockAllFashion(handle)),
+        unlockAllHairMakeup: (handle: SaveHandle) => parseJson<{ itemsUnlocked: number; message: string }>(rawApi.UnlockAllHairMakeup(handle)),
       },
     },
 
@@ -316,6 +336,45 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
       getMetLocations: (generation: number, gameVersion: number, eggLocations: boolean) => parseJson<{ generation: number; gameVersion: number; isEggLocations: boolean; locations: Array<{ value: number; text: string }>; count: number }>(rawApi.GetPKMMetLocations(generation, gameVersion, eggLocations)),
       getSpeciesForms: (species: number, generation: number) => parseJson<{ species: number; speciesName: string; generation: number; forms: Array<{ formIndex: number; formName: string; type1: number; type1Name: string; type2: number; type2Name: string; baseStats: { hp: number; attack: number; defense: number; spAttack: number; spDefense: number; speed: number }; genderRatio: number; isDualGender: boolean; isGenderless: boolean }>; formCount: number }>(rawApi.GetSpeciesForms(species, generation)),
       getSpeciesEvolutions: (species: number, generation: number) => parseJson<{ species: number; speciesName: string; generation: number; evolutionChain: Array<{ species: number; speciesName: string; form: number }>; chainLength: number; forwardEvolutions: Array<{ species: number; speciesName: string; form: number }>; preEvolutions: Array<{ species: number; speciesName: string; form: number }>; baseSpecies: number; baseSpeciesName: string; baseForm: number }>(rawApi.GetSpeciesEvolutions(species, generation)),
+    },
+
+    gen9a: {
+      collectColorfulScrews: (handle: SaveHandle) => {
+        console.warn('gen9a.collectColorfulScrews is deprecated. Use save.progress.collectColorfulScrews instead.');
+        return parseJson<{ screwsCollected: number; message: string }>(rawApi.CollectColorfulScrews(handle));
+      },
+      getColorfulScrewLocations: (handle: SaveHandle, collected: boolean) => {
+        console.warn('gen9a.getColorfulScrewLocations is deprecated. Use save.progress.getColorfulScrewLocations instead.');
+        return parseJson<{ collected: boolean; count: number; locations: Array<{ fieldItem: string; x: number; y: number; z: number }> }>(rawApi.GetColorfulScrewLocations(handle, collected));
+      },
+      setTextSpeed: (handle: SaveHandle, speed: number) => {
+        console.warn('gen9a.setTextSpeed is deprecated. Use save.setTextSpeed instead.');
+        return parseJson<MessageResponse>(rawApi.SetTextSpeed(handle, speed));
+      },
+      getTextSpeed: (handle: SaveHandle) => {
+        console.warn('gen9a.getTextSpeed is deprecated. Use save.getTextSpeed instead.');
+        return parseJson<{ textSpeed: number; speedName: string }>(rawApi.GetTextSpeed(handle));
+      },
+      unlockFashionCategory: (handle: SaveHandle, category: string) => {
+        console.warn('gen9a.unlockFashionCategory is deprecated. Use save.features.unlockFashionCategory instead.');
+        return parseJson<MessageResponse>(rawApi.UnlockFashionCategory(handle, category));
+      },
+      unlockAllFashion: (handle: SaveHandle) => {
+        console.warn('gen9a.unlockAllFashion is deprecated. Use save.features.unlockAllFashion instead.');
+        return parseJson<{ itemsUnlocked: number; message: string }>(rawApi.UnlockAllFashion(handle));
+      },
+      unlockAllHairMakeup: (handle: SaveHandle) => {
+        console.warn('gen9a.unlockAllHairMakeup is deprecated. Use save.features.unlockAllHairMakeup instead.');
+        return parseJson<{ itemsUnlocked: number; message: string }>(rawApi.UnlockAllHairMakeup(handle));
+      },
+      getInfiniteRoyalePoints: (handle: SaveHandle) => {
+        console.warn('gen9a.getInfiniteRoyalePoints is deprecated. Use save.progress.getInfiniteRoyalePoints instead.');
+        return parseJson<{ royalePoints: number; infiniteRoyalePoints: number }>(rawApi.GetInfiniteRoyalePoints(handle));
+      },
+      setInfiniteRoyalePoints: (handle: SaveHandle, royalePoints: number, infinitePoints: number) => {
+        console.warn('gen9a.setInfiniteRoyalePoints is deprecated. Use save.progress.setInfiniteRoyalePoints instead.');
+        return parseJson<MessageResponse>(rawApi.SetInfiniteRoyalePoints(handle, royalePoints, infinitePoints));
+      },
     },
   };
 }

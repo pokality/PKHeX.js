@@ -24,11 +24,10 @@ jobs:
       with:
         dotnet-version: '9.0.x'
     
-    - name: Install WASM workload
-      run: dotnet workload install wasm-tools
-    
-    - name: Restore dependencies
-      run: dotnet restore src/PKHeX/PKHeX.csproj
+    - name: Restore workloads and dependencies
+      run: |
+        dotnet workload restore src/PKHeX/PKHeX.csproj
+        dotnet restore src/PKHeX/PKHeX.csproj
     
     - name: Format check
       run: dotnet format src/PKHeX/PKHeX.csproj --verify-no-changes --verbosity diagnostic
@@ -53,11 +52,10 @@ jobs:
       with:
         dotnet-version: '9.0.x'
     
-    - name: Install WASM workload
-      run: dotnet workload install wasm-tools
-    
-    - name: Restore dependencies
-      run: dotnet restore src/PKHeX/PKHeX.csproj
+    - name: Restore workloads and dependencies
+      run: |
+        dotnet workload restore src/PKHeX/PKHeX.csproj
+        dotnet restore src/PKHeX/PKHeX.csproj
     
     - name: Build
       run: dotnet build src/PKHeX/PKHeX.csproj -c Release --no-restore
@@ -118,11 +116,10 @@ jobs:
       with:
         dotnet-version: '9.0.x'
     
-    - name: Install WASM workload
-      run: dotnet workload install wasm-tools
-    
-    - name: Restore dependencies
-      run: dotnet restore tests/PKHeX.Tests/PKHeX.Tests.csproj
+    - name: Restore workloads and dependencies
+      run: |
+        dotnet workload restore tests/PKHeX.Tests/PKHeX.Tests.csproj
+        dotnet restore tests/PKHeX.Tests/PKHeX.Tests.csproj
     
     - name: Run tests
       run: dotnet test tests/PKHeX.Tests/PKHeX.Tests.csproj -c Release --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./coverage
