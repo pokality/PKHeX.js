@@ -65,23 +65,38 @@ jobs:
         echo "  PKHeX version: $PKHEX_VERSION"
         echo "  Package.json version: $PACKAGE_VERSION"
         
+        # Normalize versions by removing leading zeros from version parts
+        # e.g., 25.11.06 -> 25.11.6
+        normalize_version() {
+          echo "$1" | sed -E 's/\.0+([0-9])/.\1/g'
+        }
+        
+        NORMALIZED_TAG=$(normalize_version "$TAG_VERSION")
+        NORMALIZED_PKHEX=$(normalize_version "$PKHEX_VERSION")
+        NORMALIZED_PACKAGE=$(normalize_version "$PACKAGE_VERSION")
+        
+        echo "Normalized versions:"
+        echo "  Tag version: $NORMALIZED_TAG"
+        echo "  PKHeX version: $NORMALIZED_PKHEX"
+        echo "  Package.json version: $NORMALIZED_PACKAGE"
+        
         ERRORS=0
         
         # Allow tag to be either exact match or hotfix (PKHEX_VERSION-<suffix> with at least 1 char)
-        if [ "$TAG_VERSION" = "$PKHEX_VERSION" ]; then
+        if [ "$NORMALIZED_TAG" = "$NORMALIZED_PKHEX" ]; then
           echo "Tag version matches PKHeX version exactly"
-        elif [[ "$TAG_VERSION" =~ ^${PKHEX_VERSION}-.+$ ]]; then
-          echo "Tag version ($TAG_VERSION) is a hotfix of PKHeX version ($PKHEX_VERSION)"
+        elif [[ "$NORMALIZED_TAG" =~ ^${NORMALIZED_PKHEX}-.+$ ]]; then
+          echo "Tag version ($NORMALIZED_TAG) is a hotfix of PKHeX version ($NORMALIZED_PKHEX)"
         else
-          echo "Tag version ($TAG_VERSION) does not match or start with PKHeX version ($PKHEX_VERSION)"
+          echo "Tag version ($NORMALIZED_TAG) does not match or start with PKHeX version ($NORMALIZED_PKHEX)"
           ERRORS=$((ERRORS + 1))
         fi
         
         # Package.json must match tag exactly
-        if [ "$TAG_VERSION" = "$PACKAGE_VERSION" ]; then
+        if [ "$NORMALIZED_TAG" = "$NORMALIZED_PACKAGE" ]; then
           echo "Package.json version matches tag exactly"
         else
-          echo "Package.json version ($PACKAGE_VERSION) does not match tag version ($TAG_VERSION)"
+          echo "Package.json version ($NORMALIZED_PACKAGE) does not match tag version ($NORMALIZED_TAG)"
           ERRORS=$((ERRORS + 1))
         fi
         
