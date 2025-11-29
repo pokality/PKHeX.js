@@ -30,8 +30,6 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateBox(save, box);
-            ApiHelpers.ValidateSlot(save, slot);
 
             if (string.IsNullOrWhiteSpace(showdownText))
                 throw new ValidationException("Showdown text cannot be empty", "EMPTY_SHOWDOWN_TEXT");

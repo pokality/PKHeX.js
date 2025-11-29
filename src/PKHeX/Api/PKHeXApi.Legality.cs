@@ -27,12 +27,7 @@ public partial class PKHeXApi
                     errorList.Add(localizer.Humanize(r));
             }
 
-            return new
-            {
-                valid = analysis.Valid,
-                errors = errorList.ToArray(),
-                parsed = analysis.Report()
-            };
+            return new LegalityResult(analysis.Valid, errorList.ToArray(), analysis.Report());
         });
     }
 

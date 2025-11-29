@@ -207,14 +207,6 @@ public partial class PKHeXApi
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
-            ApiHelpers.ValidateNonNegative(species, nameof(species), INVALID_SPECIES);
-            ApiHelpers.ValidateNonNegative(generation, nameof(generation), "INVALID_GENERATION");
-
-            if (species < 1 || species > 1025)
-                throw new ValidationException($"Species {species} is out of range (1-1025)", INVALID_SPECIES);
-
-            if (generation < 1 || generation > 9)
-                throw new ValidationException($"Generation {generation} is out of range (1-9)", "INVALID_GENERATION");
 
             var context = (EntityContext)generation;
             var evolutions = EvolutionTree.GetEvolutionTree(context);
@@ -280,15 +272,6 @@ public partial class PKHeXApi
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
-            ApiHelpers.ValidateNonNegative(species, nameof(species), INVALID_SPECIES);
-            ApiHelpers.ValidateNonNegative(generation, nameof(generation), "INVALID_GENERATION");
-
-            if (species < 1 || species > 1025)
-                throw new ValidationException($"Species {species} is out of range (1-1025)", INVALID_SPECIES);
-
-            if (generation < 1 || generation > 9)
-                throw new ValidationException($"Generation {generation} is out of range (1-9)", "INVALID_GENERATION");
-
             var context = (EntityContext)generation;
             var pt = context switch
             {

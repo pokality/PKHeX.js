@@ -1,38 +1,40 @@
+using System.Text.Json.Serialization;
+
 namespace PKHeX.Models;
 
 public record SecretBaseData(
-    string TrainerName,
-    int TrainerID,
-    int SecretID,
-    int Gender,
-    int Language,
-    string LocationName,
-    int LocationID
+    [property: JsonPropertyName("trainerName")] string TrainerName,
+    [property: JsonPropertyName("trainerId")] int TrainerID,
+    [property: JsonPropertyName("secretId")] int SecretID,
+    [property: JsonPropertyName("gender")] int Gender,
+    [property: JsonPropertyName("language")] int Language,
+    [property: JsonPropertyName("locationName")] string LocationName,
+    [property: JsonPropertyName("locationId")] int LocationID
 );
 
 public record EntralinkData(
-    int ForestLevel,
-    int MissionsCompleted,
-    int WhiteForestCount,
-    int BlackCityCount
+    [property: JsonPropertyName("forestLevel")] int ForestLevel,
+    [property: JsonPropertyName("missionsCompleted")] int MissionsCompleted,
+    [property: JsonPropertyName("whiteForestCount")] int WhiteForestCount,
+    [property: JsonPropertyName("blackCityCount")] int BlackCityCount
 );
 
 public record PokePelagoData(
-    int BeansCount,
-    int IsleAevelynDevelopment,
-    int IsleAphunDevelopment,
-    int IsleEvelupDevelopment,
-    int PokemonCount
+    [property: JsonPropertyName("beansCount")] int BeansCount,
+    [property: JsonPropertyName("isleAevelynDevelopment")] int IsleAevelynDevelopment,
+    [property: JsonPropertyName("isleAphunDevelopment")] int IsleAphunDevelopment,
+    [property: JsonPropertyName("isleEvelupDevelopment")] int IsleEvelupDevelopment,
+    [property: JsonPropertyName("pokemonCount")] int PokemonCount
 );
 
 public record FestivalPlazaData(
-    int Rank,
-    int FestivalCoins,
-    int TotalVisitors,
-    int FacilityCount
+    [property: JsonPropertyName("rank")] int Rank,
+    [property: JsonPropertyName("festivalCoins")] int FestivalCoins,
+    [property: JsonPropertyName("totalVisitors")] int TotalVisitors,
+    [property: JsonPropertyName("facilityCount")] int FacilityCount
 );
 
 public record PokeJobsData(
-    int ActiveJobsCount,
-    int CompletedJobsCount
+    [property: JsonPropertyName("activeJobsCount")] int ActiveJobsCount,
+    [property: JsonPropertyName("completedJobsCount")] int CompletedJobsCount
 );

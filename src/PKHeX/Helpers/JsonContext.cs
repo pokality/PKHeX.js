@@ -86,7 +86,40 @@ namespace PKHeX.Helpers;
 [JsonSerializable(typeof(List<EvolutionEntry>))]
 [JsonSerializable(typeof(List<SpeciesFormInfo>))]
 [JsonSerializable(typeof(List<LocationInfo>))]
+[JsonSerializable(typeof(List<RibbonEntry>))]
 [JsonSerializable(typeof(Dictionary<string, object>))]
+[JsonSerializable(typeof(RibbonEntry))]
+[JsonSerializable(typeof(RibbonListResponse))]
+[JsonSerializable(typeof(HandleCountResponse))]
+// Friendship models
+[JsonSerializable(typeof(FriendshipData))]
+// Memory models
+[JsonSerializable(typeof(MemoryInfo))]
+[JsonSerializable(typeof(MemoriesData))]
+[JsonSerializable(typeof(MemoryStringsData))]
+// Form models
+[JsonSerializable(typeof(FormData))]
+[JsonSerializable(typeof(FormInfo))]
+[JsonSerializable(typeof(AvailableFormsData))]
+[JsonSerializable(typeof(List<FormInfo>))]
+// Batch models
+[JsonSerializable(typeof(BoxSlotLocation))]
+[JsonSerializable(typeof(BoxSlotLocation[]))]
+[JsonSerializable(typeof(BatchLegalityResult))]
+[JsonSerializable(typeof(BatchLegalityResponse))]
+[JsonSerializable(typeof(BatchModification))]
+[JsonSerializable(typeof(BatchModification[]))]
+[JsonSerializable(typeof(BatchOperationResult))]
+[JsonSerializable(typeof(BatchOperationResponse))]
+[JsonSerializable(typeof(BatchClearResponse))]
+[JsonSerializable(typeof(BoxStatsData))]
+[JsonSerializable(typeof(List<BatchLegalityResult>))]
+[JsonSerializable(typeof(List<BatchOperationResult>))]
+// Tera Type models
+[JsonSerializable(typeof(TeraTypeData))]
+[JsonSerializable(typeof(TeraTypeInfo))]
+[JsonSerializable(typeof(TeraTypesListResponse))]
+[JsonSerializable(typeof(List<TeraTypeInfo>))]
 public partial class JsonContext : JsonSerializerContext
 {
 }

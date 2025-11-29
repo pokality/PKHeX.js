@@ -182,7 +182,7 @@ public partial class PKHeXApi
             if (pk == null)
                 throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
-            var mods = JsonSerializer.Deserialize<PokemonModifications>(modificationsJson, JsonOptions);
+            var mods = JsonSerializer.Deserialize<PokemonModifications>(modificationsJson, JsonContext.Default.Options);
             if (mods == null)
                 throw new ValidationException("Invalid modifications JSON", INVALID_JSON);
 
@@ -277,12 +277,7 @@ public partial class PKHeXApi
                     errorList.Add(localizer.Humanize(r));
             }
 
-            return new
-            {
-                valid = analysis.Valid,
-                errors = errorList.ToArray(),
-                parsed = analysis.Report()
-            };
+            return new LegalityResult(analysis.Valid, errorList.ToArray(), analysis.Report());
         });
     }
 
@@ -371,15 +366,14 @@ public partial class PKHeXApi
             if (pk == null)
                 throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
-            return new
-            {
-                hp = pk.Stat_HPMax,
-                attack = pk.Stat_ATK,
-                defense = pk.Stat_DEF,
-                spAttack = pk.Stat_SPA,
-                spDefense = pk.Stat_SPD,
-                speed = pk.Stat_SPE
-            };
+            return new PokemonStats(
+                pk.Stat_HPMax,
+                pk.Stat_ATK,
+                pk.Stat_DEF,
+                pk.Stat_SPA,
+                pk.Stat_SPD,
+                pk.Stat_SPE
+            );
         });
     }
 
@@ -407,15 +401,14 @@ public partial class PKHeXApi
                 throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
 
             var ribbonInfo = RibbonInfo.GetRibbonInfo(pk);
-            var ribbonList = ribbonInfo.Select(r => new
-            {
-                name = r.Name,
-                hasRibbon = r.HasRibbon,
-                ribbonCount = r.RibbonCount,
-                type = r.Type.ToString()
-            }).ToList();
+            var ribbonList = ribbonInfo.Select(r => new RibbonEntry(
+                r.Name,
+                r.HasRibbon,
+                r.RibbonCount,
+                r.Type.ToString()
+            )).ToList();
 
-            return ribbonList;
+            return new RibbonListResponse(ribbonList);
         });
     }
 
@@ -531,12 +524,11 @@ public partial class PKHeXApi
             var hpType = pk.HPType;
             var hpPower = pk.HPPower;
 
-            return new
-            {
-                type = (int)hpType,
-                typeName = GameInfo.Strings.Types[(int)hpType],
-                power = hpPower
-            };
+            return new HiddenPowerInfo(
+                (int)hpType,
+                GameInfo.Strings.Types[(int)hpType],
+                hpPower
+            );
         });
     }
 
@@ -567,11 +559,10 @@ public partial class PKHeXApi
             var characteristics = GameInfo.Strings.characteristics;
             var characteristicText = characteristic < characteristics.Length ? characteristics[characteristic] : "";
 
-            return new
-            {
-                index = characteristic,
-                text = characteristicText
-            };
+            return new CharacteristicInfo(
+                characteristic,
+                characteristicText
+            );
         });
     }
 
@@ -588,24 +579,15 @@ public partial class PKHeXApi
             var version = (GameVersion)gameVersion;
             var locations = GameInfo.GetLocationList(version, context, eggLocations);
 
-            var locationList = new List<object>();
-            foreach (var loc in locations)
-            {
-                locationList.Add(new
-                {
-                    value = loc.Value,
-                    text = loc.Text
-                });
-            }
+            var locationList = locations.Select(loc => new LocationInfo(loc.Value, loc.Text)).ToList();
 
-            return new
-            {
+            return new MetLocationsInfo(
                 generation,
                 gameVersion,
-                isEggLocations = eggLocations,
-                locations = locationList,
-                count = locationList.Count
-            };
+                eggLocations,
+                locationList,
+                locationList.Count
+            );
         });
     }
 
@@ -624,15 +606,6 @@ public partial class PKHeXApi
             {
                 throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
-
-            ApiHelpers.ValidateNonNegative(fromGeneration, nameof(fromGeneration), "INVALID_GENERATION");
-            ApiHelpers.ValidateNonNegative(toGeneration, nameof(toGeneration), "INVALID_GENERATION");
-
-            if (fromGeneration < 1 || fromGeneration > 9)
-                throw new ValidationException($"From generation {fromGeneration} is out of range (1-9)", "INVALID_GENERATION");
-
-            if (toGeneration < 1 || toGeneration > 9)
-                throw new ValidationException($"To generation {toGeneration} is out of range (1-9)", "INVALID_GENERATION");
 
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)fromGeneration);
             if (pk == null)
@@ -674,16 +647,15 @@ public partial class PKHeXApi
             var convertedData = converted.DecryptedPartyData;
             var base64Result = Convert.ToBase64String(convertedData);
 
-            return new
-            {
-                success = true,
-                base64Data = base64Result,
+            return new ConversionResult(
+                true,
+                base64Result,
                 fromGeneration,
                 toGeneration,
-                fromFormat = pk.GetType().Name,
-                toFormat = converted.GetType().Name,
-                conversionResult = result.ToString()
-            };
+                pk.GetType().Name,
+                converted.GetType().Name,
+                result.ToString()
+            );
         });
     }
 }

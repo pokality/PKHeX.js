@@ -84,3 +84,14 @@ public record MetLocationsInfo(
     [property: JsonPropertyName("locations")] List<LocationInfo> Locations,
     [property: JsonPropertyName("count")] int Count
 );
+
+public record RibbonEntry(
+    [property: JsonPropertyName("name")] string Name,
+    [property: JsonPropertyName("hasRibbon")] bool HasRibbon,
+    [property: JsonPropertyName("ribbonCount")] int RibbonCount,
+    [property: JsonPropertyName("type")] string Type
+);
+
+public record RibbonListResponse(
+    [property: JsonPropertyName("ribbons")] List<RibbonEntry> Ribbons
+);

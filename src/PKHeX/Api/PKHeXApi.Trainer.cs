@@ -44,7 +44,7 @@ public partial class PKHeXApi
             if (string.IsNullOrWhiteSpace(trainerDataJson))
                 throw new ValidationException("Trainer data cannot be empty", "EMPTY_TRAINER_DATA");
 
-            var trainerData = JsonSerializer.Deserialize<TrainerInfo>(trainerDataJson, JsonOptions);
+            var trainerData = JsonSerializer.Deserialize<TrainerInfo>(trainerDataJson, JsonContext.Default.Options);
             if (trainerData == null)
                 throw new ValidationException("Invalid trainer data JSON", INVALID_JSON);
 
@@ -71,15 +71,14 @@ public partial class PKHeXApi
             string? startDate = null;
             int fame = 0;
 
-            return new
-            {
-                ot = save.OT,
-                tid = save.DisplayTID,
-                sid = save.DisplaySID,
-                money = save.Money,
+            return new TrainerCard(
+                save.OT,
+                save.DisplayTID,
+                save.DisplaySID,
+                save.Money,
                 startDate,
                 fame
-            };
+            );
         });
     }
 
@@ -93,8 +92,7 @@ public partial class PKHeXApi
 
             int skin = 0, hair = 0, top = 0, bottom = 0, shoes = 0, accessory = 0, bag = 0, hat = 0;
 
-            return new
-            {
+            return new TrainerAppearance(
                 skin,
                 hair,
                 top,
@@ -103,7 +101,7 @@ public partial class PKHeXApi
                 accessory,
                 bag,
                 hat
-            };
+            );
         });
     }
 
@@ -118,7 +116,7 @@ public partial class PKHeXApi
             if (string.IsNullOrWhiteSpace(appearanceJson))
                 throw new ValidationException("Appearance data cannot be empty", "EMPTY_APPEARANCE_DATA");
 
-            var appearance = JsonSerializer.Deserialize<TrainerAppearance>(appearanceJson, JsonOptions);
+            var appearance = JsonSerializer.Deserialize<TrainerAppearance>(appearanceJson, JsonContext.Default.Options);
             if (appearance == null)
                 throw new ValidationException("Invalid appearance data JSON", INVALID_JSON);
 

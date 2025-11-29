@@ -76,7 +76,6 @@ public partial class PKHeXApi
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
-            ApiHelpers.ValidateHandle(handle);
             var removed = SaveFileManager.RemoveHandle(handle);
             if (!removed)
                 throw new ValidationException("Invalid save file handle", INVALID_HANDLE);
@@ -92,7 +91,7 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var count = SaveFileManager.GetActiveHandleCount();
-            return new { success = true, count };
+            return new HandleCountResponse(true, count);
         });
     }
 }

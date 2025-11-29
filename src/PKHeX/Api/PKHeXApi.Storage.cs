@@ -67,10 +67,6 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateBox(save, box);
-
-            if (wallpaperId < 0)
-                throw new ValidationException($"Wallpaper ID {wallpaperId} is invalid", "INVALID_WALLPAPER");
 
             if (save is not IBoxDetailWallpaper wallpaperWrite)
                 throw new ValidationException("Box wallpapers are not supported for this save file generation", "UNSUPPORTED_GENERATION");

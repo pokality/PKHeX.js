@@ -63,11 +63,11 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
-            var mods = JsonSerializer.Deserialize<PokemonModifications>(modificationsJson, JsonOptions);
+            var mods = JsonSerializer.Deserialize<PokemonModifications>(modificationsJson, JsonContext.Default.Options);
             if (mods == null)
                 throw new ValidationException("Invalid modifications JSON", INVALID_JSON);
 
-            ApplyModifications(pk, mods, save);
+            ApplyModifications(pk, mods);
             save.SetBoxSlotAtIndex(pk, box, slot);
 
             return new SuccessMessage(true, "Pokemon modified successfully");
@@ -81,8 +81,6 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateBox(save, box);
-            ApiHelpers.ValidateSlot(save, slot);
 
             byte[] data;
             try
@@ -111,11 +109,7 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateBox(save, box);
-            ApiHelpers.ValidateSlot(save, slot);
-
             save.SetBoxSlotAtIndex(save.BlankPKM, box, slot);
-
             return new SuccessMessage(true, "Pokemon deleted successfully");
         });
     }
@@ -127,11 +121,6 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-
-            ApiHelpers.ValidateBox(save, fromBox);
-            ApiHelpers.ValidateSlot(save, fromSlot);
-            ApiHelpers.ValidateBox(save, toBox);
-            ApiHelpers.ValidateSlot(save, toSlot);
 
             var sourcePk = save.GetBoxSlotAtIndex(fromBox, fromSlot);
             if (sourcePk.Species == 0)

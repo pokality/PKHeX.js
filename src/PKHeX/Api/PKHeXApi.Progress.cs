@@ -99,11 +99,7 @@ public partial class PKHeXApi
                 throw new ValidationException("Badges not supported for this save file generation", "UNSUPPORTED_GENERATION");
             }
 
-            return new
-            {
-                badgeCount,
-                badges = badgeList.ToArray()
-            };
+            return new BadgeData(badgeCount, badgeList.ToArray());
         });
     }
 
@@ -400,33 +396,25 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateNonNegative(recordIndex, "Record index", "INVALID_RECORD_INDEX");
-            ApiHelpers.ValidateNonNegative(value, "Record value", "INVALID_RECORD_VALUE");
 
             if (save is SAV6 sav6)
             {
-                var recordBlock = sav6.Records;
-                ApiHelpers.ValidateRange(recordIndex, 0, RecordBlock6.RecordCount - 1, "Record index", "INVALID_RECORD_INDEX");
-                recordBlock.SetRecord(recordIndex, value);
+                sav6.Records.SetRecord(recordIndex, value);
             }
             else if (save is SAV7 sav7)
             {
-                var recordBlock = sav7.Records;
-                ApiHelpers.ValidateRange(recordIndex, 0, RecordBlock6.RecordCount - 1, "Record index", "INVALID_RECORD_INDEX");
-                recordBlock.SetRecord(recordIndex, value);
+                sav7.Records.SetRecord(recordIndex, value);
             }
             else if (save is SAV8SWSH sav8)
             {
-                var recordBlock = sav8.Records;
-                ApiHelpers.ValidateRange(recordIndex, 0, Record8.RecordCount - 1, "Record index", "INVALID_RECORD_INDEX");
-                recordBlock.SetRecord(recordIndex, value);
+                sav8.Records.SetRecord(recordIndex, value);
             }
             else
             {
                 throw new ValidationException("Records not supported for this save file generation", "UNSUPPORTED_GENERATION");
             }
 
-            return ApiHelpers.SuccessMessage("Record updated successfully");
+            return new SuccessMessage(true, "Record updated successfully");
         });
     }
 }

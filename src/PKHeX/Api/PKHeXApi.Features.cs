@@ -182,7 +182,7 @@ public partial class PKHeXApi
             if (string.IsNullOrWhiteSpace(teamJson))
                 throw new ValidationException("Team data cannot be empty", "EMPTY_TEAM_DATA");
 
-            var team = JsonSerializer.Deserialize<PokemonSummary[]>(teamJson, JsonOptions);
+            var team = JsonSerializer.Deserialize<PokemonSummary[]>(teamJson, JsonContext.Default.Options);
             if (team == null || team.Length == 0)
                 throw new ValidationException("Invalid team data JSON", INVALID_JSON);
 
@@ -401,7 +401,7 @@ public partial class PKHeXApi
             if (string.IsNullOrWhiteSpace(cardJson))
                 throw new ValidationException("Card data cannot be empty", "EMPTY_CARD_DATA");
 
-            var cardData = JsonSerializer.Deserialize<MysteryGiftCard>(cardJson, JsonOptions);
+            var cardData = JsonSerializer.Deserialize<MysteryGiftCard>(cardJson, JsonContext.Default.Options);
             if (cardData == null)
                 throw new ValidationException("Invalid card data JSON", INVALID_JSON);
 

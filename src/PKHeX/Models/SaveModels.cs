@@ -128,3 +128,8 @@ public record PokeJobsResponse(
     [property: JsonPropertyName("success")] bool Success,
     [property: JsonPropertyName("pokeJobsData")] PokeJobsData PokeJobsData
 );
+
+public record HandleCountResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("count")] int Count
+);

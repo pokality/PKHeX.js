@@ -21,15 +21,14 @@ public partial class PKHeXApi
             if (pk is not IContestStatsReadOnly contestStats)
                 throw new ValidationException("This Pokemon does not support contest stats", "NO_CONTEST_STATS");
 
-            return new
-            {
-                cool = contestStats.ContestCool,
-                beauty = contestStats.ContestBeauty,
-                cute = contestStats.ContestCute,
-                smart = contestStats.ContestSmart,
-                tough = contestStats.ContestTough,
-                sheen = contestStats.ContestSheen
-            };
+            return new ContestStats(
+                contestStats.ContestCool,
+                contestStats.ContestBeauty,
+                contestStats.ContestCute,
+                contestStats.ContestSmart,
+                contestStats.ContestTough,
+                contestStats.ContestSheen
+            );
         });
     }
 

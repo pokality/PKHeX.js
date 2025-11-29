@@ -106,6 +106,69 @@ export interface SaveFileHandle {
   handle: SaveHandle;
 }
 
+/**
+ * SaveFile wrapper class that provides automatic handle cleanup via FinalizationRegistry.
+ *
+ * When a SaveFile instance is garbage collected, the underlying WASM handle
+ * is automatically disposed to prevent memory leaks.
+ *
+ * @example
+ * ```ts
+ * import { SaveFile } from 'pkhex/helpers';
+ *
+ * // Load save and wrap in SaveFile for automatic cleanup
+ * const result = pkhex.save.load(base64Data);
+ * if (isSuccess(result)) {
+ *   const save = new SaveFile(result.handle, (h) => pkhex.save.dispose(h));
+ *
+ *   // Use save.handle for API calls
+ *   const info = pkhex.save.getInfo(save.handle);
+ *
+ *   // Explicit dispose (recommended)
+ *   save.dispose();
+ *   // OR let GC handle it when save goes out of scope
+ * }
+ * ```
+ *
+ * @example Using with TC39 explicit resource management (TypeScript 5.2+)
+ * ```ts
+ * using save = new SaveFile(result.handle, (h) => pkhex.save.dispose(h));
+ * // Automatically disposed at end of scope
+ * ```
+ */
+export declare class SaveFile {
+  /**
+   * Create a new SaveFile wrapper.
+   * @param handle - The save file handle from LoadSave
+   * @param disposeCallback - Function to call to dispose the handle
+   */
+  constructor(handle: SaveHandle, disposeCallback: (handle: SaveHandle) => void);
+
+  /**
+   * Get the underlying handle for use with PKHeX API methods.
+   * @throws Error if the save file has been disposed
+   */
+  get handle(): SaveHandle;
+
+  /**
+   * Check if this save file has been disposed.
+   */
+  get disposed(): boolean;
+
+  /**
+   * Explicitly dispose the save file handle.
+   *
+   * It's recommended to call this when you're done with a save file
+   * for immediate resource cleanup, rather than waiting for GC.
+   */
+  dispose(): void;
+
+  /**
+   * Symbol.dispose support for using statement (TC39 proposal)
+   */
+  [Symbol.dispose](): void;
+}
+
 // ============================================================================
 // Pokemon Models
 // ============================================================================
@@ -185,6 +248,176 @@ export interface ContestStats {
   smart: number;
   tough: number;
   sheen: number;
+}
+
+/**
+ * Friendship and affection data
+ */
+export interface FriendshipData {
+  currentFriendship: number;
+  originalTrainerFriendship: number;
+  handlingTrainerFriendship: number | null;
+  /** Gen 6-7 only */
+  affection: number | null;
+  /** Gen 6-7 only */
+  fullness: number | null;
+  /** Gen 6-7 only */
+  enjoyment: number | null;
+}
+
+/**
+ * Memory information (Gen 6+)
+ */
+export interface MemoryInfo {
+  memoryId: number;
+  intensity: number;
+  feeling: number;
+  variable: number;
+  memoryText: string;
+}
+
+/**
+ * Pokemon memories data
+ */
+export interface MemoriesData {
+  originalTrainerMemory: MemoryInfo;
+  handlingTrainerMemory: MemoryInfo | null;
+}
+
+/**
+ * Memory strings for localization
+ */
+export interface MemoryStringsData {
+  memories: NamedEntity[];
+  feelings: NamedEntity[];
+  intensities: NamedEntity[];
+}
+
+/**
+ * Form data for a Pokemon
+ */
+export interface PokemonFormData {
+  form: number;
+  formName: string;
+  formCount: number;
+  formArgument: number | null;
+  formArgumentRemain: number | null;
+  formArgumentElapsed: number | null;
+  formArgumentMaximum: number | null;
+}
+
+/**
+ * Form info entry
+ */
+export interface FormInfoEntry {
+  formIndex: number;
+  formName: string;
+}
+
+/**
+ * Available forms for a species
+ */
+export interface AvailableFormsData {
+  species: number;
+  speciesName: string;
+  generation: number;
+  forms: FormInfoEntry[];
+  formCount: number;
+}
+
+/**
+ * Tera Type data (Gen 9)
+ */
+export interface TeraTypeData {
+  teraType: number;
+  teraTypeName: string;
+  teraTypeOverride: number;
+  teraTypeOverrideName: string;
+  isOverridden: boolean;
+}
+
+/**
+ * Tera Type info entry
+ */
+export interface TeraTypeInfo {
+  id: number;
+  name: string;
+  isStellar: boolean;
+}
+
+// ============================================================================
+// Batch Operation Models
+// ============================================================================
+
+/**
+ * Box/slot location for batch operations
+ */
+export interface BoxSlotLocation {
+  box: number;
+  slot: number;
+}
+
+/**
+ * Batch legality check result for a single Pokemon
+ */
+export interface BatchLegalityResult {
+  box: number;
+  slot: number;
+  valid: boolean;
+  empty: boolean;
+  errors: string[] | null;
+  species: number | null;
+}
+
+/**
+ * Batch legality check response
+ */
+export interface BatchLegalityResponse {
+  results: BatchLegalityResult[];
+  validCount: number;
+  invalidCount: number;
+  emptyCount: number;
+}
+
+/**
+ * Batch modification request
+ */
+export interface BatchModification {
+  box: number;
+  slot: number;
+  modifications: PokemonModifications;
+}
+
+/**
+ * Batch operation result for a single Pokemon
+ */
+export interface BatchOperationResult {
+  box: number;
+  slot: number;
+  success: boolean;
+  error: string | null;
+}
+
+/**
+ * Batch operation response
+ */
+export interface BatchOperationResponse {
+  results: BatchOperationResult[];
+  successCount: number;
+  failCount: number;
+}
+
+/**
+ * Box statistics
+ */
+export interface BoxStatsData {
+  box: number;
+  totalSlots: number;
+  occupied: number;
+  empty: number;
+  shinyCount: number;
+  eggCount: number;
+  uniqueSpecies: number;
 }
 
 // ============================================================================
@@ -688,6 +921,30 @@ export interface PKHeXApi {
       setRibbon(handle: SaveHandle, box: number, slot: number, ribbonName: string, value: boolean): ApiResult<MessageResponse>;
       getContestStats(handle: SaveHandle, box: number, slot: number): ApiResult<ContestStats>;
       setContestStat(handle: SaveHandle, box: number, slot: number, statName: string, value: number): ApiResult<MessageResponse>;
+      // Friendship operations
+      getFriendship(handle: SaveHandle, box: number, slot: number): ApiResult<FriendshipData>;
+      setFriendship(handle: SaveHandle, box: number, slot: number, friendship: number): ApiResult<MessageResponse>;
+      setOriginalTrainerFriendship(handle: SaveHandle, box: number, slot: number, friendship: number): ApiResult<MessageResponse>;
+      setHandlingTrainerFriendship(handle: SaveHandle, box: number, slot: number, friendship: number): ApiResult<MessageResponse>;
+      setAffection(handle: SaveHandle, box: number, slot: number, affection: number): ApiResult<MessageResponse>;
+      setFullness(handle: SaveHandle, box: number, slot: number, fullness: number): ApiResult<MessageResponse>;
+      setEnjoyment(handle: SaveHandle, box: number, slot: number, enjoyment: number): ApiResult<MessageResponse>;
+      maximizeFriendship(handle: SaveHandle, box: number, slot: number): ApiResult<MessageResponse>;
+      // Memory operations (Gen 6+)
+      getMemories(handle: SaveHandle, box: number, slot: number): ApiResult<MemoriesData>;
+      setOriginalTrainerMemory(handle: SaveHandle, box: number, slot: number, memoryId: number, intensity: number, feeling: number, variable: number): ApiResult<MessageResponse>;
+      setHandlingTrainerMemory(handle: SaveHandle, box: number, slot: number, memoryId: number, intensity: number, feeling: number, variable: number): ApiResult<MessageResponse>;
+      clearMemories(handle: SaveHandle, box: number, slot: number): ApiResult<MessageResponse>;
+      // Form operations
+      getForm(handle: SaveHandle, box: number, slot: number): ApiResult<PokemonFormData>;
+      setForm(handle: SaveHandle, box: number, slot: number, form: number): ApiResult<MessageResponse>;
+      setFormArgument(handle: SaveHandle, box: number, slot: number, formArgument: number): ApiResult<MessageResponse>;
+      changeSpeciesAndForm(handle: SaveHandle, box: number, slot: number, species: number, form: number): ApiResult<MessageResponse>;
+      // Tera Type operations (Gen 9)
+      getTeraType(handle: SaveHandle, box: number, slot: number): ApiResult<TeraTypeData>;
+      setTeraType(handle: SaveHandle, box: number, slot: number, teraType: number): ApiResult<MessageResponse>;
+      setTeraTypeOverride(handle: SaveHandle, box: number, slot: number, teraType: number): ApiResult<MessageResponse>;
+      resetTeraType(handle: SaveHandle, box: number, slot: number): ApiResult<MessageResponse>;
     };
 
     // Trainer operations
@@ -711,6 +968,14 @@ export interface PKHeXApi {
       getBattleBox(handle: SaveHandle): ApiResult<PokemonSummary[]>;
       setBattleBoxSlot(handle: SaveHandle, slot: number, base64PkmData: string): ApiResult<MessageResponse>;
       getDaycare(handle: SaveHandle): ApiResult<DaycareData>;
+      // Batch operations
+      batchCheckLegality(handle: SaveHandle, locations: BoxSlotLocation[]): ApiResult<BatchLegalityResponse>;
+      batchModify(handle: SaveHandle, modifications: BatchModification[]): ApiResult<BatchOperationResponse>;
+      clearBox(handle: SaveHandle, box: number): ApiResult<{ clearedCount: number; message: string }>;
+      clearAllBoxes(handle: SaveHandle): ApiResult<{ clearedCount: number; message: string }>;
+      sortBox(handle: SaveHandle, box: number, sortBy: 'species' | 'level' | 'name' | 'pokedex' | 'shiny' | 'type'): ApiResult<MessageResponse>;
+      compactBox(handle: SaveHandle, box: number): ApiResult<MessageResponse>;
+      getBoxStats(handle: SaveHandle, box: number): ApiResult<BoxStatsData>;
     };
 
     // Item operations
@@ -838,7 +1103,7 @@ export interface PKHeXApi {
      * @param base64PkmData - Base64 encoded PKM data
      * @param generation - Pokemon generation (1-9)
      */
-    getRibbons(base64PkmData: string, generation: Generation): ApiResult<RibbonData[]>;
+    getRibbons(base64PkmData: string, generation: Generation): ApiResult<{ ribbons: RibbonData[] }>;
 
     /**
      * Set a specific ribbon on a Pokemon
@@ -905,6 +1170,13 @@ export interface PKHeXApi {
       fromGeneration: Generation,
       toGeneration: Generation
     ): ApiResult<PKMConversionResult>;
+
+    /**
+     * Get Tera Type data for a standalone Pokemon (Gen 9 only)
+     * @param base64PkmData - Base64 encoded PKM data
+     * @param generation - Pokemon generation (must be 9)
+     */
+    getTeraType(base64PkmData: string, generation: Generation): ApiResult<TeraTypeData>;
   };
 
   // Game data utilities
@@ -934,6 +1206,23 @@ export interface PKHeXApi {
      * @param generation - Pokemon generation (1-9)
      */
     getSpeciesEvolutions(species: SpeciesID, generation: Generation): ApiResult<SpeciesEvolutionData>;
+
+    /**
+     * Get available forms for a species
+     * @param species - National Pokedex number (1-1025)
+     * @param generation - Pokemon generation (1-9)
+     */
+    getAvailableForms(species: SpeciesID, generation: Generation): ApiResult<AvailableFormsData>;
+
+    /**
+     * Get memory strings for localization
+     */
+    getMemoryStrings(): ApiResult<MemoryStringsData>;
+
+    /**
+     * Get all Tera Types (Gen 9)
+     */
+    getAllTeraTypes(): ApiResult<{ teraTypes: TeraTypeInfo[] }>;
   };
 
   /**

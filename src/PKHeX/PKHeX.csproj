@@ -50,13 +50,7 @@
     <PackageReference Include="System.Text.Json" Version="9.0.*" />
   </ItemGroup>
 
-  <!-- Preserve JSExport methods and PKHeX.Core from trimming -->
-  <ItemGroup>
-    <TrimmerRootAssembly Include="PKHeX" />
-    <TrimmerRootAssembly Include="PKHeX.Core" />
-  </ItemGroup>
-  
-  <!-- Preserve specific PKHeX.Core types from trimming -->
+  <!-- Preserve specific types from trimming via TrimmerRoots.xml -->
   <ItemGroup>
     <TrimmerRootDescriptor Include="TrimmerRoots.xml" Condition="Exists('TrimmerRoots.xml')" />
   </ItemGroup>

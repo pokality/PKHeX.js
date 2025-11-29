@@ -2,7 +2,6 @@ using System.Runtime.InteropServices.JavaScript;
 using PKHeX.Core;
 using PKHeX.Helpers;
 using PKHeX.Models;
-using static PKHeX.Models.ErrorCodes;
 
 namespace PKHeX.Api;
 
@@ -16,18 +15,15 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateNonNegative(flagIndex, "Flag index", "INVALID_FLAG_INDEX");
 
             bool flagValue;
 
             if (save is IEventFlagArray eventFlagArray)
             {
-                ApiHelpers.ValidateRange(flagIndex, 0, eventFlagArray.EventFlagCount - 1, "Flag index", "INVALID_FLAG_INDEX");
                 flagValue = eventFlagArray.GetEventFlag(flagIndex);
             }
             else if (save is IEventFlagProvider37 provider37)
             {
-                ApiHelpers.ValidateRange(flagIndex, 0, provider37.EventWork.EventFlagCount - 1, "Flag index", "INVALID_FLAG_INDEX");
                 flagValue = provider37.EventWork.GetEventFlag(flagIndex);
             }
             else
@@ -46,16 +42,13 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateNonNegative(flagIndex, "Flag index", "INVALID_FLAG_INDEX");
 
             if (save is IEventFlagArray eventFlagArray)
             {
-                ApiHelpers.ValidateRange(flagIndex, 0, eventFlagArray.EventFlagCount - 1, "Flag index", "INVALID_FLAG_INDEX");
                 eventFlagArray.SetEventFlag(flagIndex, value);
             }
             else if (save is IEventFlagProvider37 provider37)
             {
-                ApiHelpers.ValidateRange(flagIndex, 0, provider37.EventWork.EventFlagCount - 1, "Flag index", "INVALID_FLAG_INDEX");
                 provider37.EventWork.SetEventFlag(flagIndex, value);
             }
             else
@@ -63,7 +56,7 @@ public partial class PKHeXApi
                 throw new ValidationException("Event flags not supported for this save file generation", "UNSUPPORTED_GENERATION");
             }
 
-            return ApiHelpers.SuccessMessage("Event flag updated successfully");
+            return new SuccessMessage(true, "Event flag updated successfully");
         });
     }
 
@@ -74,7 +67,6 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateNonNegative(constIndex, "Const index", "INVALID_CONST_INDEX");
 
             int constValue;
 
@@ -86,7 +78,6 @@ public partial class PKHeXApi
             {
                 if (provider37.EventWork is IEventWorkArray<ushort> workArray)
                 {
-                    ApiHelpers.ValidateRange(constIndex, 0, workArray.EventWorkCount - 1, "Const index", "INVALID_CONST_INDEX");
                     constValue = workArray.GetWork(constIndex);
                 }
                 else
@@ -110,7 +101,6 @@ public partial class PKHeXApi
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
             var save = ApiHelpers.GetValidatedSave(handle);
-            ApiHelpers.ValidateNonNegative(constIndex, "Const index", "INVALID_CONST_INDEX");
 
             if (save is SAV2 sav2)
             {
@@ -120,7 +110,6 @@ public partial class PKHeXApi
             {
                 if (provider37.EventWork is IEventWorkArray<ushort> workArray)
                 {
-                    ApiHelpers.ValidateRange(constIndex, 0, workArray.EventWorkCount - 1, "Const index", "INVALID_CONST_INDEX");
                     workArray.SetWork(constIndex, (ushort)value);
                 }
                 else
@@ -133,7 +122,7 @@ public partial class PKHeXApi
                 throw new ValidationException("Event consts not supported for this save file generation", "UNSUPPORTED_GENERATION");
             }
 
-            return ApiHelpers.SuccessMessage("Event const updated successfully");
+            return new SuccessMessage(true, "Event const updated successfully");
         });
     }
 }
