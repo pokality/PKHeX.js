@@ -42,7 +42,11 @@
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     
     <!-- Suppress platform warnings for JSExport (we know we're browser-only) -->
-    <NoWarn>$(NoWarn);CA1416</NoWarn>
+    <!-- CA1416: Platform compatibility -->
+    <!-- CS7036: RequiresUnreferencedCode generator issue in WASM interop -->
+    <!-- IL2026: RequiresUnreferencedCode trimming warnings -->
+    <!-- SYSLIB1072: Unsupported type warnings for JS interop -->
+    <NoWarn>$(NoWarn);CA1416;CS7036;IL2026;SYSLIB1072</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

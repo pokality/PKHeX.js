@@ -9,6 +9,12 @@ namespace PKHeX.Helpers;
 public static partial class ApiHelpers
 {
     [RequiresUnreferencedCode("JSON serialization may require types that cannot be statically analyzed")]
+    public static string SerializeSuccess<T>(T data)
+    {
+        return JsonSerializer.Serialize(data, JsonContext.Default.Options);
+    }
+
+    [RequiresUnreferencedCode("JSON serialization may require types that cannot be statically analyzed")]
     public static string ExecuteWithErrorHandling<T>(Func<T> action)
     {
         try

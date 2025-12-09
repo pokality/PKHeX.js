@@ -133,29 +133,30 @@ public partial class PKHeXApi
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
+            var memStrings = new MemoryStrings(GameInfo.Strings);
             var memories = GameInfo.Strings.memories;
-            var feelings = GameInfo.Strings.GetMemoryFeelings(EntityContext.Gen8);
-            var intensities = GameInfo.Strings.GetMemoryQualities(EntityContext.Gen8);
+            var feelings = memStrings.GetMemoryFeelings(8); // Gen 8 format
+            var intensities = memStrings.GetMemoryQualities();
 
-            var memoryList = new List<NamedEntity>();
+            var memoryList = new List<Models.NamedEntity>();
             for (int i = 0; i < memories.Length; i++)
             {
                 if (!string.IsNullOrEmpty(memories[i]))
-                    memoryList.Add(new NamedEntity(i, memories[i]));
+                    memoryList.Add(new Models.NamedEntity(i, memories[i]));
             }
 
-            var feelingList = new List<NamedEntity>();
+            var feelingList = new List<Models.NamedEntity>();
             for (int i = 0; i < feelings.Length; i++)
             {
                 if (!string.IsNullOrEmpty(feelings[i]))
-                    feelingList.Add(new NamedEntity(i, feelings[i]));
+                    feelingList.Add(new Models.NamedEntity(i, feelings[i]));
             }
 
-            var intensityList = new List<NamedEntity>();
+            var intensityList = new List<Models.NamedEntity>();
             for (int i = 0; i < intensities.Length; i++)
             {
                 if (!string.IsNullOrEmpty(intensities[i]))
-                    intensityList.Add(new NamedEntity(i, intensities[i]));
+                    intensityList.Add(new Models.NamedEntity(i, intensities[i]));
             }
 
             return new MemoryStringsData(memoryList, feelingList, intensityList);

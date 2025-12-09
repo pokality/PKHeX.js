@@ -51,6 +51,22 @@ export type {
   BattleFacilityStats,
   MessageResponse,
   PKHeXApi,
+  FriendshipData,
+  MemoriesData,
+  MemoryStringsData,
+  MemoryInfo,
+  PokemonFormData,
+  FormInfoEntry,
+  AvailableFormsData,
+  TeraTypeData,
+  TeraTypeInfo,
+  BoxSlotLocation,
+  BatchLegalityResult,
+  BatchLegalityResponse,
+  BatchModification,
+  BatchOperationResult,
+  BatchOperationResponse,
+  BoxStatsData,
 } from './index.d.js';
 
 /**

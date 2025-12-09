@@ -17,18 +17,18 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
-            if (pk is not ITeraType teraPk)
+            if (pk is not ITeraTypeReadOnly teraPk)
                 throw new ValidationException("This Pokemon does not support Tera Type (Gen 9 only)", "UNSUPPORTED_FEATURE");
 
             var teraType = teraPk.TeraType;
-            var teraTypeOverride = pk is ITeraTypeChange teraChange ? teraChange.GetTeraType() : teraType;
-            var isOverridden = teraType != teraTypeOverride;
+            var teraTypeEffective = pk is ITeraType teraFull ? teraFull.GetTeraType() : teraType;
+            var isOverridden = teraType != teraTypeEffective;
 
             return new TeraTypeData(
                 (int)teraType,
                 GetTeraTypeName(teraType),
-                (int)teraTypeOverride,
-                GetTeraTypeName(teraTypeOverride),
+                (int)teraTypeEffective,
+                GetTeraTypeName(teraTypeEffective),
                 isOverridden
             );
         });
@@ -46,11 +46,11 @@ public partial class PKHeXApi
             if (pk is not ITeraType teraPk)
                 throw new ValidationException("This Pokemon does not support Tera Type (Gen 9 only)", "UNSUPPORTED_FEATURE");
 
-            // Tera types: 0-17 are standard types, 18 is Stellar (SV DLC)
-            if (teraType < 0 || teraType > 18)
-                throw new ValidationException($"Tera Type {teraType} is out of range (0-18)", "INVALID_TERA_TYPE");
+            // Tera types: 0-17 are standard types, 99 is Stellar (SV DLC)
+            if (teraType < 0 || (teraType > 17 && teraType != TeraTypeUtil.Stellar))
+                throw new ValidationException($"Tera Type {teraType} is out of range (0-17 or 99 for Stellar)", "INVALID_TERA_TYPE");
 
-            teraPk.TeraType = (MoveType)teraType;
+            teraPk.SetTeraType((MoveType)teraType);
             pk.RefreshChecksum();
             save.SetBoxSlotAtIndex(pk, box, slot);
 
@@ -67,18 +67,18 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
-            if (pk is not ITeraTypeChange teraChange)
+            if (pk is not ITeraType teraPk)
                 throw new ValidationException("This Pokemon does not support Tera Type override", "UNSUPPORTED_FEATURE");
 
-            // Tera types: 0-17 are standard types, 18 is Stellar (SV DLC), 99 to reset
-            if (teraType != 99 && (teraType < 0 || teraType > 18))
-                throw new ValidationException($"Tera Type {teraType} is out of range (0-18, or 99 to reset)", "INVALID_TERA_TYPE");
+            // Tera types: 0-17 are standard types, 99 is Stellar (SV DLC), 19 to reset
+            if (teraType != TeraTypeUtil.OverrideNone && teraType != TeraTypeUtil.Stellar && (teraType < 0 || teraType > 17))
+                throw new ValidationException($"Tera Type {teraType} is out of range (0-17, 19 to reset, or 99 for Stellar)", "INVALID_TERA_TYPE");
 
-            teraChange.SetTeraType((MoveType)teraType);
+            teraPk.SetTeraType((MoveType)teraType);
             pk.RefreshChecksum();
             save.SetBoxSlotAtIndex(pk, box, slot);
 
-            var typeName = teraType == 99 ? "original" : GetTeraTypeName((MoveType)teraType);
+            var typeName = teraType == TeraTypeUtil.OverrideNone ? "original" : GetTeraTypeName((MoveType)teraType);
             return new SuccessMessage(true, $"Tera Type override set to {typeName}");
         });
     }
@@ -92,11 +92,11 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
-            if (pk is not ITeraTypeChange teraChange)
+            if (pk is not ITeraType teraPk)
                 throw new ValidationException("This Pokemon does not support Tera Type reset", "UNSUPPORTED_FEATURE");
 
-            // MoveType 99 resets to original
-            teraChange.SetTeraType((MoveType)99);
+            // OverrideNone (19) resets to original
+            teraPk.TeraTypeOverride = (MoveType)TeraTypeUtil.OverrideNone;
             pk.RefreshChecksum();
             save.SetBoxSlotAtIndex(pk, box, slot);
 
@@ -114,13 +114,13 @@ public partial class PKHeXApi
 
             // Standard types (0-17)
             var typeNames = GameInfo.Strings.Types;
-            for (int i = 0; i < 18 && i < typeNames.Length; i++)
+            for (int i = 0; i < 18 && i < typeNames.Count; i++)
             {
                 types.Add(new TeraTypeInfo(i, typeNames[i], false));
             }
 
-            // Stellar type (18) - added in Indigo Disk DLC
-            types.Add(new TeraTypeInfo(18, "Stellar", true));
+            // Stellar type (99) - added in Indigo Disk DLC
+            types.Add(new TeraTypeInfo(TeraTypeUtil.Stellar, "Stellar", true));
 
             return new TeraTypesListResponse(types);
         });
@@ -149,18 +149,18 @@ public partial class PKHeXApi
             if (pk == null)
                 throw new ValidationException("Unable to parse Pokemon data", "INVALID_PKM_DATA");
 
-            if (pk is not ITeraType teraPk)
+            if (pk is not ITeraTypeReadOnly teraPk)
                 throw new ValidationException("This Pokemon does not support Tera Type (Gen 9 only)", "UNSUPPORTED_FEATURE");
 
             var teraType = teraPk.TeraType;
-            var teraTypeOverride = pk is ITeraTypeChange teraChange ? teraChange.GetTeraType() : teraType;
-            var isOverridden = teraType != teraTypeOverride;
+            var teraTypeEffective = pk is ITeraType teraFull ? teraFull.GetTeraType() : teraType;
+            var isOverridden = teraType != teraTypeEffective;
 
             return new TeraTypeData(
                 (int)teraType,
                 GetTeraTypeName(teraType),
-                (int)teraTypeOverride,
-                GetTeraTypeName(teraTypeOverride),
+                (int)teraTypeEffective,
+                GetTeraTypeName(teraTypeEffective),
                 isOverridden
             );
         });
@@ -169,10 +169,10 @@ public partial class PKHeXApi
     private static string GetTeraTypeName(MoveType type)
     {
         var typeIndex = (int)type;
-        if (typeIndex == 18)
+        if (typeIndex == TeraTypeUtil.Stellar)
             return "Stellar";
 
         var typeNames = GameInfo.Strings.Types;
-        return typeIndex >= 0 && typeIndex < typeNames.Length ? typeNames[typeIndex] : $"Type {typeIndex}";
+        return typeIndex >= 0 && typeIndex < typeNames.Count ? typeNames[typeIndex] : $"Type {typeIndex}";
     }
 }

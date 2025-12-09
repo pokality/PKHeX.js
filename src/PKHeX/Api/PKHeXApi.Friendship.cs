@@ -24,15 +24,19 @@ public partial class PKHeXApi
             // Affection is Gen 6-7 only (replaced by friendship in Gen 8+)
             if (pk is IAffection affectionPk)
             {
-                affection = affectionPk.Affection;
-                fullness = affectionPk.Fullness;
-                enjoyment = affectionPk.Enjoyment;
+                affection = affectionPk.OriginalTrainerAffection;
+            }
+
+            if (pk is IFullnessEnjoyment fullnessPk)
+            {
+                fullness = fullnessPk.Fullness;
+                enjoyment = fullnessPk.Enjoyment;
             }
 
             return new FriendshipData(
                 pk.CurrentFriendship,
                 pk.OriginalTrainerFriendship,
-                pk is IHandlerLanguage ht ? ht.HandlingTrainerFriendship : null,
+                pk.HandlingTrainerFriendship,
                 affection,
                 fullness,
                 enjoyment
@@ -83,10 +87,7 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
-            if (pk is not IHandlerLanguage htPk)
-                throw new ValidationException("This Pokemon does not support handling trainer friendship", "UNSUPPORTED_FEATURE");
-
-            htPk.HandlingTrainerFriendship = (byte)Math.Clamp(friendship, 0, 255);
+            pk.HandlingTrainerFriendship = (byte)Math.Clamp(friendship, 0, 255);
             pk.RefreshChecksum();
             save.SetBoxSlotAtIndex(pk, box, slot);
 
@@ -106,7 +107,7 @@ public partial class PKHeXApi
             if (pk is not IAffection affectionPk)
                 throw new ValidationException("This Pokemon does not support affection (Gen 6-7 only)", "UNSUPPORTED_FEATURE");
 
-            affectionPk.Affection = (byte)Math.Clamp(affection, 0, 255);
+            affectionPk.OriginalTrainerAffection = (byte)Math.Clamp(affection, 0, 255);
             pk.RefreshChecksum();
             save.SetBoxSlotAtIndex(pk, box, slot);
 
@@ -123,10 +124,10 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
-            if (pk is not IAffection affectionPk)
+            if (pk is not IFullnessEnjoyment fullnessPk)
                 throw new ValidationException("This Pokemon does not support fullness (Gen 6-7 only)", "UNSUPPORTED_FEATURE");
 
-            affectionPk.Fullness = (byte)Math.Clamp(fullness, 0, 255);
+            fullnessPk.Fullness = (byte)Math.Clamp(fullness, 0, 255);
             pk.RefreshChecksum();
             save.SetBoxSlotAtIndex(pk, box, slot);
 
@@ -143,10 +144,10 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
             var pk = ApiHelpers.GetValidatedPokemon(save, box, slot);
 
-            if (pk is not IAffection affectionPk)
+            if (pk is not IFullnessEnjoyment enjoymentPk)
                 throw new ValidationException("This Pokemon does not support enjoyment (Gen 6-7 only)", "UNSUPPORTED_FEATURE");
 
-            affectionPk.Enjoyment = (byte)Math.Clamp(enjoyment, 0, 255);
+            enjoymentPk.Enjoyment = (byte)Math.Clamp(enjoyment, 0, 255);
             pk.RefreshChecksum();
             save.SetBoxSlotAtIndex(pk, box, slot);
 
@@ -165,15 +166,18 @@ public partial class PKHeXApi
 
             pk.CurrentFriendship = 255;
             pk.OriginalTrainerFriendship = 255;
-
-            if (pk is IHandlerLanguage htPk)
-                htPk.HandlingTrainerFriendship = 255;
+            pk.HandlingTrainerFriendship = 255;
 
             if (pk is IAffection affectionPk)
             {
-                affectionPk.Affection = 255;
-                affectionPk.Fullness = 255;
-                affectionPk.Enjoyment = 255;
+                affectionPk.OriginalTrainerAffection = 255;
+                affectionPk.HandlingTrainerAffection = 255;
+            }
+
+            if (pk is IFullnessEnjoyment fullnessPk)
+            {
+                fullnessPk.Fullness = 255;
+                fullnessPk.Enjoyment = 255;
             }
 
             pk.RefreshChecksum();

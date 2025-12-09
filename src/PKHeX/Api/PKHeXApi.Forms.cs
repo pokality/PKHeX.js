@@ -70,7 +70,7 @@ public partial class PKHeXApi
 
     [JSExport]
     [return: JSMarshalAs<JSType.String>]
-    public static string SetFormArgument(int handle, int box, int slot, uint formArgument)
+    public static string SetFormArgument(int handle, int box, int slot, int formArgument)
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>
         {
@@ -80,7 +80,7 @@ public partial class PKHeXApi
             if (pk is not IFormArgument formArg)
                 throw new ValidationException("This Pokemon does not support form arguments", "UNSUPPORTED_FEATURE");
 
-            formArg.FormArgument = formArgument;
+            formArg.FormArgument = (uint)formArgument;
             pk.RefreshChecksum();
             save.SetBoxSlotAtIndex(pk, box, slot);
 
@@ -101,18 +101,13 @@ public partial class PKHeXApi
                 throw new ValidationException($"Generation {generation} is out of range (1-9)", "INVALID_GENERATION");
 
             var context = (EntityContext)generation;
-            var pt = GameInfo.GetPersonalTable(context);
-
-            if (species >= pt.MaxSpeciesID)
-                throw new ValidationException($"Species {species} not available in generation {generation}", "INVALID_SPECIES");
-
             var formNames = FormConverter.GetFormList((ushort)species, GameInfo.Strings.Types, GameInfo.Strings.forms, Array.Empty<string>(), context);
 
-            var forms = new List<FormInfo>();
+            var forms = new List<Models.FormInfo>();
             for (int i = 0; i < formNames.Length; i++)
             {
                 var name = string.IsNullOrEmpty(formNames[i]) ? (i == 0 ? "Normal" : $"Form {i}") : formNames[i];
-                forms.Add(new FormInfo(i, name));
+                forms.Add(new Models.FormInfo(i, name));
             }
 
             return new AvailableFormsData(
@@ -137,15 +132,10 @@ public partial class PKHeXApi
             if (species < 1 || species > 1025)
                 throw new ValidationException($"Species {species} is out of range (1-1025)", "INVALID_SPECIES");
 
-            var pt = pk.PersonalInfo.GetType() == typeof(PersonalInfo9SV)
-                ? PersonalTable.SV
-                : GameInfo.GetPersonalTable(pk.Context);
-
-            if (species > pt.MaxSpeciesID)
-                throw new ValidationException($"Species {species} not available in this game", "INVALID_SPECIES");
-
+            // Get personal info for the target species/form
+            var pt = save.Personal;
             var newPi = pt.GetFormEntry((ushort)species, (byte)form);
-            if (newPi == null || !newPi.IsPresentInGame)
+            if (newPi == null || newPi.HP == 0)
                 throw new ValidationException($"Form {form} not available for species {species} in this game", "INVALID_FORM");
 
             pk.Species = (ushort)species;

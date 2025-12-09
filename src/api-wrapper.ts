@@ -34,6 +34,18 @@ import type {
   NamedEntity,
   BattleFacilityStats,
   MessageResponse,
+  FriendshipData,
+  MemoriesData,
+  MemoryStringsData,
+  PokemonFormData,
+  AvailableFormsData,
+  TeraTypeData,
+  TeraTypeInfo,
+  BoxSlotLocation,
+  BatchLegalityResponse,
+  BatchModification,
+  BatchOperationResponse,
+  BoxStatsData,
 } from './index.js';
 
 interface RawPKHeXApi {
@@ -158,6 +170,47 @@ interface RawPKHeXApi {
   UnlockAllHairMakeup(handle: number): string;
   GetInfiniteRoyalePoints(handle: number): string;
   SetInfiniteRoyalePoints(handle: number, royalePoints: number, infinitePoints: number): string;
+
+  // Friendship methods
+  GetFriendship(handle: number, box: number, slot: number): string;
+  SetFriendship(handle: number, box: number, slot: number, friendship: number): string;
+  SetOriginalTrainerFriendship(handle: number, box: number, slot: number, friendship: number): string;
+  SetHandlingTrainerFriendship(handle: number, box: number, slot: number, friendship: number): string;
+  SetAffection(handle: number, box: number, slot: number, affection: number): string;
+  SetFullness(handle: number, box: number, slot: number, fullness: number): string;
+  SetEnjoyment(handle: number, box: number, slot: number, enjoyment: number): string;
+  MaximizeFriendship(handle: number, box: number, slot: number): string;
+
+  // Memory methods
+  GetMemories(handle: number, box: number, slot: number): string;
+  SetOriginalTrainerMemory(handle: number, box: number, slot: number, memoryId: number, intensity: number, feeling: number, variable: number): string;
+  SetHandlingTrainerMemory(handle: number, box: number, slot: number, memoryId: number, intensity: number, feeling: number, variable: number): string;
+  ClearMemories(handle: number, box: number, slot: number): string;
+  GetMemoryStrings(): string;
+
+  // Form methods
+  GetForm(handle: number, box: number, slot: number): string;
+  SetForm(handle: number, box: number, slot: number, form: number): string;
+  SetFormArgument(handle: number, box: number, slot: number, formArgument: number): string;
+  GetAvailableForms(species: number, generation: number): string;
+  ChangeSpeciesAndForm(handle: number, box: number, slot: number, species: number, form: number): string;
+
+  // Tera type methods
+  GetTeraType(handle: number, box: number, slot: number): string;
+  SetTeraType(handle: number, box: number, slot: number, teraType: number): string;
+  SetTeraTypeOverride(handle: number, box: number, slot: number, teraType: number): string;
+  ResetTeraType(handle: number, box: number, slot: number): string;
+  GetAllTeraTypes(): string;
+  GetPKMTeraType(base64PkmData: string, generation: number): string;
+
+  // Batch methods
+  BatchCheckLegality(handle: number, locationsJson: string): string;
+  BatchModify(handle: number, modificationsJson: string): string;
+  ClearBox(handle: number, box: number): string;
+  ClearAllBoxes(handle: number): string;
+  SortBox(handle: number, box: number, sortBy: string): string;
+  CompactBox(handle: number, box: number): string;
+  GetBoxStats(handle: number, box: number): string;
 }
 
 function parseJson<T>(jsonString: string): ApiResult<T> {
@@ -223,6 +276,30 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         setRibbon: (handle: SaveHandle, box: number, slot: number, ribbonName: string, value: boolean) => parseJson<MessageResponse>(rawApi.SetRibbon(handle, box, slot, ribbonName, value)),
         getContestStats: (handle: SaveHandle, box: number, slot: number) => parseJson<ContestStats>(rawApi.GetContestStats(handle, box, slot)),
         setContestStat: (handle: SaveHandle, box: number, slot: number, statName: string, value: number) => parseJson<MessageResponse>(rawApi.SetContestStat(handle, box, slot, statName, value)),
+        // Friendship operations
+        getFriendship: (handle: SaveHandle, box: number, slot: number) => parseJson<FriendshipData>(rawApi.GetFriendship(handle, box, slot)),
+        setFriendship: (handle: SaveHandle, box: number, slot: number, friendship: number) => parseJson<MessageResponse>(rawApi.SetFriendship(handle, box, slot, friendship)),
+        setOriginalTrainerFriendship: (handle: SaveHandle, box: number, slot: number, friendship: number) => parseJson<MessageResponse>(rawApi.SetOriginalTrainerFriendship(handle, box, slot, friendship)),
+        setHandlingTrainerFriendship: (handle: SaveHandle, box: number, slot: number, friendship: number) => parseJson<MessageResponse>(rawApi.SetHandlingTrainerFriendship(handle, box, slot, friendship)),
+        setAffection: (handle: SaveHandle, box: number, slot: number, affection: number) => parseJson<MessageResponse>(rawApi.SetAffection(handle, box, slot, affection)),
+        setFullness: (handle: SaveHandle, box: number, slot: number, fullness: number) => parseJson<MessageResponse>(rawApi.SetFullness(handle, box, slot, fullness)),
+        setEnjoyment: (handle: SaveHandle, box: number, slot: number, enjoyment: number) => parseJson<MessageResponse>(rawApi.SetEnjoyment(handle, box, slot, enjoyment)),
+        maximizeFriendship: (handle: SaveHandle, box: number, slot: number) => parseJson<MessageResponse>(rawApi.MaximizeFriendship(handle, box, slot)),
+        // Memory operations
+        getMemories: (handle: SaveHandle, box: number, slot: number) => parseJson<MemoriesData>(rawApi.GetMemories(handle, box, slot)),
+        setOriginalTrainerMemory: (handle: SaveHandle, box: number, slot: number, memoryId: number, intensity: number, feeling: number, variable: number) => parseJson<MessageResponse>(rawApi.SetOriginalTrainerMemory(handle, box, slot, memoryId, intensity, feeling, variable)),
+        setHandlingTrainerMemory: (handle: SaveHandle, box: number, slot: number, memoryId: number, intensity: number, feeling: number, variable: number) => parseJson<MessageResponse>(rawApi.SetHandlingTrainerMemory(handle, box, slot, memoryId, intensity, feeling, variable)),
+        clearMemories: (handle: SaveHandle, box: number, slot: number) => parseJson<MessageResponse>(rawApi.ClearMemories(handle, box, slot)),
+        // Form operations
+        getForm: (handle: SaveHandle, box: number, slot: number) => parseJson<PokemonFormData>(rawApi.GetForm(handle, box, slot)),
+        setForm: (handle: SaveHandle, box: number, slot: number, form: number) => parseJson<MessageResponse>(rawApi.SetForm(handle, box, slot, form)),
+        setFormArgument: (handle: SaveHandle, box: number, slot: number, formArgument: number) => parseJson<MessageResponse>(rawApi.SetFormArgument(handle, box, slot, formArgument)),
+        changeSpeciesAndForm: (handle: SaveHandle, box: number, slot: number, species: number, form: number) => parseJson<MessageResponse>(rawApi.ChangeSpeciesAndForm(handle, box, slot, species, form)),
+        // Tera Type operations
+        getTeraType: (handle: SaveHandle, box: number, slot: number) => parseJson<TeraTypeData>(rawApi.GetTeraType(handle, box, slot)),
+        setTeraType: (handle: SaveHandle, box: number, slot: number, teraType: number) => parseJson<MessageResponse>(rawApi.SetTeraType(handle, box, slot, teraType)),
+        setTeraTypeOverride: (handle: SaveHandle, box: number, slot: number, teraType: number) => parseJson<MessageResponse>(rawApi.SetTeraTypeOverride(handle, box, slot, teraType)),
+        resetTeraType: (handle: SaveHandle, box: number, slot: number) => parseJson<MessageResponse>(rawApi.ResetTeraType(handle, box, slot)),
       },
 
       trainer: {
@@ -244,6 +321,14 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         getBattleBox: (handle: SaveHandle) => parseJson<PokemonSummary[]>(rawApi.GetBattleBox(handle)),
         setBattleBoxSlot: (handle: SaveHandle, slot: number, base64PkmData: string) => parseJson<MessageResponse>(rawApi.SetBattleBoxSlot(handle, slot, base64PkmData)),
         getDaycare: (handle: SaveHandle) => parseJson<DaycareData>(rawApi.GetDaycare(handle)),
+        // Batch operations
+        batchCheckLegality: (handle: SaveHandle, locations: BoxSlotLocation[]) => parseJson<BatchLegalityResponse>(rawApi.BatchCheckLegality(handle, JSON.stringify(locations))),
+        batchModify: (handle: SaveHandle, modifications: BatchModification[]) => parseJson<BatchOperationResponse>(rawApi.BatchModify(handle, JSON.stringify(modifications))),
+        clearBox: (handle: SaveHandle, box: number) => parseJson<{ clearedCount: number; message: string }>(rawApi.ClearBox(handle, box)),
+        clearAllBoxes: (handle: SaveHandle) => parseJson<{ clearedCount: number; message: string }>(rawApi.ClearAllBoxes(handle)),
+        sortBox: (handle: SaveHandle, box: number, sortBy: 'species' | 'level' | 'name' | 'pokedex' | 'shiny' | 'type') => parseJson<MessageResponse>(rawApi.SortBox(handle, box, sortBy)),
+        compactBox: (handle: SaveHandle, box: number) => parseJson<MessageResponse>(rawApi.CompactBox(handle, box)),
+        getBoxStats: (handle: SaveHandle, box: number) => parseJson<BoxStatsData>(rawApi.GetBoxStats(handle, box)),
       },
 
       items: {
@@ -321,7 +406,7 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
       legalize: (base64PkmData: string, generation: number) => parseJson<PKMDataResponse>(rawApi.LegalizePKMData(base64PkmData, generation)),
       exportShowdown: (base64PkmData: string, generation: number) => parseJson<{ showdownText: string }>(rawApi.ExportPKMShowdown(base64PkmData, generation)),
       calculateStats: (base64PkmData: string, generation: number) => parseJson<{ hp: number; attack: number; defense: number; spAttack: number; spDefense: number; speed: number }>(rawApi.CalculatePKMStats(base64PkmData, generation)),
-      getRibbons: (base64PkmData: string, generation: number) => parseJson<RibbonData[]>(rawApi.GetPKMRibbons(base64PkmData, generation)),
+      getRibbons: (base64PkmData: string, generation: number) => parseJson<{ ribbons: RibbonData[] }>(rawApi.GetPKMRibbons(base64PkmData, generation)),
       setRibbon: (base64PkmData: string, generation: number, ribbonName: string, value: boolean) => parseJson<PKMDataResponse>(rawApi.SetPKMRibbon(base64PkmData, generation, ribbonName, value)),
       setShiny: (base64PkmData: string, generation: number, shinyType: ShinyType) => parseJson<PKMDataResponse>(rawApi.SetPKMShiny(base64PkmData, generation, shinyType)),
       getPIDInfo: (base64PkmData: string, generation: number) => parseJson<PIDInfo>(rawApi.GetPKMPIDInfo(base64PkmData, generation)),
@@ -330,12 +415,16 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
       getHiddenPower: (base64PkmData: string, generation: number) => parseJson<{ type: number; typeName: string; power: number }>(rawApi.GetPKMHiddenPower(base64PkmData, generation)),
       getCharacteristic: (base64PkmData: string, generation: number) => parseJson<{ index: number; text: string }>(rawApi.GetPKMCharacteristic(base64PkmData, generation)),
       convertFormat: (base64PkmData: string, fromGeneration: number, toGeneration: number) => parseJson<{ success: boolean; base64Data: string; fromGeneration: number; toGeneration: number; fromFormat: string; toFormat: string; conversionResult: string }>(rawApi.ConvertPKMFormat(base64PkmData, fromGeneration, toGeneration)),
+      getTeraType: (base64PkmData: string, generation: number) => parseJson<TeraTypeData>(rawApi.GetPKMTeraType(base64PkmData, generation)),
     },
 
     gameData: {
       getMetLocations: (generation: number, gameVersion: number, eggLocations: boolean) => parseJson<{ generation: number; gameVersion: number; isEggLocations: boolean; locations: Array<{ value: number; text: string }>; count: number }>(rawApi.GetPKMMetLocations(generation, gameVersion, eggLocations)),
       getSpeciesForms: (species: number, generation: number) => parseJson<{ species: number; speciesName: string; generation: number; forms: Array<{ formIndex: number; formName: string; type1: number; type1Name: string; type2: number; type2Name: string; baseStats: { hp: number; attack: number; defense: number; spAttack: number; spDefense: number; speed: number }; genderRatio: number; isDualGender: boolean; isGenderless: boolean }>; formCount: number }>(rawApi.GetSpeciesForms(species, generation)),
       getSpeciesEvolutions: (species: number, generation: number) => parseJson<{ species: number; speciesName: string; generation: number; evolutionChain: Array<{ species: number; speciesName: string; form: number }>; chainLength: number; forwardEvolutions: Array<{ species: number; speciesName: string; form: number }>; preEvolutions: Array<{ species: number; speciesName: string; form: number }>; baseSpecies: number; baseSpeciesName: string; baseForm: number }>(rawApi.GetSpeciesEvolutions(species, generation)),
+      getAvailableForms: (species: number, generation: number) => parseJson<AvailableFormsData>(rawApi.GetAvailableForms(species, generation)),
+      getMemoryStrings: () => parseJson<MemoryStringsData>(rawApi.GetMemoryStrings()),
+      getAllTeraTypes: () => parseJson<{ teraTypes: TeraTypeInfo[] }>(rawApi.GetAllTeraTypes()),
     },
 
     gen9a: {
