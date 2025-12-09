@@ -12,7 +12,7 @@ cp -r src/PKHeX/bin/Release/browser-wasm/publish/* dist/
 
 ./scripts/generate-boot-json.sh
 
-npx tsc src/index.ts src/api-wrapper.ts --outDir dist --module esnext --target es2020 --moduleResolution bundler --declaration 2>/dev/null
+npx tsc src/index.ts src/api-wrapper.ts src/helpers.ts --outDir dist --module esnext --target es2021 --moduleResolution bundler --declaration 2>/dev/null
 rm -f dist/*.a dist/*.dat
 
 dotnet test tests/PKHeX.Tests/PKHeX.Tests.csproj --nologo -v q
