@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 set -e
 
-dotnet clean src/PKHeX/PKHeX.csproj --nologo -v q
 dotnet format src/PKHeX/PKHeX.csproj -v q
 
 rm -rf dist
