@@ -86,6 +86,9 @@ public partial class PKHeXApi
 
             foreach (var mod in mods)
             {
+                if (mod.Modifications == null)
+                    throw new ValidationException("Each batch entry must include a 'modifications' object", INVALID_JSON);
+
                 try
                 {
                     var pk = save.GetBoxSlotAtIndex(mod.Box, mod.Slot);
@@ -191,7 +194,10 @@ public partial class PKHeXApi
             }
 
             // Sort based on criteria
-            IOrderedEnumerable<PKM> sorted = sortBy?.ToLowerInvariant() switch
+            if (string.IsNullOrEmpty(sortBy))
+                throw new ValidationException("Sort criteria cannot be empty", INVALID_ARGUMENT);
+
+            IOrderedEnumerable<PKM> sorted = sortBy.ToLowerInvariant() switch
             {
                 "species" => pokemon.OrderBy(p => p.Species).ThenBy(p => p.Form),
                 "level" => pokemon.OrderByDescending(p => p.CurrentLevel).ThenBy(p => p.Species),
@@ -199,7 +205,7 @@ public partial class PKHeXApi
                 "pokedex" or "national" => pokemon.OrderBy(p => p.Species).ThenBy(p => p.Form),
                 "shiny" => pokemon.OrderByDescending(p => p.IsShiny).ThenBy(p => p.Species),
                 "type" => pokemon.OrderBy(p => p.PersonalInfo.Type1).ThenBy(p => p.PersonalInfo.Type2).ThenBy(p => p.Species),
-                _ => pokemon.OrderBy(p => p.Species).ThenBy(p => p.Form)
+                _ => throw new ValidationException($"Invalid sort criteria '{sortBy}'. Valid options: species, level, name, pokedex, national, shiny, type", INVALID_ARGUMENT)
             };
 
             var sortedList = sorted.ToList();
@@ -212,7 +218,7 @@ public partial class PKHeXApi
             for (int i = 0; i < sortedList.Count && i < slotsPerBox; i++)
                 save.SetBoxSlotAtIndex(sortedList[i], box, i);
 
-            return new SuccessMessage(true, $"Sorted {sortedList.Count} Pokemon in box {box} by {sortBy ?? "species"}");
+            return new SuccessMessage(true, $"Sorted {sortedList.Count} Pokemon in box {box} by {sortBy}");
         });
     }
 

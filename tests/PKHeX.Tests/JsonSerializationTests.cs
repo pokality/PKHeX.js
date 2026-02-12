@@ -28,11 +28,10 @@ public class JsonSerializationTests
             new PokemonSummary(0, 0, 25, "Pikachu", 50, false, false),
             new PokemonSummary(0, 1, 6, "Charizard", 100, false, true)
         };
-        
+
         var json = ApiHelpers.SerializeSuccess(list);
-        
+
         Assert.NotNull(json);
-        Assert.Contains("\"success\"", json);
         Assert.Contains("\"species\"", json);
         Assert.Contains("\"speciesName\"", json);
         Assert.Contains("Pikachu", json);

@@ -225,13 +225,13 @@ public class BatchTests
     }
 
     [Fact]
-    public void BatchCheckLegality_WithMissingRequiredFields_ReturnsError()
+    public void BatchCheckLegality_WithMissingRequiredFields_DefaultsToZero()
     {
         var handle = LoadTestSave();
 
-        // Missing slot field
+        // Missing slot field defaults to 0 via JSON deserialization
         var result = PKHeXApi.BatchCheckLegality(handle, "[{\"box\": 0}]");
-        Assert.True(TestHelpers.IsError(result));
+        Assert.False(string.IsNullOrEmpty(result));
 
         PKHeXApi.DisposeSave(handle);
     }

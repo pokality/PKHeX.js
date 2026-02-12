@@ -607,6 +607,9 @@ public partial class PKHeXApi
                 throw new ValidationException("Invalid base64 encoding", INVALID_BASE64);
             }
 
+            if (fromGeneration < 1 || fromGeneration > 9)
+                throw new ValidationException($"Generation {fromGeneration} is out of range (1-9)", "INVALID_GENERATION");
+
             var pk = EntityFormat.GetFromBytes(data, (EntityContext)fromGeneration);
             if (pk == null)
                 throw new ValidationException("Unable to parse Pokemon data", INVALID_PKM_DATA);
