@@ -69,6 +69,16 @@ jobs:
         chmod +x scripts/generate-boot-json.sh
         ./scripts/generate-boot-json.sh
     
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Run TypeScript tests
+      run: |
+        npm ci
+        npm test
+
     - name: Calculate bundle size
       run: |
         echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
