@@ -17,11 +17,11 @@ public partial class PKHeXApi
             var save = ApiHelpers.GetValidatedSave(handle);
 
             var pouchList = new List<PouchData>();
-            var inventory = save.Inventory;
+            var pouches = save.Inventory.Pouches;
 
-            for (int pouchIndex = 0; pouchIndex < inventory.Count; pouchIndex++)
+            for (int pouchIndex = 0; pouchIndex < pouches.Count; pouchIndex++)
             {
-                var pouch = inventory[pouchIndex];
+                var pouch = pouches[pouchIndex];
                 var itemSlots = new List<ItemSlot>();
 
                 foreach (var item in pouch.Items)
@@ -59,13 +59,14 @@ public partial class PKHeXApi
             if (count <= 0)
                 throw new ValidationException($"Count {count} must be greater than 0", "INVALID_COUNT");
 
-            var inventory = save.Inventory;
-            if (pouchIndex < 0 || pouchIndex >= inventory.Count)
-                throw new ValidationException($"Pouch index {pouchIndex} is out of range (0-{inventory.Count - 1})", "INVALID_POUCH_INDEX");
+            var pouches = save.Inventory.Pouches;
+            if (pouchIndex < 0 || pouchIndex >= pouches.Count)
+                throw new ValidationException($"Pouch index {pouchIndex} is out of range (0-{pouches.Count - 1})", "INVALID_POUCH_INDEX");
 
-            var pouch = inventory[pouchIndex];
+            var pouch = pouches[pouchIndex];
+            var bag = save.Inventory;
 
-            if (!pouch.Info.IsLegal(pouch.Type, itemId, count))
+            if (!bag.IsLegal(pouch.Type, itemId, count))
                 throw new ValidationException($"Item {itemId} is not legal for pouch type {pouch.Type}", "ILLEGAL_ITEM");
 
             var existingItem = pouch.Items.FirstOrDefault(i => i.Index == itemId);
@@ -102,10 +103,10 @@ public partial class PKHeXApi
             if (count <= 0)
                 throw new ValidationException($"Count {count} must be greater than 0", "INVALID_COUNT");
 
-            var inventory = save.Inventory;
+            var pouches = save.Inventory.Pouches;
             bool itemFound = false;
 
-            foreach (var pouch in inventory)
+            foreach (var pouch in pouches)
             {
                 var item = pouch.Items.FirstOrDefault(i => i.Index == itemId);
                 if (item != null && item.Count > 0)
