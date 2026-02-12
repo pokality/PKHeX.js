@@ -6,6 +6,7 @@
  */
 
 import { createRequire } from 'module';
+import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -42,7 +43,7 @@ export async function initializeWASM(): Promise<WASMTestContext> {
       // Import the dotnet runtime
       const distPath = join(__dirname, '..', 'dist');
       const dotnetPath = join(distPath, 'dotnet.js');
-      
+
       // Dynamic import of the dotnet module
       const dotnetModule = await import(dotnetPath);
       const { dotnet } = dotnetModule;
@@ -51,8 +52,24 @@ export async function initializeWASM(): Promise<WASMTestContext> {
         throw new Error(`Invalid dotnet module structure. Got: ${JSON.stringify(Object.keys(dotnetModule))}`);
       }
 
-      // Create the runtime
-      const runtime = await dotnet.create();
+      // Read boot config from disk and convert to array-based format
+      // that the .NET 10 runtime's withConfig() expects
+      const bootConfigPath = join(distPath, 'blazor.boot.json');
+      const bootConfig = JSON.parse(readFileSync(bootConfigPath, 'utf8'));
+
+      if (bootConfig.resources) {
+        for (const key of Object.keys(bootConfig.resources)) {
+          const val = bootConfig.resources[key];
+          if (val && typeof val === 'object' && !Array.isArray(val)) {
+            bootConfig.resources[key] = Object.entries(val).map(
+              ([name, hash]) => ({ name, hash: hash as string })
+            );
+          }
+        }
+      }
+
+      // Create the runtime with config passed directly
+      const runtime = await dotnet.withConfig(bootConfig).create();
       
       // Get the PKHeX assembly exports
       const exports = await runtime.getAssemblyExports('PKHeX.dll');

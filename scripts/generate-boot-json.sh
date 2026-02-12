@@ -2,17 +2,12 @@
 set -e
 
 DIST_DIR="dist"
-BOOT_JSON="$DIST_DIR/blazor.boot.json"
+BOOT_FILE="$DIST_DIR/blazor.boot.json"
 
 echo "Generating blazor.boot.json..."
 
-cat > "$BOOT_JSON" << 'EOF'
-{
-  "mainAssemblyName": "PKHeX.dll",
-  "resources": {
-    "assembly": {
-EOF
-
+# Build assembly entries
+ASSEMBLIES=""
 first=true
 for file in "$DIST_DIR"/*.dll; do
     if [ -f "$file" ]; then
@@ -20,14 +15,18 @@ for file in "$DIST_DIR"/*.dll; do
         if [ "$first" = true ]; then
             first=false
         else
-            echo "," >> "$BOOT_JSON"
+            ASSEMBLIES="$ASSEMBLIES,"
         fi
-        echo -n "      \"$filename\": \"\"" >> "$BOOT_JSON"
+        ASSEMBLIES="$ASSEMBLIES
+      \"$filename\": \"\""
     fi
 done
 
-cat >> "$BOOT_JSON" << 'EOF'
-
+cat > "$BOOT_FILE" << JSEOF
+{
+  "mainAssemblyName": "PKHeX.dll",
+  "resources": {
+    "assembly": {${ASSEMBLIES}
     },
     "wasmNative": {
       "dotnet.native.wasm": ""
@@ -40,6 +39,6 @@ cat >> "$BOOT_JSON" << 'EOF'
     }
   }
 }
-EOF
+JSEOF
 
-echo "Generated $BOOT_JSON"
+echo "Generated $BOOT_FILE"
