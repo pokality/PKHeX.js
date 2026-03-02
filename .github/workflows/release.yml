@@ -257,7 +257,7 @@ jobs:
     name: Publish to NPM
     runs-on: ubuntu-latest
     environment: release
-    needs: [validate-version, build]
+    needs: [validate-version, build, github-release, github-pages]
     if: needs.validate-version.outputs.should_deploy == 'true'
     
     steps:
@@ -283,7 +283,7 @@ jobs:
     name: Generate TSDoc Documentation
     runs-on: ubuntu-latest
     environment: build
-    needs: [validate-version, build, npm-publish]
+    needs: [validate-version, build]
     if: needs.validate-version.outputs.should_deploy == 'true'
     
     steps:
