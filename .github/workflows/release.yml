@@ -164,7 +164,8 @@ jobs:
           del(.scripts.prepublishOnly) |
           del(.scripts.build) |
           del(.scripts["build:debug"]) |
-          del(.devDependencies)
+          del(.devDependencies) |
+          del(.files)
         ' package.json > dist/package.json
     
     - name: Create tarball for GitHub Release
@@ -252,7 +253,7 @@ jobs:
   npm-publish:
     name: Publish to NPM
     runs-on: ubuntu-latest
-    environment: build
+    environment: release
     needs: [validate-version, build]
     if: needs.validate-version.outputs.should_deploy == 'true'
     
