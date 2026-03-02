@@ -341,6 +341,110 @@ public partial class PKHeXApi
         });
     }
 
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string GetHyperspaceSurveyPoints(int handle)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Hyperspace Survey Points are only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            if (sav9za.SaveRevision == 0)
+                throw new ValidationException("Hyperspace Survey Points require the Mega Dimension DLC (save revision 1+)", "UNSUPPORTED_REVISION");
+
+            var points = sav9za.GetValue<uint>(SaveBlockAccessor9ZA.KHyperspaceSurveyPoints);
+
+            return new SurveyPointsResponse(true, points);
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string SetHyperspaceSurveyPoints(int handle, int points)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Hyperspace Survey Points are only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            if (sav9za.SaveRevision == 0)
+                throw new ValidationException("Hyperspace Survey Points require the Mega Dimension DLC (save revision 1+)", "UNSUPPORTED_REVISION");
+
+            if (points < 0)
+                throw new ValidationException("Points cannot be negative", "INVALID_ARGUMENT");
+
+            sav9za.SetValue(SaveBlockAccessor9ZA.KHyperspaceSurveyPoints, (uint)points);
+
+            return new SuccessMessage(true, $"Hyperspace Survey Points set to {points}");
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string GetDonuts(int handle)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Donuts are only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            var donuts = sav9za.Donuts;
+            var donutList = new List<DonutEntry>();
+
+            for (int i = 0; i < DonutPocket9a.MaxCount; i++)
+            {
+                var donut = donuts.GetDonut(i);
+                if (donut.Donut == 0 && donut.Calories == 0)
+                    continue;
+
+                donutList.Add(new DonutEntry(i, donut.Donut, donut.Calories, donut.Stars, donut.LevelBoost, donut.BerryName));
+            }
+
+            return new DonutPocketResponse(true, donutList, donutList.Count, DonutPocket9a.MaxCount);
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string SetAllDonutsShiny(int handle)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Donuts are only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            sav9za.Donuts.SetAllAsShinyTemplate();
+
+            return new DonutsShinyResponse(true, DonutPocket9a.MaxCount, $"Set all {DonutPocket9a.MaxCount} donuts to shiny template");
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string CompressDonuts(int handle)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Donuts are only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            sav9za.Donuts.Compress();
+
+            return new SuccessMessage(true, "Donut pocket compressed (empty slots removed)");
+        });
+    }
+
     /// <summary>
     /// Gets Infinite Royale ticket points for Legends Z-A.
     /// </summary>

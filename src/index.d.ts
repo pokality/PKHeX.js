@@ -724,6 +724,27 @@ export interface SaveRevisionData {
   revisionName: string;
 }
 
+/**
+ * Donut data from Z-A donut pocket
+ */
+export interface DonutData {
+  index: number;
+  donutId: number;
+  calories: number;
+  stars: number;
+  levelBoost: number;
+  berryName: number;
+}
+
+/**
+ * Donut pocket response
+ */
+export interface DonutPocketData {
+  donuts: DonutData[];
+  count: number;
+  maxCount: number;
+}
+
 // ============================================================================
 // Gen 9a (Legends Z-A) Models
 // ============================================================================
@@ -1079,6 +1100,8 @@ export interface PKHeXApi {
       getInfiniteRoyalePoints(handle: SaveHandle): ApiResult<{ royalePoints: number; infiniteRoyalePoints: number }>;
       setInfiniteRoyalePoints(handle: SaveHandle, royalePoints: number, infinitePoints: number): ApiResult<MessageResponse>;
       collectTechnicalMachines(handle: SaveHandle): ApiResult<{ tmsCollected: number; message: string }>;
+      getHyperspaceSurveyPoints(handle: SaveHandle): ApiResult<{ points: number }>;
+      setHyperspaceSurveyPoints(handle: SaveHandle, points: number): ApiResult<MessageResponse>;
     };
 
     // Time operations
@@ -1118,6 +1141,9 @@ export interface PKHeXApi {
       unlockFashionCategory(handle: SaveHandle, category: string): ApiResult<MessageResponse>;
       unlockAllFashion(handle: SaveHandle): ApiResult<{ itemsUnlocked: number; message: string }>;
       unlockAllHairMakeup(handle: SaveHandle): ApiResult<{ itemsUnlocked: number; message: string }>;
+      getDonuts(handle: SaveHandle): ApiResult<DonutPocketData>;
+      setAllDonutsShiny(handle: SaveHandle): ApiResult<{ count: number; message: string }>;
+      compressDonuts(handle: SaveHandle): ApiResult<MessageResponse>;
     };
   };
 

@@ -71,6 +71,8 @@ export type {
   PrimalFormData,
   PlayerAppearance9aData,
   SaveRevisionData,
+  DonutData,
+  DonutPocketData,
 } from './index.d.js';
 
 /**

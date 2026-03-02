@@ -34,6 +34,33 @@ public record TmsCollectedResponse(
     [property: JsonPropertyName("message")] string Message
 );
 
+public record SurveyPointsResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("points")] uint Points
+);
+
+public record DonutEntry(
+    [property: JsonPropertyName("index")] int Index,
+    [property: JsonPropertyName("donutId")] ushort DonutId,
+    [property: JsonPropertyName("calories")] ushort Calories,
+    [property: JsonPropertyName("stars")] byte Stars,
+    [property: JsonPropertyName("levelBoost")] byte LevelBoost,
+    [property: JsonPropertyName("berryName")] ushort BerryName
+);
+
+public record DonutPocketResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("donuts")] List<DonutEntry> Donuts,
+    [property: JsonPropertyName("count")] int Count,
+    [property: JsonPropertyName("maxCount")] int MaxCount
+);
+
+public record DonutsShinyResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("count")] int Count,
+    [property: JsonPropertyName("message")] string Message
+);
+
 public record PlayerAppearance9aResponse(
     [property: JsonPropertyName("success")] bool Success,
     [property: JsonPropertyName("skinColor")] uint SkinColor,

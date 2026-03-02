@@ -128,6 +128,12 @@ namespace PKHeX.Helpers;
 [JsonSerializable(typeof(PrimalFormResponse))]
 [JsonSerializable(typeof(SaveRevisionResponse))]
 [JsonSerializable(typeof(TmsCollectedResponse))]
+// Upstream feature models (25.12.15)
+[JsonSerializable(typeof(SurveyPointsResponse))]
+[JsonSerializable(typeof(DonutEntry))]
+[JsonSerializable(typeof(DonutPocketResponse))]
+[JsonSerializable(typeof(DonutsShinyResponse))]
+[JsonSerializable(typeof(List<DonutEntry>))]
 public partial class JsonContext : JsonSerializerContext
 {
 }

@@ -50,6 +50,7 @@ import type {
   PrimalFormData,
   PlayerAppearance9aData,
   SaveRevisionData,
+  DonutPocketData,
 } from './index.js';
 
 interface RawPKHeXApi {
@@ -151,7 +152,12 @@ interface RawPKHeXApi {
   GetPlayerAppearance9a(handle: number): string;
   SetPlayerAppearance9a(handle: number, appearanceJson: string): string;
   GetSaveRevision(handle: number): string;
+  GetHyperspaceSurveyPoints(handle: number): string;
+  SetHyperspaceSurveyPoints(handle: number, points: number): string;
   CollectTechnicalMachines(handle: number): string;
+  GetDonuts(handle: number): string;
+  SetAllDonutsShiny(handle: number): string;
+  CompressDonuts(handle: number): string;
 
   GetPKMData(base64PkmData: string, generation: number): string;
   ModifyPKMData(base64PkmData: string, generation: number, modificationsJson: string): string;
@@ -377,6 +383,8 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         getInfiniteRoyalePoints: (handle: SaveHandle) => parseJson<{ royalePoints: number; infiniteRoyalePoints: number }>(rawApi.GetInfiniteRoyalePoints(handle)),
         setInfiniteRoyalePoints: (handle: SaveHandle, royalePoints: number, infinitePoints: number) => parseJson<MessageResponse>(rawApi.SetInfiniteRoyalePoints(handle, royalePoints, infinitePoints)),
         collectTechnicalMachines: (handle: SaveHandle) => parseJson<{ tmsCollected: number; message: string }>(rawApi.CollectTechnicalMachines(handle)),
+        getHyperspaceSurveyPoints: (handle: SaveHandle) => parseJson<{ points: number }>(rawApi.GetHyperspaceSurveyPoints(handle)),
+        setHyperspaceSurveyPoints: (handle: SaveHandle, points: number) => parseJson<MessageResponse>(rawApi.SetHyperspaceSurveyPoints(handle, points)),
       },
 
       time: {
@@ -412,6 +420,9 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         unlockFashionCategory: (handle: SaveHandle, category: string) => parseJson<MessageResponse>(rawApi.UnlockFashionCategory(handle, category)),
         unlockAllFashion: (handle: SaveHandle) => parseJson<{ itemsUnlocked: number; message: string }>(rawApi.UnlockAllFashion(handle)),
         unlockAllHairMakeup: (handle: SaveHandle) => parseJson<{ itemsUnlocked: number; message: string }>(rawApi.UnlockAllHairMakeup(handle)),
+        getDonuts: (handle: SaveHandle) => parseJson<DonutPocketData>(rawApi.GetDonuts(handle)),
+        setAllDonutsShiny: (handle: SaveHandle) => parseJson<{ count: number; message: string }>(rawApi.SetAllDonutsShiny(handle)),
+        compressDonuts: (handle: SaveHandle) => parseJson<MessageResponse>(rawApi.CompressDonuts(handle)),
       },
     },
 

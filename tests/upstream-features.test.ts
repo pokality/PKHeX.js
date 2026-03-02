@@ -196,4 +196,60 @@ describe('Upstream Feature Tests', () => {
       expect(result).toHaveProperty('error');
     });
   });
+
+  // ========================================================================
+  // 25.12.15: Hyperspace Survey Points (ZA-specific, error path only)
+  // ========================================================================
+  describe('Hyperspace Survey Points (25.12.15)', () => {
+    it('should error for non-ZA saves on get', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.progress.getHyperspaceSurveyPoints(handle);
+        expect(result).toHaveProperty('error');
+      });
+    });
+
+    it('should error for non-ZA saves on set', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.progress.setHyperspaceSurveyPoints(handle, 100);
+        expect(result).toHaveProperty('error');
+      });
+    });
+
+    it('should error for invalid handle', () => {
+      const result = api.save.progress.getHyperspaceSurveyPoints(-1);
+      expect(result).toHaveProperty('error');
+    });
+  });
+
+  // ========================================================================
+  // 25.12.15: Donuts (ZA-specific, error path only)
+  // ========================================================================
+  describe('Donuts (25.12.15)', () => {
+    it('should error for non-ZA saves on get', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.features.getDonuts(handle);
+        expect(result).toHaveProperty('error');
+        expect(result.code).toBe('UNSUPPORTED_GENERATION');
+      });
+    });
+
+    it('should error for non-ZA saves on setAllShiny', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.features.setAllDonutsShiny(handle);
+        expect(result).toHaveProperty('error');
+      });
+    });
+
+    it('should error for non-ZA saves on compress', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.features.compressDonuts(handle);
+        expect(result).toHaveProperty('error');
+      });
+    });
+
+    it('should error for invalid handle', () => {
+      const result = api.save.features.getDonuts(-1);
+      expect(result).toHaveProperty('error');
+    });
+  });
 });
