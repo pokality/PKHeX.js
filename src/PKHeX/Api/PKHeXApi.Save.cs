@@ -86,6 +86,29 @@ public partial class PKHeXApi
 
     [JSExport]
     [return: JSMarshalAs<JSType.String>]
+    public static string GetSaveRevision(int handle)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Save revision is only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            var revision = sav9za.SaveRevision;
+            var revisionName = revision switch
+            {
+                0 => "Base",
+                1 => "Mega Dimension",
+                _ => $"Unknown ({revision})"
+            };
+
+            return new SaveRevisionResponse(true, revision, revisionName);
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
     public static string GetActiveHandleCount()
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>

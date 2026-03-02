@@ -320,6 +320,28 @@ public partial class PKHeXApi
     }
 
     /// <summary>
+    /// Collects all Technical Machines in a Legends Z-A save.
+    /// </summary>
+    /// <param name="handle">Save file handle</param>
+    /// <returns>JSON response with the number of TMs collected</returns>
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string CollectTechnicalMachines(int handle)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Technical Machines collection is only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            var count = TechnicalMachine9a.SetAllTechnicalMachines(sav9za);
+
+            return new TmsCollectedResponse(true, count, $"Collected {count} Technical Machines");
+        });
+    }
+
+    /// <summary>
     /// Gets Infinite Royale ticket points for Legends Z-A.
     /// </summary>
     /// <param name="handle">Save file handle</param>

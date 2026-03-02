@@ -706,6 +706,24 @@ export interface SpeciesCategoryData {
   isSpecial: boolean;
 }
 
+/**
+ * Primal form check result
+ */
+export interface PrimalFormData {
+  species: SpeciesID;
+  speciesName: string;
+  form: FormID;
+  isPrimal: boolean;
+}
+
+/**
+ * Save file revision data
+ */
+export interface SaveRevisionData {
+  revision: number;
+  revisionName: string;
+}
+
 // ============================================================================
 // Gen 9a (Legends Z-A) Models
 // ============================================================================
@@ -943,6 +961,7 @@ export interface PKHeXApi {
     dispose(handle: SaveHandle): ApiResult<MessageResponse>;
     setTextSpeed(handle: SaveHandle, speed: number): ApiResult<MessageResponse>;
     getTextSpeed(handle: SaveHandle): ApiResult<{ textSpeed: number; speedName: string }>;
+    getSaveRevision(handle: SaveHandle): ApiResult<SaveRevisionData>;
 
     // Pokemon operations within save
     pokemon: {
@@ -1059,6 +1078,7 @@ export interface PKHeXApi {
       getColorfulScrewLocations(handle: SaveHandle, collected: boolean): ApiResult<{ collected: boolean; count: number; locations: ColorfulScrewLocation[] }>;
       getInfiniteRoyalePoints(handle: SaveHandle): ApiResult<{ royalePoints: number; infiniteRoyalePoints: number }>;
       setInfiniteRoyalePoints(handle: SaveHandle, royalePoints: number, infinitePoints: number): ApiResult<MessageResponse>;
+      collectTechnicalMachines(handle: SaveHandle): ApiResult<{ tmsCollected: number; message: string }>;
     };
 
     // Time operations
@@ -1277,6 +1297,13 @@ export interface PKHeXApi {
      * @param species - National Pokedex number
      */
     getSpeciesCategory(species: SpeciesID): ApiResult<SpeciesCategoryData>;
+
+    /**
+     * Check if a species/form combination is a Primal form (Kyogre/Groudon form 1)
+     * @param species - National Pokedex number
+     * @param form - Form ID
+     */
+    isPrimalForm(species: SpeciesID, form: FormID): ApiResult<PrimalFormData>;
   };
 
   /**

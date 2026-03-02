@@ -124,6 +124,10 @@ namespace PKHeX.Helpers;
 [JsonSerializable(typeof(SpeciesCategoryResponse))]
 [JsonSerializable(typeof(PlayerAppearance9aResponse))]
 [JsonSerializable(typeof(PlayerAppearance9aInput))]
+// Upstream feature models (25.12.12)
+[JsonSerializable(typeof(PrimalFormResponse))]
+[JsonSerializable(typeof(SaveRevisionResponse))]
+[JsonSerializable(typeof(TmsCollectedResponse))]
 public partial class JsonContext : JsonSerializerContext
 {
 }

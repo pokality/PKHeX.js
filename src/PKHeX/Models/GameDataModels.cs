@@ -14,6 +14,26 @@ public record SpeciesCategoryResponse(
     [property: JsonPropertyName("isSpecial")] bool IsSpecial
 );
 
+public record PrimalFormResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("species")] int Species,
+    [property: JsonPropertyName("speciesName")] string SpeciesName,
+    [property: JsonPropertyName("form")] int Form,
+    [property: JsonPropertyName("isPrimal")] bool IsPrimal
+);
+
+public record SaveRevisionResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("revision")] int Revision,
+    [property: JsonPropertyName("revisionName")] string RevisionName
+);
+
+public record TmsCollectedResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("tmsCollected")] int TmsCollected,
+    [property: JsonPropertyName("message")] string Message
+);
+
 public record PlayerAppearance9aResponse(
     [property: JsonPropertyName("success")] bool Success,
     [property: JsonPropertyName("skinColor")] uint SkinColor,

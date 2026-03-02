@@ -47,7 +47,9 @@ import type {
   BatchOperationResponse,
   BoxStatsData,
   SpeciesCategoryData,
+  PrimalFormData,
   PlayerAppearance9aData,
+  SaveRevisionData,
 } from './index.js';
 
 interface RawPKHeXApi {
@@ -144,9 +146,12 @@ interface RawPKHeXApi {
   GetAllTypes(): string;
 
   GetSpeciesCategory(species: number): string;
+  IsPrimalForm(species: number, form: number): string;
 
   GetPlayerAppearance9a(handle: number): string;
   SetPlayerAppearance9a(handle: number, appearanceJson: string): string;
+  GetSaveRevision(handle: number): string;
+  CollectTechnicalMachines(handle: number): string;
 
   GetPKMData(base64PkmData: string, generation: number): string;
   ModifyPKMData(base64PkmData: string, generation: number, modificationsJson: string): string;
@@ -260,6 +265,7 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
       dispose: (handle: SaveHandle) => parseJson<MessageResponse>(rawApi.DisposeSave(handle)),
       setTextSpeed: (handle: SaveHandle, speed: number) => parseJson<MessageResponse>(rawApi.SetTextSpeed(handle, speed)),
       getTextSpeed: (handle: SaveHandle) => parseJson<{ textSpeed: number; speedName: string }>(rawApi.GetTextSpeed(handle)),
+      getSaveRevision: (handle: SaveHandle) => parseJson<SaveRevisionData>(rawApi.GetSaveRevision(handle)),
 
       pokemon: {
         get: (handle: SaveHandle, box: number, slot: number) => parseJson<PokemonDetail>(rawApi.GetPokemon(handle, box, slot)),
@@ -370,6 +376,7 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         getColorfulScrewLocations: (handle: SaveHandle, collected: boolean) => parseJson<{ collected: boolean; count: number; locations: Array<{ fieldItem: string; x: number; y: number; z: number }> }>(rawApi.GetColorfulScrewLocations(handle, collected)),
         getInfiniteRoyalePoints: (handle: SaveHandle) => parseJson<{ royalePoints: number; infiniteRoyalePoints: number }>(rawApi.GetInfiniteRoyalePoints(handle)),
         setInfiniteRoyalePoints: (handle: SaveHandle, royalePoints: number, infinitePoints: number) => parseJson<MessageResponse>(rawApi.SetInfiniteRoyalePoints(handle, royalePoints, infinitePoints)),
+        collectTechnicalMachines: (handle: SaveHandle) => parseJson<{ tmsCollected: number; message: string }>(rawApi.CollectTechnicalMachines(handle)),
       },
 
       time: {
@@ -435,6 +442,7 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
       getMemoryStrings: () => parseJson<MemoryStringsData>(rawApi.GetMemoryStrings()),
       getAllTeraTypes: () => parseJson<{ teraTypes: TeraTypeInfo[] }>(rawApi.GetAllTeraTypes()),
       getSpeciesCategory: (species: number) => parseJson<SpeciesCategoryData>(rawApi.GetSpeciesCategory(species)),
+      isPrimalForm: (species: number, form: number) => parseJson<PrimalFormData>(rawApi.IsPrimalForm(species, form)),
     },
 
     gen9a: {

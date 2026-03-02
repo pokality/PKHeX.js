@@ -226,6 +226,25 @@ public partial class PKHeXApi
     }
 
     [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string IsPrimalForm(int species, int form)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            if (species < 0 || species >= GameInfo.Strings.Species.Count)
+                throw new ValidationException($"Species ID {species} is out of range (0-{GameInfo.Strings.Species.Count - 1})", "INVALID_SPECIES_ID");
+
+            return new PrimalFormResponse(
+                true,
+                species,
+                GameInfo.Strings.Species[species],
+                form,
+                Core.FormInfo.IsPrimalForm((ushort)species, (byte)form)
+            );
+        });
+    }
+
+    [JSExport]
     [return: JSMarshalAs<JSType.Any>]
     public static object GetSpeciesEvolutions(int species, int generation)
     {
