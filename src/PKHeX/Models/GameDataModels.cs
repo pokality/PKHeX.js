@@ -34,6 +34,22 @@ public record TmsCollectedResponse(
     [property: JsonPropertyName("message")] string Message
 );
 
+public record ItemSearchResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("found")] bool Found,
+    [property: JsonPropertyName("pouchIndex")] int PouchIndex,
+    [property: JsonPropertyName("pouchType")] string PouchType,
+    [property: JsonPropertyName("count")] int Count
+);
+
+public record EmptySlotResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("pouchIndex")] int PouchIndex,
+    [property: JsonPropertyName("pouchType")] string PouchType,
+    [property: JsonPropertyName("emptySlotIndex")] int EmptySlotIndex,
+    [property: JsonPropertyName("hasEmptySlot")] bool HasEmptySlot
+);
+
 public record SurveyPointsResponse(
     [property: JsonPropertyName("success")] bool Success,
     [property: JsonPropertyName("points")] uint Points

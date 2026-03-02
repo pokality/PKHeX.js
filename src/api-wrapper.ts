@@ -51,6 +51,8 @@ import type {
   PlayerAppearance9aData,
   SaveRevisionData,
   DonutPocketData,
+  ItemSearchResult,
+  EmptySlotResult,
 } from './index.js';
 
 interface RawPKHeXApi {
@@ -148,6 +150,9 @@ interface RawPKHeXApi {
 
   GetSpeciesCategory(species: number): string;
   IsPrimalForm(species: number, form: number): string;
+
+  HasItem(handle: number, itemId: number): string;
+  GetFirstEmptySlot(handle: number, pouchIndex: number): string;
 
   GetPlayerAppearance9a(handle: number): string;
   SetPlayerAppearance9a(handle: number, appearanceJson: string): string;
@@ -360,6 +365,8 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         getPouches: (handle: SaveHandle) => parseJson<PouchData[]>(rawApi.GetPouchItems(handle)),
         add: (handle: SaveHandle, itemId: number, count: number, pouchIndex: number) => parseJson<MessageResponse>(rawApi.AddItemToPouch(handle, itemId, count, pouchIndex)),
         remove: (handle: SaveHandle, itemId: number, count: number) => parseJson<MessageResponse>(rawApi.RemoveItemFromPouch(handle, itemId, count)),
+        hasItem: (handle: SaveHandle, itemId: number) => parseJson<ItemSearchResult>(rawApi.HasItem(handle, itemId)),
+        getFirstEmptySlot: (handle: SaveHandle, pouchIndex: number) => parseJson<EmptySlotResult>(rawApi.GetFirstEmptySlot(handle, pouchIndex)),
       },
 
       pokedex: {

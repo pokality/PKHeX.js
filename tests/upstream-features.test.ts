@@ -276,4 +276,122 @@ describe('Upstream Feature Tests', () => {
       expect(result).toHaveProperty('error');
     });
   });
+
+  // ========================================================================
+  // 26.01.31: HasItem
+  // ========================================================================
+  describe('Has Item (26.01.31)', () => {
+    it('should search for items in inventory', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.items.hasItem(handle, 1);
+        expect(result).not.toHaveProperty('error');
+        expect(result).toHaveProperty('found');
+        expect(typeof result.found).toBe('boolean');
+      });
+    });
+
+    it('should return found=false for item not in inventory', async () => {
+      await withTestSave(rawApi, (handle) => {
+        // Item 2 (Ultra Ball) is unlikely to be in the test emerald save
+        const result = api.save.items.hasItem(handle, 2);
+        expect(result).not.toHaveProperty('error');
+        if (!result.found) {
+          expect(result.pouchIndex).toBe(-1);
+          expect(result.count).toBe(0);
+        }
+      });
+    });
+
+    it('should error for invalid item ID', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.items.hasItem(handle, -1);
+        expect(result).toHaveProperty('error');
+      });
+    });
+
+    it('should error for invalid handle', () => {
+      const result = api.save.items.hasItem(-1, 1);
+      expect(result).toHaveProperty('error');
+    });
+
+    it('should work via raw API', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const jsonResponse = rawApi.HasItem(handle, 1);
+        const parsed = JSON.parse(jsonResponse);
+        expect(parsed.success).toBe(true);
+        expect(parsed).toHaveProperty('found');
+      });
+    });
+  });
+
+  // ========================================================================
+  // 26.01.31: GetFirstEmptySlot
+  // ========================================================================
+  describe('Get First Empty Slot (26.01.31)', () => {
+    it('should find empty slot in a pouch', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.items.getFirstEmptySlot(handle, 0);
+        expect(result).not.toHaveProperty('error');
+        expect(result).toHaveProperty('emptySlotIndex');
+        expect(result).toHaveProperty('hasEmptySlot');
+        expect(typeof result.emptySlotIndex).toBe('number');
+        expect(typeof result.hasEmptySlot).toBe('boolean');
+      });
+    });
+
+    it('should error for invalid pouch index', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.items.getFirstEmptySlot(handle, 999);
+        expect(result).toHaveProperty('error');
+      });
+    });
+
+    it('should error for invalid handle', () => {
+      const result = api.save.items.getFirstEmptySlot(-1, 0);
+      expect(result).toHaveProperty('error');
+    });
+
+    it('should work via raw API', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const jsonResponse = rawApi.GetFirstEmptySlot(handle, 0);
+        const parsed = JSON.parse(jsonResponse);
+        expect(parsed.success).toBe(true);
+        expect(parsed).toHaveProperty('emptySlotIndex');
+        expect(parsed).toHaveProperty('hasEmptySlot');
+      });
+    });
+  });
+
+  // ========================================================================
+  // API Wrapper Integration
+  // ========================================================================
+  describe('API Wrapper Integration', () => {
+    it('should expose getSpeciesCategory through wrapper', () => {
+      const result = api.gameData.getSpeciesCategory(150);
+      expect(result).toBeDefined();
+      expect(result.isLegendary).toBe(true);
+    });
+
+    it('should expose isPrimalForm through wrapper', () => {
+      const result = api.gameData.isPrimalForm(382, 1);
+      expect(result).toBeDefined();
+      expect(result.isPrimal).toBe(true);
+    });
+
+    it('should expose hasItem through wrapper', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.items.hasItem(handle, 1);
+        expect(result).toBeDefined();
+        expect(result).toHaveProperty('found');
+      });
+    });
+
+    it('should expose getFirstEmptySlot through wrapper', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.items.getFirstEmptySlot(handle, 0);
+        expect(result).toBeDefined();
+        expect(result).toHaveProperty('emptySlotIndex');
+      });
+    });
+  });
 });

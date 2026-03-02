@@ -561,6 +561,26 @@ export interface PouchData {
   totalSlots: number;
 }
 
+/**
+ * Item search result
+ */
+export interface ItemSearchResult {
+  found: boolean;
+  pouchIndex: number;
+  pouchType: string | null;
+  count: number;
+}
+
+/**
+ * Empty slot search result
+ */
+export interface EmptySlotResult {
+  pouchIndex: number;
+  pouchType: string;
+  emptySlotIndex: number;
+  hasEmptySlot: boolean;
+}
+
 // ============================================================================
 // Pokedex Models
 // ============================================================================
@@ -1073,6 +1093,8 @@ export interface PKHeXApi {
       getPouches(handle: SaveHandle): ApiResult<PouchData[]>;
       add(handle: SaveHandle, itemId: number, count: number, pouchIndex: number): ApiResult<MessageResponse>;
       remove(handle: SaveHandle, itemId: number, count: number): ApiResult<MessageResponse>;
+      hasItem(handle: SaveHandle, itemId: number): ApiResult<ItemSearchResult>;
+      getFirstEmptySlot(handle: SaveHandle, pouchIndex: number): ApiResult<EmptySlotResult>;
     };
 
     // Pokedex operations

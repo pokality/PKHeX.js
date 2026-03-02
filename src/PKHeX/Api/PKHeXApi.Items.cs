@@ -91,6 +91,51 @@ public partial class PKHeXApi
 
     [JSExport]
     [return: JSMarshalAs<JSType.String>]
+    public static string HasItem(int handle, int itemId)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (itemId < 0 || itemId > save.MaxItemID)
+                throw new ValidationException($"Item ID {itemId} is out of range (0-{save.MaxItemID})", "INVALID_ITEM_ID");
+
+            var pouches = save.Inventory.Pouches;
+
+            for (int i = 0; i < pouches.Count; i++)
+            {
+                if (pouches[i].HasItem((ushort)itemId))
+                {
+                    var item = pouches[i].Items.First(it => it.Index == itemId && it.Count > 0);
+                    return new ItemSearchResponse(true, true, i, pouches[i].Type.ToString(), item.Count);
+                }
+            }
+
+            return new ItemSearchResponse(true, false, -1, "", 0);
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string GetFirstEmptySlot(int handle, int pouchIndex)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            var pouches = save.Inventory.Pouches;
+            if (pouchIndex < 0 || pouchIndex >= pouches.Count)
+                throw new ValidationException($"Pouch index {pouchIndex} is out of range (0-{pouches.Count - 1})", "INVALID_POUCH_INDEX");
+
+            var pouch = pouches[pouchIndex];
+            var emptySlotIndex = pouch.FindIndexFirstEmptySlot();
+
+            return new EmptySlotResponse(true, pouchIndex, pouch.Type.ToString(), emptySlotIndex, emptySlotIndex >= 0);
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
     public static string RemoveItemFromPouch(int handle, int itemId, int count)
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>

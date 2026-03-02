@@ -128,6 +128,9 @@ namespace PKHeX.Helpers;
 [JsonSerializable(typeof(PrimalFormResponse))]
 [JsonSerializable(typeof(SaveRevisionResponse))]
 [JsonSerializable(typeof(TmsCollectedResponse))]
+// Upstream feature models (26.01.31)
+[JsonSerializable(typeof(ItemSearchResponse))]
+[JsonSerializable(typeof(EmptySlotResponse))]
 // Upstream feature models (25.12.15)
 [JsonSerializable(typeof(SurveyPointsResponse))]
 [JsonSerializable(typeof(StreetNameResponse))]

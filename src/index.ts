@@ -73,6 +73,8 @@ export type {
   SaveRevisionData,
   DonutData,
   DonutPocketData,
+  ItemSearchResult,
+  EmptySlotResult,
 } from './index.d.js';
 
 /**
