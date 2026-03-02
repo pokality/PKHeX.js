@@ -218,6 +218,7 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: ${{ needs.validate-version.outputs.version }}
         files: |
           pkhex-wasm-${{ needs.validate-version.outputs.version }}.tar.gz
           dist/dotnet.js
