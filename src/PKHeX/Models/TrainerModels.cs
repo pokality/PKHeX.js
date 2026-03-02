@@ -47,6 +47,27 @@ public record TrainerAppearance(
     [property: JsonPropertyName("hat")] int Hat
 );
 
+public record PlayerAppearance9aInput(
+    [property: JsonPropertyName("skinColor")] uint? SkinColor = null,
+    [property: JsonPropertyName("lipColor")] uint? LipColor = null,
+    [property: JsonPropertyName("darkCircles")] uint? DarkCircles = null,
+    [property: JsonPropertyName("eyeColor")] uint? EyeColor = null,
+    [property: JsonPropertyName("eyebrowColor")] uint? EyebrowColor = null,
+    [property: JsonPropertyName("eyebrowShape")] uint? EyebrowShape = null,
+    [property: JsonPropertyName("eyelashColor")] uint? EyelashColor = null,
+    [property: JsonPropertyName("eyelashShape")] uint? EyelashShape = null,
+    [property: JsonPropertyName("beautySpotFirst")] uint? BeautySpotFirst = null,
+    [property: JsonPropertyName("beautySpotSecond")] uint? BeautySpotSecond = null,
+    [property: JsonPropertyName("freckles")] uint? Freckles = null,
+    [property: JsonPropertyName("hairColor")] uint? HairColor = null,
+    [property: JsonPropertyName("colorBlocking")] uint? ColorBlocking = null,
+    [property: JsonPropertyName("balayageFadeFirst")] uint? BalayageFadeFirst = null,
+    [property: JsonPropertyName("balayageFadeSecond")] uint? BalayageFadeSecond = null,
+    [property: JsonPropertyName("faceShape")] uint? FaceShape = null,
+    [property: JsonPropertyName("bangs")] uint? Bangs = null,
+    [property: JsonPropertyName("hairColorMode")] uint? HairColorMode = null
+);
+
 public record BadgeData(
     [property: JsonPropertyName("badgeCount")] int BadgeCount,
     [property: JsonPropertyName("badges")] bool[] Badges

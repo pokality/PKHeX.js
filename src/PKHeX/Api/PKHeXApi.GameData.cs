@@ -202,6 +202,30 @@ public partial class PKHeXApi
     }
 
     [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string GetSpeciesCategory(int species)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            if (species < 0 || species >= GameInfo.Strings.Species.Count)
+                throw new ValidationException($"Species ID {species} is out of range (0-{GameInfo.Strings.Species.Count - 1})", "INVALID_SPECIES_ID");
+
+            var s = (ushort)species;
+            return new SpeciesCategoryResponse(
+                true,
+                species,
+                GameInfo.Strings.Species[species],
+                SpeciesCategory.IsLegendary(s),
+                SpeciesCategory.IsSubLegendary(s),
+                SpeciesCategory.IsMythical(s),
+                SpeciesCategory.IsUltraBeast(s),
+                SpeciesCategory.IsParadox(s),
+                SpeciesCategory.IsSpecialPokemon(s)
+            );
+        });
+    }
+
+    [JSExport]
     [return: JSMarshalAs<JSType.Any>]
     public static object GetSpeciesEvolutions(int species, int generation)
     {

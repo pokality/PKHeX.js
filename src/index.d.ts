@@ -689,6 +689,52 @@ export interface ColorfulScrewLocation {
 }
 
 // ============================================================================
+// Species Category Models
+// ============================================================================
+
+/**
+ * Species category classification
+ */
+export interface SpeciesCategoryData {
+  species: SpeciesID;
+  speciesName: string;
+  isLegendary: boolean;
+  isSubLegendary: boolean;
+  isMythical: boolean;
+  isUltraBeast: boolean;
+  isParadox: boolean;
+  isSpecial: boolean;
+}
+
+// ============================================================================
+// Gen 9a (Legends Z-A) Models
+// ============================================================================
+
+/**
+ * Player appearance data for Legends Z-A
+ */
+export interface PlayerAppearance9aData {
+  skinColor: number;
+  lipColor: number;
+  darkCircles: number;
+  eyeColor: number;
+  eyebrowColor: number;
+  eyebrowShape: number;
+  eyelashColor: number;
+  eyelashShape: number;
+  beautySpotFirst: number;
+  beautySpotSecond: number;
+  freckles: number;
+  hairColor: number;
+  colorBlocking: number;
+  balayageFadeFirst: number;
+  balayageFadeSecond: number;
+  faceShape: number;
+  bangs: number;
+  hairColorMode: number;
+}
+
+// ============================================================================
 // Game Data Models
 // ============================================================================
 
@@ -958,6 +1004,8 @@ export interface PKHeXApi {
       setRivalName(handle: SaveHandle, rivalName: string): ApiResult<MessageResponse>;
       getBadges(handle: SaveHandle): ApiResult<BadgeData>;
       setBadge(handle: SaveHandle, badgeIndex: number, value: boolean): ApiResult<MessageResponse>;
+      getPlayerAppearance9a(handle: SaveHandle): ApiResult<PlayerAppearance9aData>;
+      setPlayerAppearance9a(handle: SaveHandle, appearance: Partial<PlayerAppearance9aData>): ApiResult<MessageResponse>;
     };
 
     // Box operations
@@ -1223,6 +1271,12 @@ export interface PKHeXApi {
      * Get all Tera Types (Gen 9)
      */
     getAllTeraTypes(): ApiResult<{ teraTypes: TeraTypeInfo[] }>;
+
+    /**
+     * Get species category classification (legendary, mythical, etc.)
+     * @param species - National Pokedex number
+     */
+    getSpeciesCategory(species: SpeciesID): ApiResult<SpeciesCategoryData>;
   };
 
   /**

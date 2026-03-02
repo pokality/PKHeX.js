@@ -67,6 +67,8 @@ export type {
   BatchOperationResult,
   BatchOperationResponse,
   BoxStatsData,
+  SpeciesCategoryData,
+  PlayerAppearance9aData,
 } from './index.d.js';
 
 /**

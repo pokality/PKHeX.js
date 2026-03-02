@@ -120,6 +120,10 @@ namespace PKHeX.Helpers;
 [JsonSerializable(typeof(TeraTypeInfo))]
 [JsonSerializable(typeof(TeraTypesListResponse))]
 [JsonSerializable(typeof(List<TeraTypeInfo>))]
+// Upstream feature models (25.11.30)
+[JsonSerializable(typeof(SpeciesCategoryResponse))]
+[JsonSerializable(typeof(PlayerAppearance9aResponse))]
+[JsonSerializable(typeof(PlayerAppearance9aInput))]
 public partial class JsonContext : JsonSerializerContext
 {
 }

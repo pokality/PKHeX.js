@@ -46,6 +46,8 @@ import type {
   BatchModification,
   BatchOperationResponse,
   BoxStatsData,
+  SpeciesCategoryData,
+  PlayerAppearance9aData,
 } from './index.js';
 
 interface RawPKHeXApi {
@@ -140,7 +142,12 @@ interface RawPKHeXApi {
   GetAllNatures(): string;
   GetTypeName(typeId: number): string;
   GetAllTypes(): string;
-  
+
+  GetSpeciesCategory(species: number): string;
+
+  GetPlayerAppearance9a(handle: number): string;
+  SetPlayerAppearance9a(handle: number, appearanceJson: string): string;
+
   GetPKMData(base64PkmData: string, generation: number): string;
   ModifyPKMData(base64PkmData: string, generation: number, modificationsJson: string): string;
   CheckPKMLegality(base64PkmData: string, generation: number): string;
@@ -312,6 +319,8 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         setRivalName: (handle: SaveHandle, rivalName: string) => parseJson<MessageResponse>(rawApi.SetRivalName(handle, rivalName)),
         getBadges: (handle: SaveHandle) => parseJson<BadgeData>(rawApi.GetBadges(handle)),
         setBadge: (handle: SaveHandle, badgeIndex: number, value: boolean) => parseJson<MessageResponse>(rawApi.SetBadge(handle, badgeIndex, value)),
+        getPlayerAppearance9a: (handle: SaveHandle) => parseJson<PlayerAppearance9aData>(rawApi.GetPlayerAppearance9a(handle)),
+        setPlayerAppearance9a: (handle: SaveHandle, appearance: Partial<PlayerAppearance9aData>) => parseJson<MessageResponse>(rawApi.SetPlayerAppearance9a(handle, JSON.stringify(appearance))),
       },
 
       boxes: {
@@ -425,6 +434,7 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
       getAvailableForms: (species: number, generation: number) => parseJson<AvailableFormsData>(rawApi.GetAvailableForms(species, generation)),
       getMemoryStrings: () => parseJson<MemoryStringsData>(rawApi.GetMemoryStrings()),
       getAllTeraTypes: () => parseJson<{ teraTypes: TeraTypeInfo[] }>(rawApi.GetAllTeraTypes()),
+      getSpeciesCategory: (species: number) => parseJson<SpeciesCategoryData>(rawApi.GetSpeciesCategory(species)),
     },
 
     gen9a: {

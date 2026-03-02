@@ -126,6 +126,86 @@ public partial class PKHeXApi
 
     [JSExport]
     [return: JSMarshalAs<JSType.String>]
+    public static string GetPlayerAppearance9a(int handle)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Player appearance details are only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            var appearance = sav9za.PlayerAppearance;
+
+            return new PlayerAppearance9aResponse(
+                true,
+                appearance.SkinColor,
+                appearance.LipColor,
+                appearance.DarkCircles,
+                appearance.EyeColor,
+                appearance.EyebrowColor,
+                appearance.EyebrowShape,
+                appearance.EyelashColor,
+                appearance.EyelashShape,
+                appearance.BeautySpotFirst,
+                appearance.BeautySpotSecond,
+                appearance.Freckles,
+                appearance.HairColor,
+                appearance.ColorBlocking,
+                appearance.BalayageFadeFirst,
+                appearance.BalayageFadeSecond,
+                appearance.FaceShape,
+                appearance.Bangs,
+                appearance.HairColorMode
+            );
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string SetPlayerAppearance9a(int handle, string appearanceJson)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Player appearance details are only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            if (string.IsNullOrWhiteSpace(appearanceJson))
+                throw new ValidationException("Appearance data cannot be empty", "EMPTY_APPEARANCE_DATA");
+
+            var data = JsonSerializer.Deserialize<PlayerAppearance9aInput>(appearanceJson, JsonContext.Default.Options);
+            if (data == null)
+                throw new ValidationException("Invalid appearance data JSON", INVALID_JSON);
+
+            var appearance = sav9za.PlayerAppearance;
+
+            if (data.SkinColor.HasValue) appearance.SkinColor = data.SkinColor.Value;
+            if (data.LipColor.HasValue) appearance.LipColor = data.LipColor.Value;
+            if (data.DarkCircles.HasValue) appearance.DarkCircles = data.DarkCircles.Value;
+            if (data.EyeColor.HasValue) appearance.EyeColor = data.EyeColor.Value;
+            if (data.EyebrowColor.HasValue) appearance.EyebrowColor = data.EyebrowColor.Value;
+            if (data.EyebrowShape.HasValue) appearance.EyebrowShape = data.EyebrowShape.Value;
+            if (data.EyelashColor.HasValue) appearance.EyelashColor = data.EyelashColor.Value;
+            if (data.EyelashShape.HasValue) appearance.EyelashShape = data.EyelashShape.Value;
+            if (data.BeautySpotFirst.HasValue) appearance.BeautySpotFirst = data.BeautySpotFirst.Value;
+            if (data.BeautySpotSecond.HasValue) appearance.BeautySpotSecond = data.BeautySpotSecond.Value;
+            if (data.Freckles.HasValue) appearance.Freckles = data.Freckles.Value;
+            if (data.HairColor.HasValue) appearance.HairColor = data.HairColor.Value;
+            if (data.ColorBlocking.HasValue) appearance.ColorBlocking = data.ColorBlocking.Value;
+            if (data.BalayageFadeFirst.HasValue) appearance.BalayageFadeFirst = data.BalayageFadeFirst.Value;
+            if (data.BalayageFadeSecond.HasValue) appearance.BalayageFadeSecond = data.BalayageFadeSecond.Value;
+            if (data.FaceShape.HasValue) appearance.FaceShape = data.FaceShape.Value;
+            if (data.Bangs.HasValue) appearance.Bangs = data.Bangs.Value;
+            if (data.HairColorMode.HasValue) appearance.HairColorMode = data.HairColorMode.Value;
+
+            return new SuccessMessage(true, "Player appearance updated successfully");
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
     public static string GetRivalName(int handle)
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>
