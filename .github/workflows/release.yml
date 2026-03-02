@@ -283,7 +283,7 @@ jobs:
     name: Generate TSDoc Documentation
     runs-on: ubuntu-latest
     environment: build
-    needs: [validate-version, build]
+    needs: [validate-version, build, npm-publish]
     if: needs.validate-version.outputs.should_deploy == 'true'
     
     steps:
