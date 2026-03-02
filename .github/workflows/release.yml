@@ -24,9 +24,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
+        ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || '' }}
         submodules: recursive
         fetch-depth: 0
-    
+
     - name: Extract tag version
       id: extract
       run: |
@@ -120,8 +121,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
+        ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || '' }}
         submodules: recursive
-    
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
