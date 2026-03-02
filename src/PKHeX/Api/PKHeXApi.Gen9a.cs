@@ -386,6 +386,54 @@ public partial class PKHeXApi
 
     [JSExport]
     [return: JSMarshalAs<JSType.String>]
+    public static string GetStreetName(int handle)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Street Name is only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            if (sav9za.SaveRevision == 0)
+                throw new ValidationException("Street Name requires the Mega Dimension DLC (save revision 1+)", "UNSUPPORTED_REVISION");
+
+            var block = sav9za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
+            var streetName = sav9za.GetString(block.Data);
+
+            return new StreetNameResponse(true, streetName, 18);
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
+    public static string SetStreetName(int handle, string name)
+    {
+        return ApiHelpers.ExecuteWithErrorHandling(() =>
+        {
+            var save = ApiHelpers.GetValidatedSave(handle);
+
+            if (save is not SAV9ZA sav9za)
+                throw new ValidationException("Street Name is only available in Legends Z-A saves", "UNSUPPORTED_GENERATION");
+
+            if (sav9za.SaveRevision == 0)
+                throw new ValidationException("Street Name requires the Mega Dimension DLC (save revision 1+)", "UNSUPPORTED_REVISION");
+
+            if (string.IsNullOrEmpty(name))
+                throw new ValidationException("Street name cannot be empty", "EMPTY_NAME");
+
+            if (name.Length > 18)
+                throw new ValidationException("Street name cannot exceed 18 characters", "NAME_TOO_LONG");
+
+            var block = sav9za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
+            sav9za.SetString(block.Data, name.AsSpan(), 18, StringConverterOption.ClearZero);
+
+            return new SuccessMessage(true, $"Street name set to '{name}'");
+        });
+    }
+
+    [JSExport]
+    [return: JSMarshalAs<JSType.String>]
     public static string GetDonuts(int handle)
     {
         return ApiHelpers.ExecuteWithErrorHandling(() =>

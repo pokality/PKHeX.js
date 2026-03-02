@@ -39,6 +39,12 @@ public record SurveyPointsResponse(
     [property: JsonPropertyName("points")] uint Points
 );
 
+public record StreetNameResponse(
+    [property: JsonPropertyName("success")] bool Success,
+    [property: JsonPropertyName("streetName")] string StreetName,
+    [property: JsonPropertyName("maxLength")] int MaxLength
+);
+
 public record DonutEntry(
     [property: JsonPropertyName("index")] int Index,
     [property: JsonPropertyName("donutId")] ushort DonutId,

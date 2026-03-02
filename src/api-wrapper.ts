@@ -152,6 +152,8 @@ interface RawPKHeXApi {
   GetPlayerAppearance9a(handle: number): string;
   SetPlayerAppearance9a(handle: number, appearanceJson: string): string;
   GetSaveRevision(handle: number): string;
+  GetStreetName(handle: number): string;
+  SetStreetName(handle: number, name: string): string;
   GetHyperspaceSurveyPoints(handle: number): string;
   SetHyperspaceSurveyPoints(handle: number, points: number): string;
   CollectTechnicalMachines(handle: number): string;
@@ -333,6 +335,8 @@ export function createPKHeXApiWrapper(rawApiOrExports: RawPKHeXApi | any): PKHeX
         setBadge: (handle: SaveHandle, badgeIndex: number, value: boolean) => parseJson<MessageResponse>(rawApi.SetBadge(handle, badgeIndex, value)),
         getPlayerAppearance9a: (handle: SaveHandle) => parseJson<PlayerAppearance9aData>(rawApi.GetPlayerAppearance9a(handle)),
         setPlayerAppearance9a: (handle: SaveHandle, appearance: Partial<PlayerAppearance9aData>) => parseJson<MessageResponse>(rawApi.SetPlayerAppearance9a(handle, JSON.stringify(appearance))),
+        getStreetName: (handle: SaveHandle) => parseJson<{ streetName: string; maxLength: number }>(rawApi.GetStreetName(handle)),
+        setStreetName: (handle: SaveHandle, name: string) => parseJson<MessageResponse>(rawApi.SetStreetName(handle, name)),
       },
 
       boxes: {

@@ -130,6 +130,7 @@ namespace PKHeX.Helpers;
 [JsonSerializable(typeof(TmsCollectedResponse))]
 // Upstream feature models (25.12.15)
 [JsonSerializable(typeof(SurveyPointsResponse))]
+[JsonSerializable(typeof(StreetNameResponse))]
 [JsonSerializable(typeof(DonutEntry))]
 [JsonSerializable(typeof(DonutPocketResponse))]
 [JsonSerializable(typeof(DonutsShinyResponse))]

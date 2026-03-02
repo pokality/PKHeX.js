@@ -1046,6 +1046,8 @@ export interface PKHeXApi {
       setBadge(handle: SaveHandle, badgeIndex: number, value: boolean): ApiResult<MessageResponse>;
       getPlayerAppearance9a(handle: SaveHandle): ApiResult<PlayerAppearance9aData>;
       setPlayerAppearance9a(handle: SaveHandle, appearance: Partial<PlayerAppearance9aData>): ApiResult<MessageResponse>;
+      getStreetName(handle: SaveHandle): ApiResult<{ streetName: string; maxLength: number }>;
+      setStreetName(handle: SaveHandle, name: string): ApiResult<MessageResponse>;
     };
 
     // Box operations

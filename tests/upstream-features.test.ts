@@ -222,6 +222,30 @@ describe('Upstream Feature Tests', () => {
   });
 
   // ========================================================================
+  // 25.12.21: Street Name (ZA-specific, error path only)
+  // ========================================================================
+  describe('Street Name (25.12.21)', () => {
+    it('should error for non-ZA saves on get', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.trainer.getStreetName(handle);
+        expect(result).toHaveProperty('error');
+      });
+    });
+
+    it('should error for non-ZA saves on set', async () => {
+      await withTestSave(rawApi, (handle) => {
+        const result = api.save.trainer.setStreetName(handle, 'Test Street');
+        expect(result).toHaveProperty('error');
+      });
+    });
+
+    it('should error for invalid handle', () => {
+      const result = api.save.trainer.getStreetName(-1);
+      expect(result).toHaveProperty('error');
+    });
+  });
+
+  // ========================================================================
   // 25.12.15: Donuts (ZA-specific, error path only)
   // ========================================================================
   describe('Donuts (25.12.15)', () => {
