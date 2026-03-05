@@ -1,0 +1,774 @@
+package pokality:pkhex;
+
+// ---------------------------------------------------------------------------
+// Shared types
+// ---------------------------------------------------------------------------
+interface types {
+  variant pkhex-error {
+    validation(string),
+    internal-error(string),
+    unsupported(string),
+  }
+
+  type save-handle = u32;
+
+  record stat-spread {
+    hp: s32,
+    atk: s32,
+    def: s32,
+    spa: s32,
+    spd: s32,
+    spe: s32,
+  }
+
+  record named-entry {
+    id: s32,
+    name: string,
+  }
+
+  record pokemon-summary {
+    box: s32,
+    slot: s32,
+    species: u16,
+    species-name: string,
+    level: u8,
+    is-egg: bool,
+    is-shiny: bool,
+  }
+
+  record pokemon-detail {
+    species: u16,
+    species-name: string,
+    nickname: string,
+    level: u8,
+    nature: u8,
+    nature-name: string,
+    ability: u16,
+    ability-name: string,
+    held-item: u16,
+    held-item-name: string,
+    moves: list<u16>,
+    move-names: list<string>,
+    ivs: stat-spread,
+    evs: stat-spread,
+    stats: stat-spread,
+    gender: u8,
+    is-shiny: bool,
+    is-egg: bool,
+    ot-name: string,
+    ot-gender: u8,
+    pid: u32,
+    ball: u8,
+    met-level: u8,
+    met-location: u16,
+    met-location-name: string,
+  }
+
+  record pokemon-modifications {
+    species: option<u16>,
+    nickname: option<string>,
+    level: option<u8>,
+    nature: option<u8>,
+    ability: option<u16>,
+    held-item: option<u16>,
+    moves: option<list<u16>>,
+    ivs: option<stat-spread>,
+    evs: option<stat-spread>,
+    gender: option<u8>,
+    is-shiny: option<bool>,
+    ot-name: option<string>,
+    ball: option<u8>,
+  }
+
+  record legality-result {
+    valid: bool,
+    errors: list<string>,
+    report: string,
+  }
+
+  record pid-info {
+    pid: u32,
+    is-shiny: bool,
+    shiny-type: string,
+    nature: u8,
+    nature-name: string,
+    gender: u8,
+    gender-name: string,
+  }
+
+  record form-data {
+    form: u8,
+    form-name: string,
+    form-count: u8,
+    form-argument: option<u32>,
+    form-argument-remain: option<u32>,
+    form-argument-elapsed: option<u32>,
+    form-argument-maximum: option<u32>,
+  }
+
+  record contest-stats {
+    cool: u8,
+    beauty: u8,
+    cute: u8,
+    smart: u8,
+    tough: u8,
+    sheen: u8,
+  }
+
+  record friendship-data {
+    current: u8,
+    ot: u8,
+    ht: u8,
+    affection: option<u8>,
+    fullness: option<u8>,
+    enjoyment: option<u8>,
+  }
+
+  record memory-info {
+    memory-id: u8,
+    intensity: u8,
+    feeling: u8,
+    variable: u16,
+    text: string,
+  }
+
+  record memories-data {
+    ot-memory: memory-info,
+    ht-memory: option<memory-info>,
+  }
+
+  record ribbon-entry {
+    name: string,
+    has-ribbon: bool,
+    ribbon-count: s32,
+    ribbon-type: string,
+  }
+
+  record tera-type-data {
+    tera-type: u8,
+    tera-type-name: string,
+    effective-tera-type: u8,
+    effective-tera-type-name: string,
+    is-overridden: bool,
+  }
+
+  record hidden-power-info {
+    type-id: s32,
+    type-name: string,
+    power: s32,
+  }
+
+  record characteristic-info {
+    index: s32,
+    text: string,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Save file lifecycle and time
+// ---------------------------------------------------------------------------
+interface save-ops {
+  use types.{save-handle, pkhex-error};
+
+  record save-info {
+    generation: string,
+    game-version: string,
+    ot: string,
+    display-tid: u32,
+    display-sid: u32,
+    box-count: s32,
+  }
+
+  record save-revision {
+    revision: s32,
+    revision-name: string,
+  }
+
+  record play-time {
+    hours: s32,
+    minutes: s32,
+    seconds: s32,
+    total-seconds: s32,
+  }
+
+  load-save: func(data: list<u8>) -> result<save-handle, pkhex-error>;
+  get-save-info: func(handle: save-handle) -> result<save-info, pkhex-error>;
+  export-save: func(handle: save-handle) -> result<list<u8>, pkhex-error>;
+  dispose-save: func(handle: save-handle);
+  get-save-revision: func(handle: save-handle) -> result<save-revision, pkhex-error>;
+  get-active-handle-count: func() -> u32;
+
+  get-play-time: func(handle: save-handle) -> result<play-time, pkhex-error>;
+  set-play-time: func(handle: save-handle, hours: s32, minutes: s32, seconds: s32) -> result<_, pkhex-error>;
+  get-seconds-to-start: func(handle: save-handle) -> result<u32, pkhex-error>;
+  set-seconds-to-start: func(handle: save-handle, seconds: u32) -> result<_, pkhex-error>;
+  get-seconds-to-fame: func(handle: save-handle) -> result<u32, pkhex-error>;
+  set-seconds-to-fame: func(handle: save-handle, seconds: u32) -> result<_, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Box pokemon operations (CRUD + all per-pokemon attributes)
+// ---------------------------------------------------------------------------
+interface pokemon-ops {
+  use types.{save-handle, pkhex-error, pokemon-summary, pokemon-detail,
+             pokemon-modifications, legality-result, pid-info, form-data,
+             contest-stats, friendship-data, memories-data, ribbon-entry,
+             tera-type-data};
+
+  // CRUD
+  get-all-pokemon: func(handle: save-handle) -> result<list<pokemon-summary>, pkhex-error>;
+  get-pokemon: func(handle: save-handle, box: s32, slot: s32) -> result<pokemon-detail, pkhex-error>;
+  modify-pokemon: func(handle: save-handle, box: s32, slot: s32, mods: pokemon-modifications) -> result<_, pkhex-error>;
+  set-pokemon: func(handle: save-handle, box: s32, slot: s32, data: list<u8>) -> result<_, pkhex-error>;
+  delete-pokemon: func(handle: save-handle, box: s32, slot: s32) -> result<_, pkhex-error>;
+  move-pokemon: func(handle: save-handle, from-box: s32, from-slot: s32, to-box: s32, to-slot: s32) -> result<_, pkhex-error>;
+
+  // Showdown
+  export-showdown: func(handle: save-handle, box: s32, slot: s32) -> result<string, pkhex-error>;
+  import-showdown: func(handle: save-handle, box: s32, slot: s32, text: string) -> result<_, pkhex-error>;
+
+  // Legality
+  check-legality: func(handle: save-handle, box: s32, slot: s32) -> result<legality-result, pkhex-error>;
+  legalize-pokemon: func(handle: save-handle, box: s32, slot: s32) -> result<_, pkhex-error>;
+
+  // PID / Shiny
+  get-pid-info: func(handle: save-handle, box: s32, slot: s32) -> result<pid-info, pkhex-error>;
+  generate-pid: func(handle: save-handle, box: s32, slot: s32, nature: u8, shiny: bool) -> result<_, pkhex-error>;
+  set-pid: func(handle: save-handle, box: s32, slot: s32, pid: u32) -> result<_, pkhex-error>;
+  set-shiny: func(handle: save-handle, box: s32, slot: s32, shiny-type: u8) -> result<_, pkhex-error>;
+
+  // Forms
+  get-form: func(handle: save-handle, box: s32, slot: s32) -> result<form-data, pkhex-error>;
+  set-form: func(handle: save-handle, box: s32, slot: s32, form: u8) -> result<_, pkhex-error>;
+  set-form-argument: func(handle: save-handle, box: s32, slot: s32, form-argument: u32) -> result<_, pkhex-error>;
+  change-species-and-form: func(handle: save-handle, box: s32, slot: s32, species: u16, form: u8) -> result<_, pkhex-error>;
+
+  // Contest stats
+  get-contest-stats: func(handle: save-handle, box: s32, slot: s32) -> result<contest-stats, pkhex-error>;
+  set-contest-stat: func(handle: save-handle, box: s32, slot: s32, stat-name: string, value: u8) -> result<_, pkhex-error>;
+
+  // Friendship / Affection
+  get-friendship: func(handle: save-handle, box: s32, slot: s32) -> result<friendship-data, pkhex-error>;
+  set-friendship: func(handle: save-handle, box: s32, slot: s32, value: u8) -> result<_, pkhex-error>;
+  set-ot-friendship: func(handle: save-handle, box: s32, slot: s32, value: u8) -> result<_, pkhex-error>;
+  set-ht-friendship: func(handle: save-handle, box: s32, slot: s32, value: u8) -> result<_, pkhex-error>;
+  set-affection: func(handle: save-handle, box: s32, slot: s32, value: u8) -> result<_, pkhex-error>;
+  set-fullness: func(handle: save-handle, box: s32, slot: s32, value: u8) -> result<_, pkhex-error>;
+  set-enjoyment: func(handle: save-handle, box: s32, slot: s32, value: u8) -> result<_, pkhex-error>;
+  maximize-friendship: func(handle: save-handle, box: s32, slot: s32) -> result<_, pkhex-error>;
+
+  // Ribbons
+  get-ribbons: func(handle: save-handle, box: s32, slot: s32) -> result<list<ribbon-entry>, pkhex-error>;
+  get-ribbon-count: func(handle: save-handle, box: s32, slot: s32) -> result<s32, pkhex-error>;
+  set-ribbon: func(handle: save-handle, box: s32, slot: s32, ribbon-name: string, value: bool) -> result<_, pkhex-error>;
+
+  // Memories
+  get-memories: func(handle: save-handle, box: s32, slot: s32) -> result<memories-data, pkhex-error>;
+  set-ot-memory: func(handle: save-handle, box: s32, slot: s32, memory-id: u8, intensity: u8, feeling: u8, variable: u16) -> result<_, pkhex-error>;
+  set-ht-memory: func(handle: save-handle, box: s32, slot: s32, memory-id: u8, intensity: u8, feeling: u8, variable: u16) -> result<_, pkhex-error>;
+  clear-memories: func(handle: save-handle, box: s32, slot: s32) -> result<_, pkhex-error>;
+
+  // Tera type (Gen 9)
+  get-tera-type: func(handle: save-handle, box: s32, slot: s32) -> result<tera-type-data, pkhex-error>;
+  set-tera-type: func(handle: save-handle, box: s32, slot: s32, tera-type: u8) -> result<_, pkhex-error>;
+  reset-tera-type: func(handle: save-handle, box: s32, slot: s32) -> result<_, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Party operations
+// ---------------------------------------------------------------------------
+interface party-ops {
+  use types.{save-handle, pkhex-error, pokemon-summary, pokemon-detail};
+
+  get-party: func(handle: save-handle) -> result<list<pokemon-summary>, pkhex-error>;
+  get-party-slot: func(handle: save-handle, slot: s32) -> result<pokemon-detail, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Standalone PKM operations (raw bytes, no save handle)
+// ---------------------------------------------------------------------------
+interface pkm-ops {
+  use types.{pkhex-error, pokemon-detail, pokemon-modifications, legality-result,
+             pid-info, hidden-power-info, characteristic-info, stat-spread,
+             ribbon-entry, tera-type-data, named-entry};
+
+  get-pkm-data: func(data: list<u8>, generation: u8) -> result<pokemon-detail, pkhex-error>;
+  modify-pkm-data: func(data: list<u8>, generation: u8, mods: pokemon-modifications) -> result<list<u8>, pkhex-error>;
+  calculate-pkm-stats: func(data: list<u8>, generation: u8) -> result<stat-spread, pkhex-error>;
+
+  get-pkm-pid-info: func(data: list<u8>, generation: u8) -> result<pid-info, pkhex-error>;
+  set-pkm-pid: func(data: list<u8>, generation: u8, pid: u32) -> result<list<u8>, pkhex-error>;
+  set-pkm-shiny: func(data: list<u8>, generation: u8, shiny-type: u8) -> result<list<u8>, pkhex-error>;
+
+  check-pkm-legality: func(data: list<u8>, generation: u8) -> result<legality-result, pkhex-error>;
+  legalize-pkm-data: func(data: list<u8>, generation: u8) -> result<list<u8>, pkhex-error>;
+
+  export-pkm-showdown: func(data: list<u8>, generation: u8) -> result<string, pkhex-error>;
+
+  get-pkm-ribbons: func(data: list<u8>, generation: u8) -> result<list<ribbon-entry>, pkhex-error>;
+  set-pkm-ribbon: func(data: list<u8>, generation: u8, ribbon-name: string, value: bool) -> result<list<u8>, pkhex-error>;
+
+  reroll-pkm-encryption-constant: func(data: list<u8>, generation: u8) -> result<list<u8>, pkhex-error>;
+  get-pkm-hidden-power: func(data: list<u8>, generation: u8) -> result<hidden-power-info, pkhex-error>;
+  get-pkm-characteristic: func(data: list<u8>, generation: u8) -> result<characteristic-info, pkhex-error>;
+  get-pkm-tera-type: func(data: list<u8>, generation: u8) -> result<tera-type-data, pkhex-error>;
+
+  convert-pkm-format: func(data: list<u8>, from-generation: u8, to-generation: u8) -> result<list<u8>, pkhex-error>;
+  get-met-locations: func(generation: u8, game-version: s32, egg-locations: bool) -> result<list<named-entry>, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Trainer operations
+// ---------------------------------------------------------------------------
+interface trainer-ops {
+  use types.{save-handle, pkhex-error};
+
+  record trainer-info {
+    ot: string,
+    display-tid: u32,
+    display-sid: u32,
+    gender: u8,
+    language: s32,
+    money: u32,
+    played-hours: s32,
+    played-minutes: s32,
+    played-seconds: s32,
+  }
+
+  record trainer-modifications {
+    ot: option<string>,
+    gender: option<u8>,
+    language: option<s32>,
+    money: option<u32>,
+  }
+
+  record trainer-card {
+    ot: string,
+    display-tid: u32,
+    display-sid: u32,
+    money: u32,
+  }
+
+  record player-appearance-za {
+    skin-color: u8,
+    lip-color: u8,
+    dark-circles: u8,
+    eye-color: u8,
+    eyebrow-color: u8,
+    eyebrow-shape: u8,
+    eyelash-color: u8,
+    eyelash-shape: u8,
+    beauty-spot-first: u8,
+    beauty-spot-second: u8,
+    freckles: u8,
+    hair-color: u8,
+    color-blocking: u8,
+    balayage-fade-first: u8,
+    balayage-fade-second: u8,
+    face-shape: u8,
+    bangs: u8,
+    hair-color-mode: u8,
+  }
+
+  get-trainer-info: func(handle: save-handle) -> result<trainer-info, pkhex-error>;
+  set-trainer-info: func(handle: save-handle, mods: trainer-modifications) -> result<_, pkhex-error>;
+  get-trainer-card: func(handle: save-handle) -> result<trainer-card, pkhex-error>;
+  get-rival-name: func(handle: save-handle) -> result<string, pkhex-error>;
+  set-rival-name: func(handle: save-handle, name: string) -> result<_, pkhex-error>;
+  get-player-appearance-za: func(handle: save-handle) -> result<player-appearance-za, pkhex-error>;
+  set-player-appearance-za: func(handle: save-handle, appearance: player-appearance-za) -> result<_, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Storage, batch, battle box, and daycare operations
+// ---------------------------------------------------------------------------
+interface storage-ops {
+  use types.{save-handle, pkhex-error, pokemon-summary, pokemon-modifications};
+
+  record box-info {
+    name: string,
+    wallpaper: s32,
+  }
+
+  record box-stats {
+    box: s32,
+    total-slots: s32,
+    occupied: s32,
+    empty: s32,
+    shiny-count: s32,
+    egg-count: s32,
+    unique-species: s32,
+  }
+
+  record batch-legality-entry {
+    box: s32,
+    slot: s32,
+    valid: bool,
+    empty: bool,
+    errors: option<list<string>>,
+    species: option<u16>,
+  }
+
+  record batch-legality-result {
+    results: list<batch-legality-entry>,
+    valid-count: s32,
+    invalid-count: s32,
+    empty-count: s32,
+  }
+
+  record batch-modify-entry {
+    box: s32,
+    slot: s32,
+    modifications: pokemon-modifications,
+  }
+
+  record batch-operation-result {
+    box: s32,
+    slot: s32,
+    success: bool,
+    error: option<string>,
+  }
+
+  record daycare-info {
+    slot1-species: u16,
+    slot1-species-name: string,
+    slot1-level: u8,
+    slot2-species: u16,
+    slot2-species-name: string,
+    slot2-level: u8,
+    has-egg: bool,
+  }
+
+  // Box management
+  get-box-names: func(handle: save-handle) -> result<list<string>, pkhex-error>;
+  get-box-info: func(handle: save-handle) -> result<list<box-info>, pkhex-error>;
+  set-box-wallpaper: func(handle: save-handle, box: s32, wallpaper: s32) -> result<_, pkhex-error>;
+  get-box-stats: func(handle: save-handle, box: s32) -> result<box-stats, pkhex-error>;
+
+  // Batch operations
+  batch-check-legality: func(handle: save-handle, locations: list<tuple<s32, s32>>) -> result<batch-legality-result, pkhex-error>;
+  batch-modify-pokemon: func(handle: save-handle, entries: list<batch-modify-entry>) -> result<list<batch-operation-result>, pkhex-error>;
+  clear-box: func(handle: save-handle, box: s32) -> result<s32, pkhex-error>;
+  clear-all-boxes: func(handle: save-handle) -> result<s32, pkhex-error>;
+  sort-box: func(handle: save-handle, box: s32, sort-by: string) -> result<_, pkhex-error>;
+  compact-box: func(handle: save-handle, box: s32) -> result<_, pkhex-error>;
+
+  // Battle box
+  get-battle-box: func(handle: save-handle) -> result<list<pokemon-summary>, pkhex-error>;
+  set-battle-box-slot: func(handle: save-handle, slot: s32, data: list<u8>) -> result<_, pkhex-error>;
+
+  // Daycare
+  get-daycare: func(handle: save-handle) -> result<daycare-info, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Inventory / Item operations
+// ---------------------------------------------------------------------------
+interface item-ops {
+  use types.{save-handle, pkhex-error};
+
+  record item-slot {
+    item-id: u16,
+    item-name: string,
+    count: s32,
+  }
+
+  record pouch-data {
+    pouch-type: string,
+    pouch-index: s32,
+    items: list<item-slot>,
+    max-slots: s32,
+  }
+
+  record item-search-result {
+    found: bool,
+    pouch-index: s32,
+    pouch-type: string,
+    count: s32,
+  }
+
+  get-pouch-items: func(handle: save-handle) -> result<list<pouch-data>, pkhex-error>;
+  add-item-to-pouch: func(handle: save-handle, item-id: u16, count: s32, pouch-index: s32) -> result<_, pkhex-error>;
+  remove-item-from-pouch: func(handle: save-handle, item-id: u16, count: s32) -> result<_, pkhex-error>;
+  has-item: func(handle: save-handle, item-id: u16) -> result<item-search-result, pkhex-error>;
+  get-first-empty-slot: func(handle: save-handle, pouch-index: s32) -> result<s32, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Static game data lookups (no save handle needed)
+// ---------------------------------------------------------------------------
+interface game-data-ops {
+  use types.{pkhex-error, named-entry, stat-spread};
+
+  record species-category {
+    species: u16,
+    species-name: string,
+    is-legendary: bool,
+    is-sub-legendary: bool,
+    is-mythical: bool,
+    is-ultra-beast: bool,
+    is-paradox: bool,
+    is-special: bool,
+  }
+
+  record evolution-entry {
+    species: u16,
+    species-name: string,
+    form: u8,
+  }
+
+  record evolution-data {
+    species: u16,
+    species-name: string,
+    chain: list<evolution-entry>,
+    forward-evolutions: list<evolution-entry>,
+    pre-evolutions: list<evolution-entry>,
+    base-species: u16,
+    base-species-name: string,
+    base-form: u8,
+  }
+
+  record form-entry {
+    form-index: u8,
+    form-name: string,
+    type1: u8,
+    type1-name: string,
+    type2: u8,
+    type2-name: string,
+    base-stats: stat-spread,
+    gender-ratio: u8,
+    is-dual-gender: bool,
+    is-genderless: bool,
+  }
+
+  record species-forms {
+    species: u16,
+    species-name: string,
+    generation: u8,
+    forms: list<form-entry>,
+    form-count: u8,
+  }
+
+  record available-form {
+    index: u8,
+    name: string,
+  }
+
+  record tera-type-info {
+    id: u8,
+    name: string,
+    is-special: bool,
+  }
+
+  record memory-strings {
+    memories: list<named-entry>,
+    feelings: list<named-entry>,
+    intensities: list<named-entry>,
+  }
+
+  // Name lookups
+  get-species-name: func(species-id: u16) -> result<string, pkhex-error>;
+  get-all-species: func() -> list<named-entry>;
+  get-move-name: func(move-id: u16) -> result<string, pkhex-error>;
+  get-all-moves: func() -> list<named-entry>;
+  get-ability-name: func(ability-id: u16) -> result<string, pkhex-error>;
+  get-all-abilities: func() -> list<named-entry>;
+  get-item-name: func(item-id: u16) -> result<string, pkhex-error>;
+  get-all-items: func() -> list<named-entry>;
+  get-nature-name: func(nature-id: u8) -> result<string, pkhex-error>;
+  get-all-natures: func() -> list<named-entry>;
+  get-type-name: func(type-id: u8) -> result<string, pkhex-error>;
+  get-all-types: func() -> list<named-entry>;
+
+  // Species info
+  get-species-category: func(species: u16) -> result<species-category, pkhex-error>;
+  is-primal-form: func(species: u16, form: u8) -> result<bool, pkhex-error>;
+  get-species-evolutions: func(species: u16, generation: u8) -> result<evolution-data, pkhex-error>;
+  get-species-forms: func(species: u16, generation: u8) -> result<species-forms, pkhex-error>;
+  get-available-forms: func(species: u16, generation: u8) -> result<list<available-form>, pkhex-error>;
+
+  // Tera types
+  get-all-tera-types: func() -> list<tera-type-info>;
+
+  // Memory strings
+  get-memory-strings: func() -> result<memory-strings, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Progress: badges, BP, coins, records, pokedex, events
+// ---------------------------------------------------------------------------
+interface progress-ops {
+  use types.{save-handle, pkhex-error};
+
+  record badge-data {
+    count: s32,
+    badges: list<bool>,
+  }
+
+  record pokedex-entry {
+    species: u16,
+    species-name: string,
+    seen: bool,
+    caught: bool,
+  }
+
+  // Badges
+  get-badges: func(handle: save-handle) -> result<badge-data, pkhex-error>;
+  set-badge: func(handle: save-handle, badge-index: s32, value: bool) -> result<_, pkhex-error>;
+
+  // Battle points
+  get-battle-points: func(handle: save-handle) -> result<s32, pkhex-error>;
+  set-battle-points: func(handle: save-handle, bp: s32) -> result<_, pkhex-error>;
+
+  // Coins
+  get-coins: func(handle: save-handle) -> result<s32, pkhex-error>;
+  set-coins: func(handle: save-handle, coins: s32) -> result<_, pkhex-error>;
+
+  // Records
+  get-records: func(handle: save-handle) -> result<list<tuple<string, s32>>, pkhex-error>;
+  set-record: func(handle: save-handle, record-index: s32, value: s32) -> result<_, pkhex-error>;
+
+  // Pokedex
+  get-pokedex: func(handle: save-handle) -> result<list<pokedex-entry>, pkhex-error>;
+  set-pokedex-seen: func(handle: save-handle, species: u16) -> result<_, pkhex-error>;
+  set-pokedex-caught: func(handle: save-handle, species: u16) -> result<_, pkhex-error>;
+
+  // Event flags/consts
+  get-event-flag: func(handle: save-handle, flag-index: s32) -> result<bool, pkhex-error>;
+  set-event-flag: func(handle: save-handle, flag-index: s32, value: bool) -> result<_, pkhex-error>;
+  get-event-const: func(handle: save-handle, const-index: s32) -> result<s32, pkhex-error>;
+  set-event-const: func(handle: save-handle, const-index: s32, value: s32) -> result<_, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Special features: mystery gifts, hall of fame, battle facility, etc.
+// ---------------------------------------------------------------------------
+interface feature-ops {
+  use types.{save-handle, pkhex-error, pokemon-summary};
+
+  record mystery-gift-card {
+    index: s32,
+    gift-type: string,
+    card-title: string,
+    is-item: bool,
+    is-pokemon: bool,
+    item-id: s32,
+    species: u16,
+    level: u8,
+    is-shiny: bool,
+    is-egg: bool,
+  }
+
+  record hall-of-fame-entry {
+    index: s32,
+    team: list<pokemon-summary>,
+  }
+
+  record battle-facility-stats {
+    entries: list<tuple<string, s32>>,
+  }
+
+  record secret-base-data {
+    trainer-name: string,
+    trainer-id: s32,
+    secret-id: s32,
+    gender: u8,
+    language: s32,
+    location-name: string,
+    location-id: s32,
+  }
+
+  // Mystery gifts
+  get-mystery-gifts: func(handle: save-handle) -> result<list<mystery-gift-card>, pkhex-error>;
+  get-mystery-gift-card: func(handle: save-handle, index: s32) -> result<mystery-gift-card, pkhex-error>;
+  delete-mystery-gift: func(handle: save-handle, index: s32) -> result<_, pkhex-error>;
+  get-mystery-gift-flags: func(handle: save-handle) -> result<list<bool>, pkhex-error>;
+
+  // Hall of fame
+  get-hall-of-fame: func(handle: save-handle) -> result<list<hall-of-fame-entry>, pkhex-error>;
+
+  // Battle facility
+  get-battle-facility-stats: func(handle: save-handle) -> result<battle-facility-stats, pkhex-error>;
+
+  // Secret base
+  get-secret-base: func(handle: save-handle) -> result<secret-base-data, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// Legends Z-A specific operations
+// ---------------------------------------------------------------------------
+interface za-ops {
+  use types.{save-handle, pkhex-error};
+
+  record donut-entry {
+    slot: s32,
+    donut: s32,
+    calories: s32,
+    stars: s32,
+    level-boost: s32,
+    berry-name: string,
+  }
+
+  record screw-location {
+    field-item: s32,
+    x: f32,
+    y: f32,
+    z: f32,
+  }
+
+  record royale-points {
+    royale: u32,
+    infinite-royale: u32,
+  }
+
+  // Fashion
+  unlock-fashion-category: func(handle: save-handle, category: string) -> result<_, pkhex-error>;
+  unlock-all-fashion: func(handle: save-handle) -> result<s32, pkhex-error>;
+  unlock-all-hair-makeup: func(handle: save-handle) -> result<s32, pkhex-error>;
+
+  // Colorful screws
+  collect-colorful-screws: func(handle: save-handle) -> result<s32, pkhex-error>;
+  get-colorful-screw-locations: func(handle: save-handle, collected: bool) -> result<list<screw-location>, pkhex-error>;
+
+  // Technical machines
+  collect-technical-machines: func(handle: save-handle) -> result<s32, pkhex-error>;
+
+  // Text speed
+  get-text-speed: func(handle: save-handle) -> result<s32, pkhex-error>;
+  set-text-speed: func(handle: save-handle, speed: s32) -> result<_, pkhex-error>;
+
+  // Donuts
+  get-donuts: func(handle: save-handle) -> result<list<donut-entry>, pkhex-error>;
+  set-all-donuts-shiny: func(handle: save-handle) -> result<_, pkhex-error>;
+  compress-donuts: func(handle: save-handle) -> result<_, pkhex-error>;
+
+  // Hyperspace survey points
+  get-hyperspace-survey-points: func(handle: save-handle) -> result<u32, pkhex-error>;
+  set-hyperspace-survey-points: func(handle: save-handle, points: u32) -> result<_, pkhex-error>;
+
+  // Street name
+  get-street-name: func(handle: save-handle) -> result<string, pkhex-error>;
+  set-street-name: func(handle: save-handle, name: string) -> result<_, pkhex-error>;
+
+  // Infinite Royale
+  get-infinite-royale-points: func(handle: save-handle) -> result<royale-points, pkhex-error>;
+  set-infinite-royale-points: func(handle: save-handle, royale: u32, infinite: u32) -> result<_, pkhex-error>;
+}
+
+// ---------------------------------------------------------------------------
+// World: exports all interfaces
+// ---------------------------------------------------------------------------
+world pkhex {
+  export types;
+  export save-ops;
+  export pokemon-ops;
+  export party-ops;
+  export pkm-ops;
+  export trainer-ops;
+  export storage-ops;
+  export item-ops;
+  export game-data-ops;
+  export progress-ops;
+  export feature-ops;
+  export za-ops;
+}

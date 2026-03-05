@@ -1,168 +1,102 @@
 /**
- * WASM Test Setup
- * 
- * Loads the WASM module once and provides it to all tests.
- * This avoids the overhead of loading WASM for each test file.
+ * WASI Component Test Setup
+ *
+ * Imports the jco-transpiled WASI component and provides helpers
+ * for loading test save files.
+ *
+ * IMPORTANT: Due to a NativeAOT-LLVM bug, loadSave can only be
+ * called twice before thread statics corrupt. We load a single
+ * shared save handle at module init and reuse it across all tests.
  */
 
-import { createRequire } from 'module';
 import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-const require = createRequire(import.meta.url);
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-let wasmModule: any = null;
-let isInitialized = false;
-let initPromise: Promise<WASMTestContext> | null = null;
+import {
+  run,
+  saveOps,
+  pokemonOps,
+  partyOps,
+  pkmOps,
+  trainerOps,
+  storageOps,
+  itemOps,
+  gameDataOps,
+  progressOps,
+  featureOps,
+  zaOps,
+} from '../dist/pkhex.js';
 
-export interface WASMTestContext {
-  rawApi: any;
-  isReady: boolean;
+// Initialize the .NET runtime inside the WASM component.
+const g = globalThis as Record<string, unknown>;
+if (!g.__pkhex_runtime_initialized) {
+  run.run();
+  g.__pkhex_runtime_initialized = true;
 }
 
-/**
- * Initialize the WASM module (call once before all tests)
- */
-export async function initializeWASM(): Promise<WASMTestContext> {
-  // Return cached result if already initialized
-  if (isInitialized && wasmModule) {
-    return { rawApi: wasmModule, isReady: true };
+// Load the shared test save handle once per process.
+// Reuse across all tests to avoid the 3-load crash bug.
+const savePath = join(__dirname, 'PKHeX.Tests', 'TestData', 'emerald.sav');
+const saveData = new Uint8Array(readFileSync(savePath));
+
+let _sharedHandle: number | null = null;
+
+function getSharedHandle(): number {
+  if (_sharedHandle === null) {
+    _sharedHandle = saveOps.loadSave(saveData);
   }
-
-  // Return existing promise if initialization is in progress
-  if (initPromise) {
-    return initPromise;
-  }
-
-  // Start initialization
-  initPromise = (async () => {
-    try {
-      // Import the dotnet runtime
-      const distPath = join(__dirname, '..', 'dist');
-      const dotnetPath = join(distPath, 'dotnet.js');
-
-      // Dynamic import of the dotnet module
-      const dotnetModule = await import(dotnetPath);
-      const { dotnet } = dotnetModule;
-
-      if (!dotnet || typeof dotnet.create !== 'function') {
-        throw new Error(`Invalid dotnet module structure. Got: ${JSON.stringify(Object.keys(dotnetModule))}`);
-      }
-
-      // Read boot config from disk and convert to array-based format
-      // that the .NET 10 runtime's withConfig() expects
-      const bootConfigPath = join(distPath, 'blazor.boot.json');
-      const bootConfig = JSON.parse(readFileSync(bootConfigPath, 'utf8'));
-
-      if (bootConfig.resources) {
-        for (const key of Object.keys(bootConfig.resources)) {
-          const val = bootConfig.resources[key];
-          if (val && typeof val === 'object' && !Array.isArray(val)) {
-            bootConfig.resources[key] = Object.entries(val).map(
-              ([name, hash]) => ({ name, hash: hash as string })
-            );
-          }
-        }
-      }
-
-      // Create the runtime with config passed directly
-      const runtime = await dotnet.withConfig(bootConfig).create();
-      
-      // Get the PKHeX assembly exports
-      const exports = await runtime.getAssemblyExports('PKHeX.dll');
-      
-      // The exports structure is: exports.PKHeX.Api.PKHeXApi
-      if (!exports || !exports.PKHeX || !exports.PKHeX.Api || !exports.PKHeX.Api.PKHeXApi) {
-        // Debug output
-        console.error('Assembly exports structure:');
-        console.error('- exports:', !!exports);
-        if (exports) {
-          console.error('- exports keys:', Object.keys(exports));
-          if (exports.PKHeX) {
-            console.error('- PKHeX keys:', Object.keys(exports.PKHeX));
-            if (exports.PKHeX.Api) {
-              console.error('- Api keys:', Object.keys(exports.PKHeX.Api));
-            }
-          }
-        }
-        throw new Error(`PKHeXApi not found in assembly exports`);
-      }
-
-      wasmModule = exports.PKHeX.Api.PKHeXApi;
-      isInitialized = true;
-
-      return { rawApi: wasmModule, isReady: true };
-    } catch (error) {
-      console.error('Failed to initialize WASM:', error);
-      initPromise = null; // Allow retry
-      return { rawApi: null, isReady: false };
-    }
-  })();
-
-  return initPromise;
+  return _sharedHandle;
 }
 
-/**
- * Get the initialized WASM module
- */
-export function getWASM(): WASMTestContext {
-  if (!isInitialized || !wasmModule) {
-    throw new Error('WASM not initialized. Call initializeWASM() first.');
-  }
-  return { rawApi: wasmModule, isReady: true };
-}
+export {
+  saveOps,
+  pokemonOps,
+  partyOps,
+  pkmOps,
+  trainerOps,
+  storageOps,
+  itemOps,
+  gameDataOps,
+  progressOps,
+  featureOps,
+  zaOps,
+};
 
 /**
- * Create a test save file for integration tests
+ * Creates a fresh test save. WARNING: due to a NativeAOT-LLVM bug,
+ * calling loadSave more than twice per process will crash. Prefer
+ * useTestSave() which reuses a shared handle.
  */
-export function createTestSave(rawApi: any): number {
-  const fs = require('fs');
-  const path = require('path');
-  
-  const testSavePath = path.join(__dirname, 'PKHeX.Tests', 'TestData', 'emerald.sav');
-  
+export function createTestSave(): number {
+  return saveOps.loadSave(saveData);
+}
+
+export function disposeTestSave(handle: number): void {
   try {
-    const saveData = fs.readFileSync(testSavePath);
-    const base64Data = saveData.toString('base64');
-    
-    const result = JSON.parse(rawApi.LoadSave(base64Data));
-    if (result.success) {
-      return result.handle;
-    }
-    throw new Error(result.error || 'Failed to create test save');
-  } catch (error) {
-    throw new Error(`Failed to create test save: ${error}`);
+    saveOps.disposeSave(handle);
+  } catch {
+    // Ignore errors during cleanup
   }
 }
 
 /**
- * Clean up a test save file
+ * Provides a shared save handle for testing. The handle persists
+ * across all tests in the process — mutations accumulate.
+ * For tests that need isolation, use createTestSave() sparingly.
  */
-export function disposeTestSave(rawApi: any, handle: number): void {
-  try {
-    rawApi.DisposeSave(handle);
-  } catch (error) {
-    console.warn(`Failed to dispose test save ${handle}:`, error);
-  }
+export function useTestSave(fn: (handle: number) => void): void {
+  fn(getSharedHandle());
 }
 
 /**
- * Helper to run a test with a save file
+ * @deprecated Use useTestSave() instead. This creates+disposes a
+ * fresh save handle per call, which hits the 3-load crash limit.
  */
 export async function withTestSave<T>(
-  rawApi: any,
-  testFn: (handle: number) => T | Promise<T>
+  fn: (handle: number) => T | Promise<T>
 ): Promise<T> {
-  let handle: number | null = null;
-  try {
-    handle = createTestSave(rawApi);
-    return await testFn(handle);
-  } finally {
-    if (handle !== null) {
-      disposeTestSave(rawApi, handle);
-    }
-  }
+  return await fn(getSharedHandle());
 }
