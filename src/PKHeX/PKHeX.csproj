@@ -2,61 +2,33 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
-    <OutputType>Library</OutputType>
+    <RuntimeIdentifier>wasi-wasm</RuntimeIdentifier>
+    <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    
-    <!-- WASM Configuration -->
-    <WasmEnableExceptionHandling>true</WasmEnableExceptionHandling>
-    <InvariantGlobalization>true</InvariantGlobalization>
-    
-    <!-- JSExport Configuration -->
-    <WasmEnableSIMD>false</WasmEnableSIMD>
-    <WasmEnableThreads>false</WasmEnableThreads>
-    
-    <!-- Disable Blazor Features -->
-    <IsTrimmable>true</IsTrimmable>
-    <TrimMode>link</TrimMode>
-    <EnableDefaultItems>true</EnableDefaultItems>
-    
-    <!-- Output Configuration -->
-    <WasmAppDir>../../dist</WasmAppDir>
-    <WasmMainAssemblyFileName>PKHeX.wasm</WasmMainAssemblyFileName>
-    <WasmGenerateAppBundle>false</WasmGenerateAppBundle>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    
-    <!-- IL Trimming for Size Optimization -->
+
+    <!-- NativeAOT / WASI Configuration -->
     <PublishTrimmed>true</PublishTrimmed>
-    <TrimmerDefaultAction>link</TrimmerDefaultAction>
+    <InvariantGlobalization>true</InvariantGlobalization>
     <IlcOptimizationPreference>Size</IlcOptimizationPreference>
-    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
     <EventSourceSupport>false</EventSourceSupport>
     <UseSystemResourceKeys>true</UseSystemResourceKeys>
-    <InvariantGlobalization>true</InvariantGlobalization>
-    
-    <!-- Trimming Warnings -->
+
+    <!-- Export WASI component functions -->
+    <IlcExportUnmanagedEntrypoints>true</IlcExportUnmanagedEntrypoints>
+
+    <!-- Trimming -->
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    
-    <!-- Suppress platform warnings for JSExport (we know we're browser-only) -->
-    <!-- CA1416: Platform compatibility -->
-    <!-- CS7036: RequiresUnreferencedCode generator issue in WASM interop -->
-    <!-- IL2026: RequiresUnreferencedCode trimming warnings -->
-    <!-- SYSLIB1072: Unsupported type warnings for JS interop -->
-    <NoWarn>$(NoWarn);CA1416;CS7036;IL2026;SYSLIB1072</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\PKHeX\PKHeX.Core\PKHeX.Core.csproj" />
-    <PackageReference Include="System.Text.Json" Version="10.0.*" />
-  </ItemGroup>
-
-  <!-- Preserve specific types from trimming via TrimmerRoots.xml -->
-  <ItemGroup>
-    <TrimmerRootDescriptor Include="TrimmerRoots.xml" Condition="Exists('TrimmerRoots.xml')" />
+    <PackageReference Include="BytecodeAlliance.Componentize.DotNet.Wasm.SDK"
+                      Version="0.7.0-preview00010" />
+    <PackageReference Include="runtime.linux-x64.Microsoft.DotNet.ILCompiler.LLVM"
+                      Version="10.0.0-alpha.1.25075.1" />
   </ItemGroup>
 
 </Project>

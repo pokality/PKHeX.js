@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <linker>
-  <!-- Preserve all public types in PKHeX for JSExport -->
-  <assembly fullname="PKHeX">
-    <type fullname="PKHeX.Api.PKHeXApi" preserve="all" />
-    <type fullname="PKHeX.Models.*" preserve="all" />
-  </assembly>
-  
-  <!-- Preserve System.Text.Json for serialization -->
-  <assembly fullname="System.Text.Json">
-    <type fullname="System.Text.Json.JsonSerializer" preserve="all" />
-    <type fullname="System.Text.Json.JsonSerializerOptions" preserve="all" />
-  </assembly>
-  
-  <!-- Preserve SaveFile types -->
+  <!-- Preserve PKHeX.Core types needed at runtime -->
   <assembly fullname="PKHeX.Core">
     <type fullname="PKHeX.Core.SaveUtil" preserve="all" />
     <type fullname="PKHeX.Core.SaveFile" preserve="all" />

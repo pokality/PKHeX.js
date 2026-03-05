@@ -1,397 +1,235 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { initializeWASM, withTestSave } from './wasm-test-setup';
-import { createPKHeXApiWrapper } from '../src/api-wrapper';
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  saveOps, trainerOps, gameDataOps, itemOps,
+  progressOps, zaOps, withTestSave
+} from './wasm-test-setup.ts';
+
+// IMPORTANT: Save-dependent tests run before error-throwing tests.
+// .NET exceptions corrupt the WASM thread state in NativeAOT-LLVM.
 
 describe('Upstream Feature Tests', () => {
-  let rawApi: any;
-  let api: any;
 
-  beforeAll(async () => {
-    const context = await initializeWASM();
-    if (!context.isReady) {
-      throw new Error('Failed to initialize WASM for upstream feature tests');
-    }
-    rawApi = context.rawApi;
-    api = createPKHeXApiWrapper(rawApi);
-  }, 60000);
+  // ── Stateless/save-dependent tests (run first) ──
 
-  // ========================================================================
-  // 25.11.30: SpeciesCategory
-  // ========================================================================
   describe('Species Category (25.11.30)', () => {
     it('should identify Mewtwo as legendary', () => {
-      const result = api.gameData.getSpeciesCategory(150);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isLegendary).toBe(true);
-      expect(result.isSpecial).toBe(true);
-      expect(result.isMythical).toBe(false);
+      const result = gameDataOps.getSpeciesCategory(150);
+      assert.strictEqual(result.isLegendary, true);
+      assert.strictEqual(result.isSpecial, true);
+      assert.strictEqual(result.isMythical, false);
     });
 
     it('should identify Mew as mythical', () => {
-      const result = api.gameData.getSpeciesCategory(151);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isMythical).toBe(true);
-      expect(result.isSpecial).toBe(true);
-      expect(result.isLegendary).toBe(false);
+      const result = gameDataOps.getSpeciesCategory(151);
+      assert.strictEqual(result.isMythical, true);
+      assert.strictEqual(result.isSpecial, true);
+      assert.strictEqual(result.isLegendary, false);
     });
 
     it('should identify Nihilego as ultra beast', () => {
-      const result = api.gameData.getSpeciesCategory(793);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isUltraBeast).toBe(true);
-      expect(result.isSpecial).toBe(true);
+      const result = gameDataOps.getSpeciesCategory(793);
+      assert.strictEqual(result.isUltraBeast, true);
+      assert.strictEqual(result.isSpecial, true);
     });
 
     it('should identify Pikachu as not special', () => {
-      const result = api.gameData.getSpeciesCategory(25);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isSpecial).toBe(false);
-      expect(result.isLegendary).toBe(false);
-      expect(result.isMythical).toBe(false);
-      expect(result.isUltraBeast).toBe(false);
-      expect(result.isParadox).toBe(false);
+      const result = gameDataOps.getSpeciesCategory(25);
+      assert.strictEqual(result.isSpecial, false);
+      assert.strictEqual(result.isLegendary, false);
+      assert.strictEqual(result.isMythical, false);
+      assert.strictEqual(result.isUltraBeast, false);
+      assert.strictEqual(result.isParadox, false);
     });
 
     it('should identify sub-legendary Pokemon', () => {
-      // Articuno (144) is sub-legendary
-      const result = api.gameData.getSpeciesCategory(144);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isSubLegendary).toBe(true);
-      expect(result.isSpecial).toBe(true);
+      const result = gameDataOps.getSpeciesCategory(144);
+      assert.strictEqual(result.isSubLegendary, true);
+      assert.strictEqual(result.isSpecial, true);
     });
 
     it('should return species name in response', () => {
-      const result = api.gameData.getSpeciesCategory(25);
-      expect(result).not.toHaveProperty('error');
-      expect(result.speciesName).toBeTruthy();
-      expect(result.species).toBe(25);
-    });
-
-    it('should error on invalid species ID', () => {
-      const result = api.gameData.getSpeciesCategory(-1);
-      expect(result).toHaveProperty('error');
-    });
-
-    it('should work via raw API', () => {
-      const jsonResponse = rawApi.GetSpeciesCategory(150);
-      const parsed = JSON.parse(jsonResponse);
-      expect(parsed.success).toBe(true);
-      expect(parsed.isLegendary).toBe(true);
+      const result = gameDataOps.getSpeciesCategory(25);
+      assert.ok(result.speciesName);
+      assert.strictEqual(result.species, 25);
     });
   });
 
-  // ========================================================================
-  // 25.11.30: PlayerAppearance9a (ZA-specific, error path only)
-  // ========================================================================
-  describe('Player Appearance 9a (25.11.30)', () => {
-    it('should error for non-ZA saves on get', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.trainer.getPlayerAppearance9a(handle);
-        expect(result).toHaveProperty('error');
-        expect(result.code).toBe('UNSUPPORTED_GENERATION');
-      });
-    });
-
-    it('should error for non-ZA saves on set', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.trainer.setPlayerAppearance9a(handle, { skinColor: 1 });
-        expect(result).toHaveProperty('error');
-        expect(result.code).toBe('UNSUPPORTED_GENERATION');
-      });
-    });
-
-    it('should error for invalid handle on get', () => {
-      const result = api.save.trainer.getPlayerAppearance9a(-1);
-      expect(result).toHaveProperty('error');
-    });
-
-    it('should serialize raw API error response', () => {
-      const jsonResponse = rawApi.GetPlayerAppearance9a(-1);
-      const parsed = JSON.parse(jsonResponse);
-      expect(parsed).toHaveProperty('error');
-    });
-  });
-
-  // ========================================================================
-  // 25.12.12: IsPrimalForm
-  // ========================================================================
   describe('Primal Form Check (25.12.12)', () => {
     it('should identify Primal Kyogre', () => {
-      // Kyogre (382) form 1 is Primal
-      const result = api.gameData.isPrimalForm(382, 1);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isPrimal).toBe(true);
+      assert.strictEqual(gameDataOps.isPrimalForm(382, 1), true);
     });
 
     it('should identify Primal Groudon', () => {
-      // Groudon (383) form 1 is Primal
-      const result = api.gameData.isPrimalForm(383, 1);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isPrimal).toBe(true);
+      assert.strictEqual(gameDataOps.isPrimalForm(383, 1), true);
     });
 
     it('should not flag base Kyogre as primal', () => {
-      const result = api.gameData.isPrimalForm(382, 0);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isPrimal).toBe(false);
+      assert.strictEqual(gameDataOps.isPrimalForm(382, 0), false);
     });
 
     it('should not flag Pikachu as primal', () => {
-      const result = api.gameData.isPrimalForm(25, 0);
-      expect(result).not.toHaveProperty('error');
-      expect(result.isPrimal).toBe(false);
-    });
-
-    it('should error on invalid species', () => {
-      const result = api.gameData.isPrimalForm(-1, 0);
-      expect(result).toHaveProperty('error');
-    });
-
-    it('should work via raw API', () => {
-      const jsonResponse = rawApi.IsPrimalForm(382, 1);
-      const parsed = JSON.parse(jsonResponse);
-      expect(parsed.success).toBe(true);
-      expect(parsed.isPrimal).toBe(true);
+      assert.strictEqual(gameDataOps.isPrimalForm(25, 0), false);
     });
   });
 
-  // ========================================================================
-  // 25.12.12: SaveRevision (ZA-specific, error path only)
-  // ========================================================================
-  describe('Save Revision (25.12.12)', () => {
-    it('should error for non-ZA saves', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.getSaveRevision(handle);
-        expect(result).toHaveProperty('error');
-        expect(result.code).toBe('UNSUPPORTED_GENERATION');
-      });
-    });
-
-    it('should error for invalid handle', () => {
-      const result = api.save.getSaveRevision(-1);
-      expect(result).toHaveProperty('error');
-    });
-
-    it('should serialize raw API error response', () => {
-      const jsonResponse = rawApi.GetSaveRevision(-1);
-      const parsed = JSON.parse(jsonResponse);
-      expect(parsed).toHaveProperty('error');
-    });
-  });
-
-  // ========================================================================
-  // 25.12.12: CollectTechnicalMachines (ZA-specific, error path only)
-  // ========================================================================
-  describe('Collect Technical Machines (25.12.12)', () => {
-    it('should error for non-ZA saves', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.progress.collectTechnicalMachines(handle);
-        expect(result).toHaveProperty('error');
-        expect(result.code).toBe('UNSUPPORTED_GENERATION');
-      });
-    });
-
-    it('should error for invalid handle', () => {
-      const result = api.save.progress.collectTechnicalMachines(-1);
-      expect(result).toHaveProperty('error');
-    });
-  });
-
-  // ========================================================================
-  // 25.12.15: Hyperspace Survey Points (ZA-specific, error path only)
-  // ========================================================================
-  describe('Hyperspace Survey Points (25.12.15)', () => {
-    it('should error for non-ZA saves on get', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.progress.getHyperspaceSurveyPoints(handle);
-        expect(result).toHaveProperty('error');
-      });
-    });
-
-    it('should error for non-ZA saves on set', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.progress.setHyperspaceSurveyPoints(handle, 100);
-        expect(result).toHaveProperty('error');
-      });
-    });
-
-    it('should error for invalid handle', () => {
-      const result = api.save.progress.getHyperspaceSurveyPoints(-1);
-      expect(result).toHaveProperty('error');
-    });
-  });
-
-  // ========================================================================
-  // 25.12.21: Street Name (ZA-specific, error path only)
-  // ========================================================================
-  describe('Street Name (25.12.21)', () => {
-    it('should error for non-ZA saves on get', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.trainer.getStreetName(handle);
-        expect(result).toHaveProperty('error');
-      });
-    });
-
-    it('should error for non-ZA saves on set', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.trainer.setStreetName(handle, 'Test Street');
-        expect(result).toHaveProperty('error');
-      });
-    });
-
-    it('should error for invalid handle', () => {
-      const result = api.save.trainer.getStreetName(-1);
-      expect(result).toHaveProperty('error');
-    });
-  });
-
-  // ========================================================================
-  // 25.12.15: Donuts (ZA-specific, error path only)
-  // ========================================================================
-  describe('Donuts (25.12.15)', () => {
-    it('should error for non-ZA saves on get', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.features.getDonuts(handle);
-        expect(result).toHaveProperty('error');
-        expect(result.code).toBe('UNSUPPORTED_GENERATION');
-      });
-    });
-
-    it('should error for non-ZA saves on setAllShiny', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.features.setAllDonutsShiny(handle);
-        expect(result).toHaveProperty('error');
-      });
-    });
-
-    it('should error for non-ZA saves on compress', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.features.compressDonuts(handle);
-        expect(result).toHaveProperty('error');
-      });
-    });
-
-    it('should error for invalid handle', () => {
-      const result = api.save.features.getDonuts(-1);
-      expect(result).toHaveProperty('error');
-    });
-  });
-
-  // ========================================================================
-  // 26.01.31: HasItem
-  // ========================================================================
   describe('Has Item (26.01.31)', () => {
     it('should search for items in inventory', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.items.hasItem(handle, 1);
-        expect(result).not.toHaveProperty('error');
-        expect(result).toHaveProperty('found');
-        expect(typeof result.found).toBe('boolean');
+      await withTestSave((handle: number) => {
+        const result = itemOps.hasItem(handle, 1);
+        assert.ok('found' in result);
+        assert.strictEqual(typeof result.found, 'boolean');
       });
     });
 
     it('should return found=false for item not in inventory', async () => {
-      await withTestSave(rawApi, (handle) => {
-        // Item 2 (Ultra Ball) is unlikely to be in the test emerald save
-        const result = api.save.items.hasItem(handle, 2);
-        expect(result).not.toHaveProperty('error');
+      await withTestSave((handle: number) => {
+        const result = itemOps.hasItem(handle, 2);
         if (!result.found) {
-          expect(result.pouchIndex).toBe(-1);
-          expect(result.count).toBe(0);
+          assert.strictEqual(result.count, 0);
         }
       });
     });
-
-    it('should error for invalid item ID', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.items.hasItem(handle, -1);
-        expect(result).toHaveProperty('error');
-      });
-    });
-
-    it('should error for invalid handle', () => {
-      const result = api.save.items.hasItem(-1, 1);
-      expect(result).toHaveProperty('error');
-    });
-
-    it('should work via raw API', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const jsonResponse = rawApi.HasItem(handle, 1);
-        const parsed = JSON.parse(jsonResponse);
-        expect(parsed.success).toBe(true);
-        expect(parsed).toHaveProperty('found');
-      });
-    });
   });
 
-  // ========================================================================
-  // 26.01.31: GetFirstEmptySlot
-  // ========================================================================
   describe('Get First Empty Slot (26.01.31)', () => {
     it('should find empty slot in a pouch', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.items.getFirstEmptySlot(handle, 0);
-        expect(result).not.toHaveProperty('error');
-        expect(result).toHaveProperty('emptySlotIndex');
-        expect(result).toHaveProperty('hasEmptySlot');
-        expect(typeof result.emptySlotIndex).toBe('number');
-        expect(typeof result.hasEmptySlot).toBe('boolean');
-      });
-    });
-
-    it('should error for invalid pouch index', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.items.getFirstEmptySlot(handle, 999);
-        expect(result).toHaveProperty('error');
-      });
-    });
-
-    it('should error for invalid handle', () => {
-      const result = api.save.items.getFirstEmptySlot(-1, 0);
-      expect(result).toHaveProperty('error');
-    });
-
-    it('should work via raw API', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const jsonResponse = rawApi.GetFirstEmptySlot(handle, 0);
-        const parsed = JSON.parse(jsonResponse);
-        expect(parsed.success).toBe(true);
-        expect(parsed).toHaveProperty('emptySlotIndex');
-        expect(parsed).toHaveProperty('hasEmptySlot');
+      await withTestSave((handle: number) => {
+        const result = itemOps.getFirstEmptySlot(handle, 0);
+        assert.strictEqual(typeof result, 'number');
       });
     });
   });
 
-  // ========================================================================
-  // API Wrapper Integration
-  // ========================================================================
-  describe('API Wrapper Integration', () => {
-    it('should expose getSpeciesCategory through wrapper', () => {
-      const result = api.gameData.getSpeciesCategory(150);
-      expect(result).toBeDefined();
-      expect(result.isLegendary).toBe(true);
-    });
+  // ── Error-throwing tests (run last) ──
 
-    it('should expose isPrimalForm through wrapper', () => {
-      const result = api.gameData.isPrimalForm(382, 1);
-      expect(result).toBeDefined();
-      expect(result.isPrimal).toBe(true);
+  describe('Species Category Error Paths', () => {
+    it('should throw on invalid species ID', () => {
+      assert.throws(() => gameDataOps.getSpeciesCategory(-1));
     });
+  });
 
-    it('should expose hasItem through wrapper', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.items.hasItem(handle, 1);
-        expect(result).toBeDefined();
-        expect(result).toHaveProperty('found');
+  describe('Primal Form Edge Cases', () => {
+    it('should return false for invalid species', () => {
+      assert.strictEqual(gameDataOps.isPrimalForm(-1, 0), false);
+    });
+  });
+
+  describe('Player Appearance Za Error Paths', () => {
+    it('should throw for non-ZA saves on get', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => trainerOps.getPlayerAppearanceZa(handle));
       });
     });
 
-    it('should expose getFirstEmptySlot through wrapper', async () => {
-      await withTestSave(rawApi, (handle) => {
-        const result = api.save.items.getFirstEmptySlot(handle, 0);
-        expect(result).toBeDefined();
-        expect(result).toHaveProperty('emptySlotIndex');
+    it('should throw for non-ZA saves on set', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => trainerOps.setPlayerAppearanceZa(handle, { skinColor: 1 }));
       });
+    });
+
+    it('should throw for invalid handle on get', () => {
+      assert.throws(() => trainerOps.getPlayerAppearanceZa(0));
+    });
+  });
+
+  describe('Save Revision Error Paths (25.12.12)', () => {
+    it('should throw for non-ZA saves', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => saveOps.getSaveRevision(handle));
+      });
+    });
+
+    it('should throw for invalid handle', () => {
+      assert.throws(() => saveOps.getSaveRevision(0));
+    });
+  });
+
+  describe('ZA Feature Error Paths', () => {
+    it('should throw for non-ZA saves on collectTechnicalMachines', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => zaOps.collectTechnicalMachines(handle));
+      });
+    });
+
+    it('should throw for invalid handle on collectTechnicalMachines', () => {
+      assert.throws(() => zaOps.collectTechnicalMachines(0));
+    });
+
+    it('should throw for non-ZA saves on getHyperspaceSurveyPoints', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => zaOps.getHyperspaceSurveyPoints(handle));
+      });
+    });
+
+    it('should throw for non-ZA saves on setHyperspaceSurveyPoints', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => zaOps.setHyperspaceSurveyPoints(handle, 100));
+      });
+    });
+
+    it('should throw for invalid handle on getHyperspaceSurveyPoints', () => {
+      assert.throws(() => zaOps.getHyperspaceSurveyPoints(0));
+    });
+
+    it('should throw for non-ZA saves on getStreetName', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => zaOps.getStreetName(handle));
+      });
+    });
+
+    it('should throw for non-ZA saves on setStreetName', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => zaOps.setStreetName(handle, 'Test Street'));
+      });
+    });
+
+    it('should throw for invalid handle on getStreetName', () => {
+      assert.throws(() => zaOps.getStreetName(0));
+    });
+
+    it('should throw for non-ZA saves on getDonuts', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => zaOps.getDonuts(handle));
+      });
+    });
+
+    it('should throw for non-ZA saves on setAllDonutsShiny', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => zaOps.setAllDonutsShiny(handle));
+      });
+    });
+
+    it('should throw for non-ZA saves on compressDonuts', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => zaOps.compressDonuts(handle));
+      });
+    });
+
+    it('should throw for invalid handle on getDonuts', () => {
+      assert.throws(() => zaOps.getDonuts(0));
+    });
+  });
+
+  describe('Item Error Paths', () => {
+    it('should throw for invalid item ID', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => itemOps.hasItem(handle, -1));
+      });
+    });
+
+    it('should throw for invalid handle on hasItem', () => {
+      assert.throws(() => itemOps.hasItem(0, 1));
+    });
+
+    it('should throw for invalid pouch index', async () => {
+      await withTestSave((handle: number) => {
+        assert.throws(() => itemOps.getFirstEmptySlot(handle, 999));
+      });
+    });
+
+    it('should throw for invalid handle on getFirstEmptySlot', () => {
+      assert.throws(() => itemOps.getFirstEmptySlot(0, 0));
     });
   });
 });

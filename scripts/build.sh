@@ -1,18 +1,15 @@
 #!/usr/bin/env sh
 set -e
 
-dotnet format src/PKHeX/PKHeX.csproj -v q
+dotnet build src/PKHeX/PKHeX.csproj -c Release --nologo -v q
 
 rm -rf dist
 mkdir -p dist
 
-dotnet publish src/PKHeX/PKHeX.csproj -c Release --nologo -v q
-cp -r src/PKHeX/bin/Release/browser-wasm/publish/* dist/
+npx jco transpile src/PKHeX/bin/Release/net10.0/wasi-wasm/native/PKHeX.wasm \
+  -o dist/ --name pkhex
 
-./scripts/generate-boot-json.sh
-
-npx tsc src/index.ts src/api-wrapper.ts src/helpers.ts --outDir dist --module esnext --target es2021 --moduleResolution bundler --declaration 2>/dev/null
-rm -f dist/*.a dist/*.dat
+npx tsc
 
 dotnet test tests/PKHeX.Tests/PKHeX.Tests.csproj --nologo -v q
 npm test --silent
