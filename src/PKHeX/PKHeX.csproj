@@ -51,7 +51,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\PKHeX\PKHeX.Core\PKHeX.Core.csproj" />
-    <PackageReference Include="System.Text.Json" Version="10.0.*" />
   </ItemGroup>
 
   <!-- Preserve specific types from trimming via TrimmerRoots.xml -->
