@@ -19,7 +19,7 @@ jobs:
       version: ${{ steps.extract.outputs.version }}
       pkhex_version: ${{ steps.pkhex.outputs.version }}
       should_deploy: ${{ steps.compare.outputs.should_deploy }}
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -38,52 +38,48 @@ jobs:
         fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Tag version: $VERSION"
-    
+
     - name: Get PKHeX submodule version
       id: pkhex
       run: |
         PKHEX_TAG=$(git -C lib/PKHeX describe --tags --abbrev=0 2>/dev/null || echo "unknown")
-        # PKHeX tags don't have 'v' prefix (e.g., "25.10.26")
         echo "version=$PKHEX_TAG" >> $GITHUB_OUTPUT
         echo "PKHeX version: $PKHEX_TAG"
-    
+
     - name: Get package.json version
       id: package
       run: |
         PACKAGE_VERSION=$(jq -r '.version' package.json)
         echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
         echo "Package.json version: $PACKAGE_VERSION"
-    
+
     - name: Compare versions
       id: compare
       run: |
         TAG_VERSION="${{ steps.extract.outputs.version }}"
         PKHEX_VERSION="${{ steps.pkhex.outputs.version }}"
         PACKAGE_VERSION="${{ steps.package.outputs.version }}"
-        
+
         echo "Comparing versions:"
         echo "  Tag version: $TAG_VERSION"
         echo "  PKHeX version: $PKHEX_VERSION"
         echo "  Package.json version: $PACKAGE_VERSION"
-        
-        # Normalize versions by removing leading zeros from version parts
-        # e.g., 25.11.06 -> 25.11.6
+
         normalize_version() {
           echo "$1" | sed -E 's/\.0+([0-9])/.\1/g'
         }
-        
+
         NORMALIZED_TAG=$(normalize_version "$TAG_VERSION")
         NORMALIZED_PKHEX=$(normalize_version "$PKHEX_VERSION")
         NORMALIZED_PACKAGE=$(normalize_version "$PACKAGE_VERSION")
-        
+
         echo "Normalized versions:"
         echo "  Tag version: $NORMALIZED_TAG"
         echo "  PKHeX version: $NORMALIZED_PKHEX"
         echo "  Package.json version: $NORMALIZED_PACKAGE"
-        
+
         ERRORS=0
-        
-        # Allow tag to be either exact match or hotfix (PKHEX_VERSION-<suffix> with at least 1 char)
+
         if [ "$NORMALIZED_TAG" = "$NORMALIZED_PKHEX" ]; then
           echo "Tag version matches PKHeX version exactly"
         elif [[ "$NORMALIZED_TAG" =~ ^${NORMALIZED_PKHEX}-.+$ ]]; then
@@ -92,15 +88,14 @@ jobs:
           echo "Tag version ($NORMALIZED_TAG) does not match or start with PKHeX version ($NORMALIZED_PKHEX)"
           ERRORS=$((ERRORS + 1))
         fi
-        
-        # Package.json must match tag exactly
+
         if [ "$NORMALIZED_TAG" = "$NORMALIZED_PACKAGE" ]; then
           echo "Package.json version matches tag exactly"
         else
           echo "Package.json version ($NORMALIZED_PACKAGE) does not match tag version ($NORMALIZED_TAG)"
           ERRORS=$((ERRORS + 1))
         fi
-        
+
         if [ $ERRORS -eq 0 ]; then
           echo "All versions match. Deployment will proceed."
           echo "should_deploy=true" >> $GITHUB_OUTPUT
@@ -110,111 +105,124 @@ jobs:
           exit 1
         fi
 
-  build:
-    name: Build Release
+  wait-for-ci:
+    name: Wait for CI
     runs-on: ubuntu-latest
-    environment: build
     needs: validate-version
     if: needs.validate-version.outputs.should_deploy == 'true'
-    
+
+    steps:
+    - name: Wait for CI workflow to complete
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        SHA="${{ github.sha }}"
+        echo "Waiting for CI workflow to pass on commit $SHA..."
+
+        for i in $(seq 1 60); do
+          RUNS=$(gh api repos/${{ github.repository }}/actions/workflows/ci.yml/runs?head_sha=$SHA --jq '.workflow_runs[] | {status, conclusion}')
+
+          if [ -z "$RUNS" ]; then
+            echo "Attempt $i: No CI runs found yet, waiting..."
+            sleep 30
+            continue
+          fi
+
+          STATUS=$(echo "$RUNS" | jq -r '.status' | head -1)
+          CONCLUSION=$(echo "$RUNS" | jq -r '.conclusion' | head -1)
+
+          echo "Attempt $i: CI status=$STATUS conclusion=$CONCLUSION"
+
+          if [ "$STATUS" = "completed" ]; then
+            if [ "$CONCLUSION" = "success" ]; then
+              echo "CI passed!"
+              exit 0
+            else
+              echo "CI failed with conclusion: $CONCLUSION"
+              exit 1
+            fi
+          fi
+
+          sleep 30
+        done
+
+        echo "Timed out waiting for CI (30 minutes)"
+        exit 1
+
+  generate-docs:
+    name: Generate TSDoc Documentation
+    runs-on: ubuntu-latest
+    environment: build
+    needs: [validate-version, wait-for-ci]
+    if: needs.validate-version.outputs.should_deploy == 'true'
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || '' }}
-        submodules: recursive
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
-    
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Restore workloads and dependencies
+
+    - name: Install documentation tools
       run: |
-        dotnet workload restore src/PKHeX/PKHeX.csproj
-        dotnet restore src/PKHeX/PKHeX.csproj
-        dotnet restore tests/PKHeX.Tests/PKHeX.Tests.csproj
-    
-    - name: Build and test
-      run: |
-        chmod +x scripts/build.sh scripts/generate-boot-json.sh
-        ./scripts/build.sh
-        echo "Build complete. Checking dist directory:"
-        ls -la dist/ | head -20
-    
-    - name: Copy additional files for NPM
-      run: |
-        echo "Copying README.md to dist/"
-        cp README.md dist/
-        echo "Contents of dist/ after copy:"
-        ls -la dist/ | head -20
-    
-    - name: Create package.json for publishing
-      run: |
-        VERSION="${{ needs.validate-version.outputs.version }}"
-        # Create a clean package.json without build scripts for publishing
-        jq --arg version "$VERSION" '
-          .version = $version |
-          del(.scripts.prepublishOnly) |
-          del(.scripts.build) |
-          del(.scripts["build:debug"]) |
-          del(.devDependencies) |
-          del(.files)
-        ' package.json > dist/package.json
-    
-    - name: Create tarball for GitHub Release
-      run: |
-        tar -czf pkhex-wasm-${{ needs.validate-version.outputs.version }}.tar.gz -C dist .
-    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+        npm install -g typedoc
+        sudo apt-get update
+        sudo apt-get install -y pandoc calibre python3-pip
+        pip3 install weasyprint
+
+    - name: Download build artifacts
+      uses: dawidd6/action-download-artifact@v6
       with:
-        name: pkhex-wasm-release
+        workflow: ci.yml
+        commit: ${{ github.sha }}
+        name: pkhex-wasm-build
         path: dist/
-        retention-days: 90
-    
-    - name: Upload tarball artifact
+
+    - name: Generate documentation (HTML, PDF, EPUB, MOBI)
+      run: |
+        chmod +x scripts/generate-docs.sh
+        ./scripts/generate-docs.sh
+
+    - name: Upload docs artifact
       uses: actions/upload-artifact@v4
       with:
-        name: pkhex-wasm-tarball
-        path: pkhex-wasm-${{ needs.validate-version.outputs.version }}.tar.gz
+        name: pkhex-wasm-docs
+        path: docs/
         retention-days: 90
 
   github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [validate-version, build, generate-docs]
+    needs: [validate-version, wait-for-ci, generate-docs]
     if: needs.validate-version.outputs.should_deploy == 'true'
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Download tarball
-      uses: actions/download-artifact@v4
+      uses: dawidd6/action-download-artifact@v6
       with:
+        workflow: ci.yml
+        commit: ${{ github.sha }}
         name: pkhex-wasm-tarball
-    
+
     - name: Download build artifacts
-      uses: actions/download-artifact@v4
+      uses: dawidd6/action-download-artifact@v6
       with:
-        name: pkhex-wasm-release
+        workflow: ci.yml
+        commit: ${{ github.sha }}
+        name: pkhex-wasm-build
         path: dist/
-    
+
     - name: Download documentation
       uses: actions/download-artifact@v4
       with:
         name: pkhex-wasm-docs
         path: docs/
-    
+
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
@@ -232,91 +240,26 @@ jobs:
         generate_release_notes: true
         body: |
           ## PKHeX WASM ${{ needs.validate-version.outputs.version }}
-          
+
           Built against PKHeX.Core ${{ needs.validate-version.outputs.pkhex_version }}
-          
+
           ### Installation
-          
+
           ```bash
           npm install pkhex@${{ needs.validate-version.outputs.version }}
           ```
-          
+
           ### Documentation
-          
+
           - [Online Documentation](https://pokality.github.io/PkHeX.js/)
           - [PDF Documentation](./PKHeX-API-Documentation.pdf)
           - [EPUB Documentation](./PKHeX-API-Documentation.epub)
           - [MOBI Documentation](./PKHeX-API-Documentation.mobi)
-          
+
           ### What's Changed
           See the full changelog below.
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  npm-publish:
-    name: Publish to NPM
-    runs-on: ubuntu-latest
-    environment: release
-    needs: [validate-version, build, github-release, github-pages]
-    if: needs.validate-version.outputs.should_deploy == 'true'
-    
-    steps:
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        registry-url: 'https://registry.npmjs.org'
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: pkhex-wasm-release
-        path: dist/
-
-    - name: Publish to NPM
-      working-directory: dist/
-      run: npm publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  generate-docs:
-    name: Generate TSDoc Documentation
-    runs-on: ubuntu-latest
-    environment: build
-    needs: [validate-version, build]
-    if: needs.validate-version.outputs.should_deploy == 'true'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Install documentation tools
-      run: |
-        npm install -g typedoc
-        sudo apt-get update
-        sudo apt-get install -y pandoc calibre python3-pip
-        pip3 install weasyprint
-    
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: pkhex-wasm-release
-        path: dist/
-    
-    - name: Generate documentation (HTML, PDF, EPUB, MOBI)
-      run: ./scripts/generate-docs.sh
-    
-    - name: Upload docs artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: pkhex-wasm-docs
-        path: docs/
-        retention-days: 90
 
   github-pages:
     name: Deploy to GitHub Pages
@@ -330,22 +273,50 @@ jobs:
       contents: read
       pages: write
       id-token: write
-    
+
     steps:
     - name: Download documentation
       uses: actions/download-artifact@v4
       with:
         name: pkhex-wasm-docs
         path: docs/
-    
+
     - name: Setup Pages
       uses: actions/configure-pages@v4
-    
+
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
       with:
         path: docs/
-    
+
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
+
+  npm-publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    environment: release
+    needs: [validate-version, wait-for-ci, github-release, github-pages]
+    if: needs.validate-version.outputs.should_deploy == 'true'
+
+    steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Download build artifacts
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        workflow: ci.yml
+        commit: ${{ github.sha }}
+        name: pkhex-wasm-build
+        path: dist/
+
+    - name: Publish to NPM
+      working-directory: dist/
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
