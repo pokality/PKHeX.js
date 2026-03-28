@@ -2,21 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RuntimeIdentifier>wasi-wasm</RuntimeIdentifier>
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <!-- NativeAOT / WASI Configuration -->
-    <PublishTrimmed>true</PublishTrimmed>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- Size optimization -->
     <IlcOptimizationPreference>Size</IlcOptimizationPreference>
     <EventSourceSupport>false</EventSourceSupport>
     <UseSystemResourceKeys>true</UseSystemResourceKeys>
-
-    <!-- Export WASI component functions -->
-    <IlcExportUnmanagedEntrypoints>true</IlcExportUnmanagedEntrypoints>
 
     <!-- Trimming -->
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
@@ -27,8 +21,13 @@
     <ProjectReference Include="..\..\lib\PKHeX\PKHeX.Core\PKHeX.Core.csproj" />
     <PackageReference Include="BytecodeAlliance.Componentize.DotNet.Wasm.SDK"
                       Version="0.7.0-preview00010" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM"
+                      Version="10.0.0-rc.1.26117.1" />
     <PackageReference Include="runtime.linux-x64.Microsoft.DotNet.ILCompiler.LLVM"
-                      Version="10.0.0-alpha.1.25075.1" />
+                      Version="10.0.0-rc.1.26117.1" />
+    <PackageReference Include="runtime.wasi-wasm.Microsoft.DotNet.ILCompiler.LLVM"
+                      Version="10.0.0-rc.1.26117.1" />
   </ItemGroup>
+
 
 </Project>
